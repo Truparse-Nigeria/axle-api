@@ -30,7 +30,7 @@ export const signup = catchAsync(async (req, res) => {
     dialCode,
     email,
     gender,
-    password: pwd,
+    passcode: rawPasscode,
     referredBy,
     messageToken,
   } = await validateRequestPayload(req.body, signupSchema);
@@ -63,13 +63,13 @@ export const signup = catchAsync(async (req, res) => {
     dialCode,
     email,
     gender,
-    password: await createHash(pwd),
+    passcode: await createHash(rawPasscode),
     referralCode,
     messageToken,
     ...(referrer && { referredBy: { user: referrer._id } }),
   });
 
-  const { password, ...createdUser } = user.toObject();
+  const { passcode, ...createdUser } = user.toObject();
 
   sendResponse(res, 200, "Welcome aboard! Your account is ready", {
     user: createdUser,

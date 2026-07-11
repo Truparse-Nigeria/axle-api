@@ -3,7 +3,7 @@ import {
   createHash,
   deleteCache,
   getCache,
-  resetPasswordSchema,
+  resetPasscodeSchema,
   sendResponse,
   validateRequestPayload,
   type IOtpFinalizer,
@@ -11,11 +11,11 @@ import {
 import { catchAsync } from "@/middleware";
 import { UserModel } from "@/model";
 
-export const resetPassword = catchAsync(async (req, res) => {
+export const resetPasscode = catchAsync(async (req, res) => {
   //Validate data
-  const { finalizer, context, password } = await validateRequestPayload(
+  const { finalizer, context, passcode } = await validateRequestPayload(
     req.body,
-    resetPasswordSchema
+    resetPasscodeSchema
   );
 
   // User finalizer to check if the user is eligible to make this change
@@ -23,18 +23,18 @@ export const resetPassword = catchAsync(async (req, res) => {
   deleteCache(finalizer);
 
   if (!checkFinalizer || checkFinalizer.context !== context) {
-    throw new AppError("Too slow! Password change expired. Try again!", 400);
+    throw new AppError("Too slow! Passcode change expired. Try again!", 400);
   }
 
-  const hashPassword = await createHash(password);
+  const hashPasscode = await createHash(passcode);
 
   const updatedUser = await UserModel.findOneAndUpdate(
     { email: checkFinalizer.email },
-    { password: hashPassword }
+    { passcode: hashPasscode }
   );
 
   if (!updatedUser)
-    throw new AppError("Password update failed, Kindly contact support");
+    throw new AppError("Passcode update failed, Kindly contact support");
 
-  sendResponse(res, 200, "Done! Your password is now fresh and secure");
+  sendResponse(res, 200, "Done! Your passcode is now fresh and secure");
 });

@@ -21,7 +21,7 @@ export enum CryptoCurrencyEnum {
 }
 
 export enum OtpContextEnum {
-  RESET_PASSWORD = "RESET_PASSWORD",
+  RESET_PASSCODE = "RESET_PASSCODE",
   VERIFY_EMAIL = "VERIFY_EMAIL",
   RESET = "RESET_PIN",
 }

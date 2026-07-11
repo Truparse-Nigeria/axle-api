@@ -41,7 +41,7 @@ export const requestOtp = catchAsync(async (req, res) => {
     type: "SEND_EMAIL",
     priority: 1,
     to: email,
-    subject: "Forgot Password",
+    subject: "Forgot Passcode",
     template: ` otp `,
   });
 

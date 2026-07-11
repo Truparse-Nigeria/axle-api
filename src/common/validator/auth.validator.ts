@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { GenderEnum, OtpContextEnum } from "../enum";
 
+export const passcodeSchema = z
+  .string()
+  .trim()
+  .min(6, "Passcode must be at least 6 digits")
+  .max(12, "Passcode must be at most 12 digits")
+  .regex(/^\d+$/, "Passcode must contain only numbers");
+
 export const signupSchema = z.object({
   firstName: z.string().trim().min(2, "First name is too short"),
   lastName: z.string().trim().min(2, "Last name is too short"),
@@ -16,22 +23,18 @@ export const signupSchema = z.object({
     .regex(/^\+\d{1,4}$/, "Dial code must look like +234"),
   email: z.email(),
   gender: z.enum(GenderEnum),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[a-z]/, "Password must contain a lowercase letter")
-    .regex(/[A-Z]/, "Password must contain an uppercase letter")
-    .regex(/\d/, "Password must contain a number"),
+  passcode: passcodeSchema,
   referredBy: z.string().trim().optional(),
   messageToken: z.string().trim().optional(),
 });
 
-export const resetPasswordSchema = z.object({
+export const loginSchema = z.object({
+  email: z.email(),
+  passcode: z.string().trim().min(1, "Passcode is required"),
+});
+
+export const resetPasscodeSchema = z.object({
   finalizer: z.string().trim().max(12),
   context: z.enum(OtpContextEnum),
-  password: z
-    .string()
-    .trim()
-    .min(6, "Password must be at least 6 characters")
-    .max(50, "Password must be less than 50 characters"),
+  passcode: passcodeSchema,
 });

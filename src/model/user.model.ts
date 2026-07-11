@@ -99,7 +99,7 @@ const userSchema = new Schema<IUserDocument>(
       enum: Object.values(GenderEnum),
       required: true,
     },
-    password: {
+    passcode: {
       type: String,
       required: true,
       select: false,
