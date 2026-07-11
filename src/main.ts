@@ -6,6 +6,7 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { errorHandler } from "./middleware";
+import { otpRouter, userRouter } from "./router";
 
 let ALLOWED_ORIGINS = [] as string[] | boolean;
 
@@ -75,6 +76,9 @@ app.use("/api/v1/health-check", (req, res) => {
     message: "Health check successful",
   });
 });
+
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/otp", otpRouter);
 
 app.all("/*splat", (req, res) => {
   logger.error(
