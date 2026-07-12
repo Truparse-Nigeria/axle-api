@@ -37,6 +37,7 @@ export interface IUser {
   lastName: string;
   gender: GenderEnum;
   passcode: string;
+  jti?: string;
   messageToken?: string;
   wallet: IWallet;
   referredBy?: {

@@ -104,6 +104,10 @@ const userSchema = new Schema<IUserDocument>(
       required: true,
       select: false,
     },
+    jti: {
+      type: String,
+      select: false,
+    },
     messageToken: { type: String, trim: true },
     wallet: {
       type: WalletSchema,
@@ -113,7 +117,7 @@ const userSchema = new Schema<IUserDocument>(
   { timestamps: true }
 );
 
-export const UserModel: Model<IUserDocument> = model<IUserDocument>(
+export const User: Model<IUserDocument> = model<IUserDocument>(
   "User",
   userSchema
 );

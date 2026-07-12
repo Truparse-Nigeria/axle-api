@@ -1,17 +1,19 @@
 import {
+  AccessTypeEnum,
   AppError,
   createHash,
   deleteCache,
   getCache,
+  getModel,
   resetPasscodeSchema,
   sendResponse,
   validateRequestPayload,
   type IOtpFinalizer,
 } from "@/common";
 import { catchAsync } from "@/middleware";
-import { UserModel } from "@/model";
+import { User } from "@/model";
 
-export const resetPasscode = catchAsync(async (req, res) => {
+export const resetPasscode = (accessType: AccessTypeEnum) =>  catchAsync(async (req, res) => {
   //Validate data
   const { finalizer, context, passcode } = await validateRequestPayload(
     req.body,
@@ -28,7 +30,7 @@ export const resetPasscode = catchAsync(async (req, res) => {
 
   const hashPasscode = await createHash(passcode);
 
-  const updatedUser = await UserModel.findOneAndUpdate(
+  const updatedUser = await getModel(accessType).findOneAndUpdate(
     { email: checkFinalizer.email },
     { passcode: hashPasscode }
   );

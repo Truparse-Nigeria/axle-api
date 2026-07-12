@@ -1,53 +1,37 @@
 import {
+  AccessTypeEnum,
   AppError,
   compareHash,
-  ENVIRONMENT,
+  getModel,
   loginSchema,
   sendResponse,
+  tokenPair,
   validateRequestPayload,
 } from "@/common";
 import { catchAsync } from "@/middleware";
-import { UserModel } from "@/model";
-import jwt, { type SignOptions } from "jsonwebtoken";
 
-const signTokens = (userId: string) => {
-  const { USER } = ENVIRONMENT.JWT;
+export const login = (accessType: AccessTypeEnum) =>
+  catchAsync(async (req, res) => {
+    const { email, passcode: rawPasscode } = await validateRequestPayload(
+      req.body,
+      loginSchema
+    );
 
-  const accessToken = jwt.sign(
-    { id: userId },
-    USER.ACCESS_TOKEN_SECRET as string,
-    { expiresIn: USER.ACCESS_TOKEN_EXPIRES_IN as SignOptions["expiresIn"] }
-  );
+    const user = await getModel(accessType)
+      .findOne({ email })
+      .select("+passcode");
 
-  const refreshToken = jwt.sign(
-    { id: userId },
-    USER.REFRESH_TOKEN_SECRET as string,
-    { expiresIn: USER.REFRESH_TOKEN_EXPIRES_IN as SignOptions["expiresIn"] }
-  );
+    // Same error for unknown email and wrong passcode so the response
+    // doesn't reveal which accounts exist
+    if (!user || !(await compareHash(rawPasscode, user.passcode))) {
+      throw new AppError("Invalid email or passcode", 401);
+    }
 
-  return { accessToken, refreshToken };
-};
+    const jti = await tokenPair(req, res, { id: String(user._id) }, accessType);
 
-export const login = catchAsync(async (req, res) => {
-  const { email, passcode: rawPasscode } = await validateRequestPayload(
-    req.body,
-    loginSchema
-  );
+    await getModel(accessType).findByIdAndUpdate(user._id, { jti });
 
-  const user = await UserModel.findOne({ email }).select("+passcode");
+    const { passcode, ...loggedInUser } = user.toObject();
 
-  // Same error for unknown email and wrong passcode so the response
-  // doesn't reveal which accounts exist
-  if (!user || !(await compareHash(rawPasscode, user.passcode))) {
-    throw new AppError("Invalid email or passcode", 401);
-  }
-
-  const { accessToken, refreshToken } = signTokens(String(user._id));
-
-  res.locals.accessToken = accessToken;
-  res.locals.refreshToken = refreshToken;
-
-  const { passcode, ...loggedInUser } = user.toObject();
-
-  sendResponse(res, 200, "Welcome back!", { user: loggedInUser });
-});
+    sendResponse(res, 200, "Welcome back!", { user: loggedInUser });
+  });

@@ -1,4 +1,8 @@
 
+## Mongoose
+
+- Never update documents with `document.save()` — it is not atomic. Always use atomic query updates like `findByIdAndUpdate` or `findOneAndUpdate` instead.
+
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
