@@ -114,10 +114,10 @@ const userSchema = new Schema<IUserDocument>(
       default: () => ({}),
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const User: Model<IUserDocument> = model<IUserDocument>(
   "User",
-  userSchema
+  userSchema,
 );
