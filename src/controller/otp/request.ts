@@ -1,6 +1,7 @@
 import {
   AppError,
   createHash,
+  ENVIRONMENT,
   generateOTP,
   incrCache,
   OtpPrefixEnum,
@@ -41,8 +42,8 @@ export const requestOtp = catchAsync(async (req, res) => {
     type: "SEND_EMAIL",
     priority: 1,
     to: email,
-    subject: "Forgot Passcode",
-    template: ` otp `,
+    subject: `${ENVIRONMENT.APP.NAME} -  One time password`,
+    template: ` otp ${otp}`,
   });
 
   sendResponse(res, 200, "Your OTP is on its way! Check your email");
