@@ -14,7 +14,7 @@ export const login = (accessType: AccessTypeEnum) =>
   catchAsync(async (req, res) => {
     const { email, passcode: rawPasscode } = await validateRequestPayload(
       req.body,
-      loginSchema
+      loginSchema,
     );
 
     const user = await getModel(accessType)
@@ -33,5 +33,5 @@ export const login = (accessType: AccessTypeEnum) =>
 
     const { passcode, ...loggedInUser } = user.toObject();
 
-    sendResponse(res, 200, "Welcome back!", { user: loggedInUser });
+    sendResponse(res, 200, "Welcome back!", loggedInUser);
   });
