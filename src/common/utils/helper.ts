@@ -2,6 +2,7 @@ import { differenceInSeconds, endOfDay } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { customAlphabet } from "nanoid";
 import { ENVIRONMENT } from "../config";
+import { isAxiosError } from "axios";
 
 export const createHash = async (value: string) => {
   return await Bun.password.hash(value, {
@@ -49,3 +50,57 @@ export const generateRandomCode = (length: number, prefix?: string): string => {
 
 
 export const IS_DEVELOPMENT = ENVIRONMENT.APP.ENV === "development";
+
+export const parseError = (error: unknown) => {
+  if (isAxiosError(error)) {
+    if (error.response?.data) {
+      return {
+        errorData: error.response.data,
+        message:
+          error.response.data?.message ||
+          error.response.data?.msg ||
+          "Error with response data",
+      };
+    }
+    if (error.response) {
+      return { errorData: error.response, message: "Error with response" };
+    }
+  }
+
+  if (error instanceof Error) {
+    // Check if the Error has a `data` field
+    const maybeWithData = error as Error & {
+      data?: { message?: string; msg?: string };
+    };
+    return {
+      errorData: null,
+      message:
+        maybeWithData.data?.message ||
+        maybeWithData.data?.msg ||
+        maybeWithData.message,
+    };
+  }
+
+  // If it's neither an AxiosError nor a standard Error
+  const maybeUnknown = error as { data?: { message?: string; msg?: string } };
+  return {
+    errorData: null,
+    message:
+      maybeUnknown?.data?.message || maybeUnknown?.data?.msg || "Unknown Error",
+  };
+};
+
+export const messageVtpass = (code: string) => {
+  switch (code) {
+    case "000":
+      return "Transaction successful";
+    case "013":
+      return "Amount too low. Please increase the amount.";
+    case "019":
+      return "Possible duplicate detected. Please try again after 15 seconds.";
+    case "011":
+      return "Some information appears to be incorrect. Please review and try again.";
+    default:
+      return "";
+  }
+};

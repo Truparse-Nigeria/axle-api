@@ -1,4 +1,3 @@
-
 export const ENVIRONMENT = {
   APP: {
     NAME: Bun.env.NAME,
@@ -52,6 +51,11 @@ export const ENVIRONMENT = {
     SERVICE: Bun.env.ZEPTO_SERVICE,
     USERNAME: Bun.env.ZEPTO_USERNAME,
     PASSWORD: Bun.env.ZEPTO_PASSWORD,
+  },
+  VT_PASS: {
+    URL: Bun.env.VT_PASS_URL,
+    USERNAME: Bun.env.VT_PASS_USERNAME,
+    PASSWORD: Bun.env.VT_PASS_PASSWORD,
   },
 };
 

@@ -1,4 +1,4 @@
-import { ENVIRONMENT, IS_DEVELOPMENT, logger, type ISendMail } from "@/common";
+import { ENVIRONMENT, IS_DEVELOPMENT, type ISendMail } from "@/common";
 import nodemailer from "nodemailer";
 import { SendMailClient } from "zeptomail";
 

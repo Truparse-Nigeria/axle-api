@@ -25,3 +25,19 @@ export enum OtpContextEnum {
   VERIFY_EMAIL = "VERIFY_EMAIL",
   RESET = "RESET_PIN",
 }
+
+export enum HttpMethod {
+  GET = "GET",
+  POST = "POST",
+  PATCH = "PATCH",
+  PUT = "PUT",
+  DELETE = "DELETE",
+}
+
+export enum StatusEnum {
+  PROCESSING = "PROCESSING",
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+  REVERSAL = "REVERSAL",
+}
+
