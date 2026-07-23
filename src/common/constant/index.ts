@@ -10,6 +10,20 @@ export const cacheKey = {
   REGULAR_DATA_KEY: "regular-data",
 };
 
+export const TxnDesc = {
+  airtimePurchase: "Airtime purchase",
+  dataPurchase: "Data purchase",
+  tvSubscription: "TV Subscription purchase",
+  electricity: "Electricity purchase",
+  wallet2Wallet: "Axle to axle transfer",
+  wallet2Bank: "Outbound transfer",
+  topUp: "Inbound Transfer",
+};
+
+export const validationConstants = {
+  NUMBER_GREATER_THAN_ZERO: "Amount must be greater than zero.",
+};
+
 export interface IApiResponse<T = null> {
   data?: T;
   error?: Record<string, any> | null;

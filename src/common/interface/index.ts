@@ -4,3 +4,4 @@ export * from "./email.interface";
 export * from "./collection.interface"
 export * from "./vtpass.interface"
 export * from "./setting.interface"
+export * from "./transaction.interface"

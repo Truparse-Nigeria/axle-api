@@ -10,6 +10,7 @@ export enum OtpPrefixEnum {
 }
 
 export enum FiatCurrencyEnum {
+  NGN = "NGN",
   USD = "USD",
   GBP = "GBP",
   EUR = "EUR",
@@ -59,5 +60,27 @@ export enum StatusEnum {
   SUCCESS = "SUCCESS",
   FAILED = "FAILED",
   REVERSAL = "REVERSAL",
+}
+
+export enum PurposeEnum {
+  POWER = "POWER",
+  AIRTIME = "AIRTIME",
+  DATA = "DATA",
+  CABLE = "CABLE",
+  WALLET = "WALLET",
+  TRANSFER = "TRANSFER",
+  CARDS = "CARDS",
+  REFER_AND_EARN = "REFER AND EARN",
+}
+
+export enum ActivityEnum {
+  CREDIT = "CREDIT",
+  DEBIT = "DEBIT",
+}
+
+export enum VendorEnum {
+  VTPASS = "vtpass",
+  SAFE_HAVEN = "safehaven",
+  AXLE = "axle",
 }
 

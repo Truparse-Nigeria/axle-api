@@ -57,6 +57,26 @@ export const setCookie = (
   });
 };
 
+export const clearToken = (
+  req: Request,
+  res: Response,
+  accessType: AccessTypeEnum,
+) => {
+  const ATN = ENVIRONMENT.JWT[accessType].ACCESS_TOKEN_NAME! as string;
+  const RTN = ENVIRONMENT.JWT[accessType].REFRESH_TOKEN_NAME! as string;
+
+  const options: CookieOptions = {
+    httpOnly: true,
+    secure: !isPostman(req),
+    path: "/",
+    sameSite: "none",
+    partitioned: true,
+  };
+
+  res.clearCookie(ATN, options);
+  res.clearCookie(RTN, options);
+};
+
 // Create access token and refresh token
 export const tokenPair = async (
   req: Request,

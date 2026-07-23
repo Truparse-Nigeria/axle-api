@@ -1,8 +1,9 @@
-import { differenceInSeconds, endOfDay } from "date-fns";
+import { differenceInSeconds, endOfDay, format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { customAlphabet } from "nanoid";
 import { ENVIRONMENT } from "../config";
 import { isAxiosError } from "axios";
+import { StatusEnum } from "../enum";
 import type { ISettings } from "../interface";
 
 export const createHash = async (value: string) => {
@@ -49,6 +50,27 @@ export const generateRandomCode = (length: number, prefix?: string): string => {
   return prefix ? `${prefix}-${nanoid()}` : nanoid();
 };
 
+
+// Human-readable, timezone-stamped reference for a transaction
+export const generateRequestID = (prefix?: string) => {
+  const timezone = "Africa/Lagos";
+  const now = toZonedTime(new Date(), timezone);
+  const formattedDate = format(now, "yyyyMMddHHmm");
+  const randomString = generateRandomCode(12, prefix);
+
+  return `${formattedDate}x${randomString?.replace("-", "")}`;
+};
+
+export const statusMessage = (status: StatusEnum): string => {
+  const messages: Record<StatusEnum, string> = {
+    [StatusEnum.SUCCESS]: "successful",
+    [StatusEnum.PROCESSING]: "processing",
+    [StatusEnum.FAILED]: "failed",
+    [StatusEnum.REVERSAL]: "reversed",
+  };
+
+  return messages[status] ?? "unknown";
+};
 
 export const IS_DEVELOPMENT = ENVIRONMENT.APP.ENV === "development";
 
