@@ -3,6 +3,7 @@ import { toZonedTime } from "date-fns-tz";
 import { customAlphabet } from "nanoid";
 import { ENVIRONMENT } from "../config";
 import { isAxiosError } from "axios";
+import type { ISettings } from "../interface";
 
 export const createHash = async (value: string) => {
   return await Bun.password.hash(value, {
@@ -88,6 +89,46 @@ export const parseError = (error: unknown) => {
     message:
       maybeUnknown?.data?.message || maybeUnknown?.data?.msg || "Unknown Error",
   };
+};
+
+// Strips the internal-only keys before the settings are handed to a client.
+// Possible consideration against modifying the object directly?
+export const sortSettings = (val: ISettings, seen = new WeakSet<object>()) => {
+  if (typeof val !== "object" || val === null) {
+    return val;
+  }
+
+  // prevent infinite recursion
+  if (seen.has(val)) {
+    return val;
+  }
+
+  seen.add(val);
+
+  const obj = val as Record<string, any>;
+
+  Object.keys(obj).forEach((key) => {
+    // remove unwanted keys
+    if (
+      ["customRates", "providerCreationFee", "providerPercent"].includes(key)
+    ) {
+      delete obj[key];
+      return;
+    }
+
+    if (key === "providers") {
+      delete obj[key];
+      return;
+    }
+
+    const value = obj[key];
+
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      sortSettings(value, seen);
+    }
+  });
+
+  return val;
 };
 
 export const messageVtpass = (code: string) => {

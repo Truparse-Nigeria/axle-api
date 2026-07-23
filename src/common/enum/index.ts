@@ -34,6 +34,26 @@ export enum HttpMethod {
   DELETE = "DELETE",
 }
 
+export enum DiscosEnum {
+  ABA = "Aba Electricity",
+  AEDC = "Abuja Electricity",
+  BEDC = "Benin Electricity",
+  EEDC = "Enugu Electricity",
+  EKEDC = "Eko Electricity",
+  IBEDC = "Ibadan Electricity",
+  IKEDC = "Ikeja Electricity",
+  JED = "Jos Electricity",
+  KAEDCO = "Kaduna Electricity",
+  KEDCO = "Kano Electricity",
+  PHED = "Port Harcourt Electricity",
+  YEDC = "Yola Electricity",
+}
+
+export enum CardBrandEnum {
+  MASTERCARD = "MasterCard",
+  VISA = "Visa",
+}
+
 export enum StatusEnum {
   PROCESSING = "PROCESSING",
   SUCCESS = "SUCCESS",

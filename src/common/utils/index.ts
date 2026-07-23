@@ -6,3 +6,4 @@ export * from "./helper";
 export * from "./send-response";
 export * from "./payload-validator";
 export * from "./token";
+export * from "./settings";
