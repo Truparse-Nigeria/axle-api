@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { validationConstants } from "../constant";
 
+const passcodeField = z
+  .string()
+  .trim()
+  .length(6, "Passcode must be exactly 6 digits")
+  .regex(/^\d{6}$/, "Passcode must contain only numbers");
+
 export const payAirtimeSchema = z
   .object({
     network: z.enum(["mtn", "glo", "airtel", "9mobile"]),
@@ -18,21 +24,9 @@ export const payAirtimeSchema = z
         Number.MAX_SAFE_INTEGER - 100_000_000,
         "Amount exceeds maximum limit.",
       ),
-    passcode: z
-      .string()
-      .trim()
-      .min(6, "Passcode must be at least 6 digits")
-      .max(12, "Passcode must be at most 12 digits")
-      .regex(/^\d+$/, "Passcode must contain only numbers"),
+    passcode: passcodeField,
   })
   .strip();
-
-const passcodeField = z
-  .string()
-  .trim()
-  .min(6, "Passcode must be at least 6 digits")
-  .max(12, "Passcode must be at most 12 digits")
-  .regex(/^\d+$/, "Passcode must contain only numbers");
 
 export const validateCablePlatformSchema = z.object({
   entity: z.string().trim(),
