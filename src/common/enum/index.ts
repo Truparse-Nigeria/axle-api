@@ -84,3 +84,8 @@ export enum VendorEnum {
   AXLE = "axle",
 }
 
+export enum VtpassCableEnum {
+  CHANGE = "change",
+  RENEW = "RENEW",
+}
+

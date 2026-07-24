@@ -26,3 +26,26 @@ export const payAirtimeSchema = z
       .regex(/^\d+$/, "Passcode must contain only numbers"),
   })
   .strip();
+
+const passcodeField = z
+  .string()
+  .trim()
+  .min(6, "Passcode must be at least 6 digits")
+  .max(12, "Passcode must be at most 12 digits")
+  .regex(/^\d+$/, "Passcode must contain only numbers");
+
+export const validateCablePlatformSchema = z.object({
+  entity: z.string().trim(),
+});
+
+export const validateSmartcardNumberSchema = z.object({
+  entity: z.string().trim(),
+  smartcardNumber: z.string().trim(),
+  save: z.boolean().optional().default(false),
+});
+
+export const buyCableSchema = z.object({
+  smartcardNumber: z.string().trim(),
+  planId: z.string().trim(),
+  passcode: passcodeField,
+});
