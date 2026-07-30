@@ -4,10 +4,12 @@ import {
   getSettings,
   login,
   purchaseAirtime,
+  purchaseElectricity,
   refreshSettings,
   resetPasscode,
   retrievePlans,
   signup,
+  validateMeterNumber,
   validateSmartcardNumber,
 } from "@/controller";
 import { authGuard } from "@/middleware";
@@ -35,5 +37,13 @@ router.post(
   validateSmartcardNumber,
 );
 router.post("/bill/cable/purchase", authGuard(access), buyCable);
+
+// Electricity
+router.post(
+  "/bill/electricity/validate-meter",
+  authGuard(access),
+  validateMeterNumber,
+);
+router.post("/bill/electricity/purchase", authGuard(access), purchaseElectricity);
 
 export { router as userRouter };

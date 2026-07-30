@@ -43,3 +43,33 @@ export const buyCableSchema = z.object({
   planId: z.string().trim(),
   passcode: passcodeField,
 });
+
+const meterNumberField = z
+  .string()
+  .trim()
+  .refine((meterNumber) => /^\d{7,}$/.test(meterNumber), {
+    message: "Meter number must be at least 7 digits",
+  });
+
+export const validateMeterNumberSchema = z.object({
+  meterNumber: meterNumberField,
+  disco: z.string().trim(),
+  type: z.enum(["prepaid", "postpaid"]),
+  save: z.boolean().optional().default(false),
+});
+
+export const payElectricitySchema = z
+  .object({
+    meterNumber: meterNumberField,
+    disco: z.string().trim(),
+    type: z.enum(["prepaid", "postpaid"]),
+    amount: z
+      .number()
+      .positive(validationConstants.NUMBER_GREATER_THAN_ZERO)
+      .max(
+        Number.MAX_SAFE_INTEGER - 100_000_000,
+        "Amount exceeds maximum limit.",
+      ),
+    passcode: passcodeField,
+  })
+  .strip();
