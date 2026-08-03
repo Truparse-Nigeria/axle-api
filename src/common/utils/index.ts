@@ -8,3 +8,4 @@ export * from "./payload-validator";
 export * from "./token";
 export * from "./settings";
 export * from "./checkers";
+export * from "./reloadly-product-formatter";

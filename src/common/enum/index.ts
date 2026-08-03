@@ -67,6 +67,7 @@ export enum PurposeEnum {
   AIRTIME = "AIRTIME",
   DATA = "DATA",
   CABLE = "CABLE",
+  GIFTCARD = "GIFTCARD",
   WALLET = "WALLET",
   TRANSFER = "TRANSFER",
   CARDS = "CARDS",
@@ -81,6 +82,7 @@ export enum ActivityEnum {
 export enum VendorEnum {
   VTPASS = "vtpass",
   SAFE_HAVEN = "safehaven",
+  RELOADLY = "reloadly",
   AXLE = "axle",
 }
 

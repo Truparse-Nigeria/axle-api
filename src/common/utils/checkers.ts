@@ -185,3 +185,35 @@ export const billServiceCheck = async (
       }
     : null;
 };
+
+// Resolves the currently enabled giftcard provider, folding the top-level
+// service charge into the returned provider object.
+export const giftcardServiceCheck = async () => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  const giftcardSettings = settings.giftcard;
+
+  const charge = giftcardSettings?.charge || 0;
+
+  const providers = giftcardSettings?.providers;
+
+  if (!providers) return null;
+
+  const enabledProviders = Object.entries(providers).find(
+    ([_, provider]) => provider?.enabled,
+  );
+
+  if (!enabledProviders) return null;
+
+  return enabledProviders.length
+    ? {
+        name: enabledProviders[0],
+        ...enabledProviders[1],
+        charge,
+      }
+    : null;
+};

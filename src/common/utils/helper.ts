@@ -153,6 +153,32 @@ export const sortSettings = (val: ISettings, seen = new WeakSet<object>()) => {
   return val;
 };
 
+// In-flight request registry, keyed by an arbitrary identifier
+const ongoingRequests = new Map<string, Promise<any>>();
+
+/**
+ * Collapses concurrent calls that share the same key into a single in-flight
+ * request. While one call is running, later callers with the same key await the
+ * same promise instead of firing duplicate requests (e.g. token refresh).
+ */
+export const deduplicationHandler = async (
+  key: string,
+  requestHandler: () => Promise<any>,
+) => {
+  if (ongoingRequests.has(key)) {
+    return await ongoingRequests.get(key);
+  }
+
+  const requestPromise = requestHandler();
+  ongoingRequests.set(key, requestPromise);
+
+  try {
+    return await requestPromise;
+  } finally {
+    ongoingRequests.delete(key);
+  }
+};
+
 export const messageVtpass = (code: string) => {
   switch (code) {
     case "000":

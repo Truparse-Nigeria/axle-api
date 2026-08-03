@@ -3,10 +3,15 @@ import {
   buyCable,
   getSettings,
   login,
+  orderGiftcard,
   purchaseAirtime,
   purchaseElectricity,
+  redeemGiftcard,
   refreshSettings,
   resetPasscode,
+  retrieveGiftcardCategories,
+  retrieveGiftcardCountries,
+  retrieveGiftcardProducts,
   retrievePlans,
   signup,
   validateMeterNumber,
@@ -45,5 +50,16 @@ router.post(
   validateMeterNumber,
 );
 router.post("/bill/electricity/purchase", authGuard(access), purchaseElectricity);
+
+// Giftcards
+router.get("/giftcard/countries", authGuard(access), retrieveGiftcardCountries);
+router.get("/giftcard/products", authGuard(access), retrieveGiftcardProducts);
+router.get("/giftcard/categories", authGuard(access), retrieveGiftcardCategories);
+router.post("/giftcard/order", authGuard(access), orderGiftcard);
+router.get(
+  "/giftcard/redeem/:transactionId",
+  authGuard(access),
+  redeemGiftcard,
+);
 
 export { router as userRouter };

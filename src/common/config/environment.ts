@@ -57,6 +57,12 @@ export const ENVIRONMENT = {
     USERNAME: Bun.env.VT_PASS_USERNAME,
     PASSWORD: Bun.env.VT_PASS_PASSWORD,
   },
+  RELOADLY: {
+    CLIENT_ID: Bun.env.RELOADLY_CLIENT_ID,
+    CLIENT_SECRET: Bun.env.RELOADLY_CLIENT_SECRET,
+    URL: Bun.env.RELOADLY_URL,
+    AUTH_URL: Bun.env.RELOADLY_AUTH_URL,
+  },
 };
 
 (() => {
