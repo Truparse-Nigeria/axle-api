@@ -14,7 +14,7 @@ export const currentUser = (accessType: AccessTypeEnum) =>
       throw new AppError("User not found");
     };
 
-    const { passcode, ...currentUser } = user
+    const { passcode, ...currentUser } = user.toObject();
 
     return sendResponse(
       res,
