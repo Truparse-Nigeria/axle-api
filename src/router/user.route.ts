@@ -17,6 +17,7 @@ import {
   validateMeterNumber,
   validateSmartcardNumber,
 } from "@/controller";
+import { currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
 
@@ -31,35 +32,28 @@ router.post("/auth/reset-passcode", resetPasscode(access));
 router.get("/settings", getSettings(access));
 router.get("/settings/refresh", refreshSettings);
 
+// Any route below this middleware will be protected
+router.use(authGuard(access));
+
+router.get("/me", currentUser(access));
+
 // Bill payments
-router.post("/bill/airtime", authGuard(access), purchaseAirtime);
+router.post("/bill/airtime", purchaseAirtime);
 
 // Cable (TV)
-router.get("/bill/cable/plans/:entity", authGuard(access), retrievePlans);
-router.post(
-  "/bill/cable/validate-smartcard",
-  authGuard(access),
-  validateSmartcardNumber,
-);
-router.post("/bill/cable/purchase", authGuard(access), buyCable);
+router.get("/bill/cable/plans/:entity", retrievePlans);
+router.post("/bill/cable/validate-smartcard", validateSmartcardNumber);
+router.post("/bill/cable/purchase", buyCable);
 
 // Electricity
-router.post(
-  "/bill/electricity/validate-meter",
-  authGuard(access),
-  validateMeterNumber,
-);
-router.post("/bill/electricity/purchase", authGuard(access), purchaseElectricity);
+router.post("/bill/electricity/validate-meter", validateMeterNumber);
+router.post("/bill/electricity/purchase", purchaseElectricity);
 
 // Giftcards
-router.get("/giftcard/countries", authGuard(access), retrieveGiftcardCountries);
-router.get("/giftcard/products", authGuard(access), retrieveGiftcardProducts);
-router.get("/giftcard/categories", authGuard(access), retrieveGiftcardCategories);
-router.post("/giftcard/order", authGuard(access), orderGiftcard);
-router.get(
-  "/giftcard/redeem/:transactionId",
-  authGuard(access),
-  redeemGiftcard,
-);
+router.get("/giftcard/countries", retrieveGiftcardCountries);
+router.get("/giftcard/products", retrieveGiftcardProducts);
+router.get("/giftcard/categories", retrieveGiftcardCategories);
+router.post("/giftcard/order", orderGiftcard);
+router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
 
 export { router as userRouter };
