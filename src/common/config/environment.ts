@@ -63,6 +63,11 @@ export const ENVIRONMENT = {
     URL: Bun.env.RELOADLY_URL,
     AUTH_URL: Bun.env.RELOADLY_AUTH_URL,
   },
+  EVERSEND: {
+    URL: Bun.env.EVERSEND_URL,
+    CLIENT_ID: Bun.env.EVERSEND_CLIENT_ID,
+    CLIENT_SECRET: Bun.env.EVERSEND_CLIENT_SECRET,
+  },
 };
 
 (() => {

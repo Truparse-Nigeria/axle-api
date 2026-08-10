@@ -9,3 +9,4 @@ export * from "./token";
 export * from "./settings";
 export * from "./checkers";
 export * from "./reloadly-product-formatter";
+export * from "./encryption";
