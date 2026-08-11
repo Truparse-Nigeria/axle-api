@@ -23,10 +23,8 @@ import { Transaction } from "@/model";
 import { vtpassPay } from "@/provider";
 
 export const purchaseElectricity = catchAsync(async (req, res) => {
-  const { amount, meterNumber, type, disco } = await validateRequestPayload(
-    req.body,
-    payElectricitySchema,
-  );
+  const { amount, meterNumber, type, disco, pin } =
+    await validateRequestPayload(req.body, payElectricitySchema);
 
   // Source and destination currency are both NGN for electricity, so the
   // exchange rate is always 1.
@@ -46,8 +44,8 @@ export const purchaseElectricity = catchAsync(async (req, res) => {
   // Total amount (amount + service charge)
   const totalAmount = amount + checkService.charge;
 
-  await runCheck({ user, amount: totalAmount, currency, passcode: req.body.passcode });
-  delete req.body.passcode;
+  await runCheck({ user, amount: totalAmount, currency, pin });
+  delete req.body.pin;
 
   // Charge user
   const updatedUser = await chargeUser({ user, amount: totalAmount, currency });

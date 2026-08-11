@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { validationConstants } from "../constant";
 
-const passcodeField = z
+const pinField = z
   .string()
   .trim()
-  .length(6, "Passcode must be exactly 6 digits")
-  .regex(/^\d{6}$/, "Passcode must contain only numbers");
+  .length(4, "PIN must be exactly 4 digits")
+  .regex(/^\d{4}$/, "PIN must contain only numbers");
 
 export const payAirtimeSchema = z
   .object({
@@ -24,7 +24,7 @@ export const payAirtimeSchema = z
         Number.MAX_SAFE_INTEGER - 100_000_000,
         "Amount exceeds maximum limit.",
       ),
-    passcode: passcodeField,
+    pin: pinField,
   })
   .strip();
 
@@ -41,7 +41,7 @@ export const validateSmartcardNumberSchema = z.object({
 export const buyCableSchema = z.object({
   smartcardNumber: z.string().trim(),
   planId: z.string().trim(),
-  passcode: passcodeField,
+  pin: pinField,
 });
 
 const meterNumberField = z
@@ -70,6 +70,6 @@ export const payElectricitySchema = z
         Number.MAX_SAFE_INTEGER - 100_000_000,
         "Amount exceeds maximum limit.",
       ),
-    passcode: passcodeField,
+    pin: pinField,
   })
   .strip();

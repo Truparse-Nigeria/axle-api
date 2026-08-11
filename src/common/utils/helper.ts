@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import { ENVIRONMENT } from "../config";
 import { isAxiosError } from "axios";
 import { StatusEnum } from "../enum";
-import type { ISettings } from "../interface";
+import type { ISettings, IUser } from "../interface";
 
 export const createHash = async (value: string) => {
   return await Bun.password.hash(value, {
@@ -198,6 +198,21 @@ export const messageVtpass = (code: string) => {
 // Turn a "+field1 +field2" projection string into ["field1", "field2"]
 export const reformatSensitiveFields = (sensitiveFields: string) => {
   return sensitiveFields.replace(/\+/g, "").split(" ");
+};
+
+// Onboarding steps the user still needs to finish. The client uses this to
+// route the user after login/signup. Array-based so new steps (e.g. SURVEY,
+// KYC, AVATAR) just get pushed here later.
+// NOTE: fields consulted here are `select: false` (e.g. pin), so the caller
+// MUST select them — otherwise a completed step looks incomplete.
+export const checkOnboarding = (user: IUser) => {
+  const onboarding: string[] = [];
+
+  if (!user?.pin) {
+    onboarding.push("PIN");
+  }
+
+  return onboarding;
 };
 
 // Delete a "+field1 +nested.field" set of keys from a plain object (in place).

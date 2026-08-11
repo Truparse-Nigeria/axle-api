@@ -23,7 +23,7 @@ import { Transaction } from "@/model";
 import { vtpassPay } from "@/provider";
 
 export const purchaseAirtime = catchAsync(async (req, res) => {
-  const { network, phone, amount, passcode } = await validateRequestPayload(
+  const { network, phone, amount, pin } = await validateRequestPayload(
     req.body,
     payAirtimeSchema,
   );
@@ -37,8 +37,8 @@ export const purchaseAirtime = catchAsync(async (req, res) => {
     throw new AppError("User not found");
   }
 
-  await runCheck({ user, amount, currency, passcode });
-  delete req.body.passcode;
+  await runCheck({ user, amount, currency, pin });
+  delete req.body.pin;
 
   // Check if service is available
   const checkService = await billServiceCheck("airtime", network);

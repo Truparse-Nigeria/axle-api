@@ -1,6 +1,7 @@
 import {
   AccessTypeEnum,
   AppError,
+  checkOnboarding,
   createHash,
   generateRandomCode,
   sendResponse,
@@ -79,7 +80,12 @@ export const signup = catchAsync(async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, { jti });
 
+  // Pending onboarding steps (a new user always needs a PIN). The client uses
+  // this to route the user after signup.
+  const onboarding = checkOnboarding(user);
+
   sendResponse(res, 200, "Welcome aboard! Your account is ready", {
     user: user.toObject(),
+    ...(onboarding.length > 0 && { onboarding }),
   });
 });

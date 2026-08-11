@@ -26,7 +26,7 @@ import { vtpassPay } from "@/provider";
 import { cablePlansQuery } from "./retrieve-plans";
 
 export const buyCable = catchAsync(async (req, res) => {
-  const { planId, smartcardNumber, passcode } = await validateRequestPayload(
+  const { planId, smartcardNumber, pin } = await validateRequestPayload(
     req.body,
     buyCableSchema,
   );
@@ -65,8 +65,8 @@ export const buyCable = catchAsync(async (req, res) => {
   // Total amount (amount + service charge)
   const totalAmount = amount + checkService.charge;
 
-  await runCheck({ user, amount: totalAmount, currency, passcode });
-  delete req.body.passcode;
+  await runCheck({ user, amount: totalAmount, currency, pin });
+  delete req.body.pin;
 
   // Charge user
   const updatedUser = await chargeUser({ user, amount: totalAmount, currency });

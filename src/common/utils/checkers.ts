@@ -4,6 +4,7 @@ import { FiatCurrencyEnum } from "../enum";
 import { cacheKey } from "../constant";
 import type { IBiller, IDisco, ISettings, IUser } from "../interface";
 import AppError from "./app-error";
+import { deleteCache, getCache, incrCache, setCache } from "./cache";
 import { compareHash } from "./helper";
 import { retrieveSettings } from "./settings";
 
@@ -31,14 +32,59 @@ export const passcodeCheck = async (
   }
 };
 
+// Wrong-PIN lockout: after PIN_MAX_ATTEMPTS failures the user is locked out
+// for PIN_LOCK_SECONDS. Counters live in the cache, keyed per user.
+const PIN_MAX_ATTEMPTS = 10;
+const PIN_LOCK_SECONDS = 15 * 60;
+const pinLockKey = (userId: string) => `PIN_LOCK:${userId}`;
+const pinAttemptKey = (userId: string) => `PIN_WRONG_ATTEMPTS:${userId}`;
+const pinLockError = new AppError(
+  "Too many wrong PIN attempts. Please try again in 15 minutes.",
+  429,
+);
+
+export const pinCheck = async (
+  pin: string,
+  userPin?: string,
+  userId?: string,
+) => {
+  if (!userPin) {
+    throw new AppError("You do not have a PIN. Create one first!", 400);
+  }
+
+  if (userId) {
+    const pinLock = await getCache(pinLockKey(userId));
+    if (pinLock) {
+      throw pinLockError;
+    }
+  }
+
+  const isPinValid = await compareHash(pin, userPin);
+
+  if (!isPinValid) {
+    if (userId) {
+      const attempts = await incrCache(pinAttemptKey(userId), PIN_LOCK_SECONDS);
+      if (attempts >= PIN_MAX_ATTEMPTS) {
+        await setCache(pinLockKey(userId), true, PIN_LOCK_SECONDS);
+        throw pinLockError;
+      }
+    }
+    throw new AppError("Nope! That is not your current PIN. Try again!", 400);
+  }
+
+  if (userId) {
+    await deleteCache(pinAttemptKey(userId));
+  }
+};
+
 // Run all checks before proceeding with a transaction
 export const runCheck = async (options: {
-  user: IUser;
+  user: IUserDocument;
   amount: number;
-  passcode: string;
+  pin: string;
   currency: FiatCurrencyEnum;
 }) => {
-  const { user, amount, currency, passcode } = options;
+  const { user, amount, currency, pin } = options;
 
   const wallet = user.wallet.fiat[currency];
 
@@ -46,7 +92,7 @@ export const runCheck = async (options: {
     throw new AppError(`You need to create a wallet for ${currency}`);
   }
 
-  await passcodeCheck(passcode, user?.passcode);
+  await pinCheck(pin, user?.pin, String(user._id));
   walletCheck(wallet.balance, amount);
 };
 

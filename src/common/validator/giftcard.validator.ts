@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { validationConstants } from "../constant";
 
-const passcodeField = z
+const pinField = z
   .string()
   .trim()
-  .length(6, "Passcode must be exactly 6 digits")
-  .regex(/^\d{6}$/, "Passcode must contain only numbers");
+  .length(4, "PIN must be exactly 4 digits")
+  .regex(/^\d{4}$/, "PIN must contain only numbers");
 
 export const giftcardProductsRetrieveSchema = z.object({
   size: z.string().optional(),
@@ -22,7 +22,7 @@ export const giftcardOrderSchema = z.object({
     .positive(validationConstants.NUMBER_GREATER_THAN_ZERO)
     .min(1),
   unitPrice: z.number().positive(validationConstants.NUMBER_GREATER_THAN_ZERO),
-  passcode: passcodeField,
+  pin: pinField,
 });
 
 export const redeemGiftcardSchema = z.object({

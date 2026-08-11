@@ -1,6 +1,7 @@
 import {
   AccessTypeEnum,
   AppError,
+  checkOnboarding,
   compareHash,
   getModel,
   loginSchema,
@@ -19,7 +20,7 @@ export const login = (accessType: AccessTypeEnum) =>
 
     const user = await getModel(accessType)
       .findOne({ email })
-      .select("+passcode");
+      .select("+passcode +pin");
 
     // Same error for unknown email and wrong passcode so the response
     // doesn't reveal which accounts exist
@@ -30,5 +31,13 @@ export const login = (accessType: AccessTypeEnum) =>
     const jti = await tokenPair(req, res, { id: String(user._id) }, accessType);
 
     await getModel(accessType).findByIdAndUpdate(user._id, { jti });
-    sendResponse(res, 200, "Welcome back!", user.toObject());
+
+    // Pending onboarding steps (e.g. PIN) — read off the live doc before
+    // toObject() strips `pin`. The client uses this to route the user.
+    const onboarding = checkOnboarding(user);
+
+    sendResponse(res, 200, "Welcome back!", {
+      ...user.toObject(),
+      ...(onboarding.length > 0 && { onboarding }),
+    });
   });

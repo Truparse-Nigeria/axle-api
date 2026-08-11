@@ -28,7 +28,7 @@ export const orderGiftcard = catchAsync(async (req, res) => {
     throw new AppError("Service not available");
   }
 
-  const { productId, quantity, unitPrice, passcode } =
+  const { productId, quantity, unitPrice, pin } =
     await validateRequestPayload(req.body, giftcardOrderSchema);
 
   const user = req.user;
@@ -74,8 +74,8 @@ export const orderGiftcard = catchAsync(async (req, res) => {
 
   const amount = quantity * NGN + senderFee;
 
-  await runCheck({ user, amount, currency, passcode });
-  delete req.body.passcode;
+  await runCheck({ user, amount, currency, pin });
+  delete req.body.pin;
 
   // Charge user
   const updatedUser = await chargeUser({ user, amount, currency });
