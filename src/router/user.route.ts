@@ -37,7 +37,7 @@ router.get("/settings/refresh", refreshSettings);
 router.use(authGuard(access));
 
 router.get("/me", currentUser(access));
-router.patch("/create-pin", createPin(access));
+router.patch("/create-pin", createPin);
 
 // Bill payments
 router.post("/bill/airtime", purchaseAirtime);
