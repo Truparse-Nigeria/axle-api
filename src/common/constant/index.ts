@@ -30,6 +30,10 @@ export const validationConstants = {
 export const SENSITIVE_TRANSACTION_FIELDS =
   "+responsePayload +requestPayload +settlement +meta +provider +initialBalance +finalBalance";
 
+// Single source of truth for user fields that must never reach an API response.
+export const SENSITIVE_USER_FIELDS =
+  "+passcode +pin +jti +referredBy +messageToken";
+
 export interface IApiResponse<T = null> {
   data?: T;
   error?: Record<string, any> | null;

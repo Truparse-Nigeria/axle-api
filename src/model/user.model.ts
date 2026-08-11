@@ -1,8 +1,10 @@
 import { Schema, model, type Document, type Model } from "mongoose";
 import {
   CryptoCurrencyEnum,
+  deleteFields,
   FiatCurrencyEnum,
   GenderEnum,
+  SENSITIVE_USER_FIELDS,
   type IUser,
 } from "../common";
 
@@ -104,6 +106,10 @@ const userSchema = new Schema<IUserDocument>(
       required: true,
       select: false,
     },
+    pin: {
+      type: String,
+      select: false,
+    },
     jti: {
       type: String,
       select: false,
@@ -116,6 +122,19 @@ const userSchema = new Schema<IUserDocument>(
   },
   { timestamps: true },
 );
+
+// Automatic backstop: strip sensitive fields whenever a user *document* is
+// serialized, driven by the same SENSITIVE_USER_FIELDS constant that
+// deleteFields() and superQuery `hiddenFields` use. This covers document/
+// toObject responses; lean() results and aggregation (superQuery) are plain
+// objects that bypass this — those paths strip explicitly instead.
+const hideSensitiveFields = (_doc: unknown, ret: Record<string, any>) => {
+  delete ret.__v;
+  return deleteFields(ret, SENSITIVE_USER_FIELDS);
+};
+
+userSchema.set("toJSON", { transform: hideSensitiveFields });
+userSchema.set("toObject", { transform: hideSensitiveFields });
 
 export const User: Model<IUserDocument> = model<IUserDocument>(
   "User",

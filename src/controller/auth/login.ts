@@ -30,8 +30,5 @@ export const login = (accessType: AccessTypeEnum) =>
     const jti = await tokenPair(req, res, { id: String(user._id) }, accessType);
 
     await getModel(accessType).findByIdAndUpdate(user._id, { jti });
-
-    const { passcode, ...loggedInUser } = user.toObject();
-
-    sendResponse(res, 200, "Welcome back!", loggedInUser);
+    sendResponse(res, 200, "Welcome back!", user.toObject());
   });

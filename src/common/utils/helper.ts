@@ -200,6 +200,48 @@ export const reformatSensitiveFields = (sensitiveFields: string) => {
   return sensitiveFields.replace(/\+/g, "").split(" ");
 };
 
+// Delete a "+field1 +nested.field" set of keys from a plain object (in place).
+// Pairs with the SENSITIVE_* constants for stripping single-object responses.
+export const deleteFields = <T>(obj: T, fields: string): T => {
+  const fieldsToDelete = fields
+    .split(" ")
+    .map((f) => f.replace("+", "").trim())
+    .filter((f) => f);
+
+  if (!obj || typeof obj !== "object" || fieldsToDelete.length === 0) {
+    return obj;
+  }
+
+  fieldsToDelete.forEach((field) => {
+    if (field.includes(".")) {
+      // Handle nested fields
+      const parts = field.split(".");
+      let current: Record<string, any> = obj;
+
+      for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (!part || !current[part] || typeof current[part] !== "object") {
+          // Path doesn't exist, nothing to delete
+          return;
+        }
+        current = current[part];
+      }
+
+      const lastPart = parts[parts.length - 1];
+      if (lastPart && Object.prototype.hasOwnProperty.call(current, lastPart)) {
+        delete current[lastPart];
+      }
+    } else {
+      // Handle top-level fields
+      if (Object.prototype.hasOwnProperty.call(obj, field)) {
+        delete (obj as Record<string, any>)[field];
+      }
+    }
+  });
+
+  return obj;
+};
+
 export const convertToObjectIds = (
   obj: Record<string, any>,
   skipObjectIdConversion?: string[],

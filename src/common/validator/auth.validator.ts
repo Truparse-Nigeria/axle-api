@@ -8,6 +8,15 @@ export const passcodeSchema = z
   .max(12, "Passcode must be at most 12 digits")
   .regex(/^\d+$/, "Passcode must contain only numbers");
 
+export const createPinSchema = z
+  .object({
+    pin: z
+      .string()
+      .length(4, "PIN must be exactly 4 digits")
+      .regex(/^\d{4}$/, "PIN must contain only numbers"),
+  })
+  .strip();
+
 export const signupSchema = z.object({
   firstName: z.string().trim().min(2, "First name is too short"),
   lastName: z.string().trim().min(2, "Last name is too short"),

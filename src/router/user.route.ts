@@ -18,7 +18,7 @@ import {
   validateMeterNumber,
   validateSmartcardNumber,
 } from "@/controller";
-import { currentUser } from "@/controller/user";
+import { createPin, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
 
@@ -37,6 +37,7 @@ router.get("/settings/refresh", refreshSettings);
 router.use(authGuard(access));
 
 router.get("/me", currentUser(access));
+router.post("/pin", createPin(access));
 
 // Bill payments
 router.post("/bill/airtime", purchaseAirtime);

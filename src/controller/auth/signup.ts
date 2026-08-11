@@ -79,9 +79,7 @@ export const signup = catchAsync(async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, { jti });
 
-  const { passcode, ...createdUser } = user.toObject();
-
   sendResponse(res, 200, "Welcome aboard! Your account is ready", {
-    user: createdUser,
+    user: user.toObject(),
   });
 });
