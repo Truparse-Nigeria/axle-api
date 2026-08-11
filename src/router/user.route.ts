@@ -2,6 +2,7 @@ import { AccessTypeEnum } from "@/common";
 import {
   buyCable,
   getSettings,
+  getTransactions,
   login,
   orderGiftcard,
   purchaseAirtime,
@@ -55,5 +56,8 @@ router.get("/giftcard/products", retrieveGiftcardProducts);
 router.get("/giftcard/categories", retrieveGiftcardCategories);
 router.post("/giftcard/order", orderGiftcard);
 router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
+
+// Transactions
+router.post("/transactions", getTransactions(access));
 
 export { router as userRouter };

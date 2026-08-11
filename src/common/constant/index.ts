@@ -26,6 +26,10 @@ export const validationConstants = {
   NUMBER_GREATER_THAN_ZERO: "Amount must be greater than zero.",
 };
 
+// Fields hidden from non-privileged reads (mirrors the model's `select: false`)
+export const SENSITIVE_TRANSACTION_FIELDS =
+  "+responsePayload +requestPayload +settlement +meta +provider +initialBalance +finalBalance";
+
 export interface IApiResponse<T = null> {
   data?: T;
   error?: Record<string, any> | null;

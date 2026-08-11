@@ -1,6 +1,7 @@
 import { differenceInSeconds, endOfDay, format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { customAlphabet } from "nanoid";
+import mongoose from "mongoose";
 import { ENVIRONMENT } from "../config";
 import { isAxiosError } from "axios";
 import { StatusEnum } from "../enum";
@@ -192,4 +193,102 @@ export const messageVtpass = (code: string) => {
     default:
       return "";
   }
+};
+
+// Turn a "+field1 +field2" projection string into ["field1", "field2"]
+export const reformatSensitiveFields = (sensitiveFields: string) => {
+  return sensitiveFields.replace(/\+/g, "").split(" ");
+};
+
+export const convertToObjectIds = (
+  obj: Record<string, any>,
+  skipObjectIdConversion?: string[],
+): Record<string, any> => {
+  const result: Record<string, any> = {};
+
+  for (const key in obj) {
+    const value = obj[key];
+
+    // Avoid converting if already an ObjectId
+    if (
+      typeof value === "string" &&
+      mongoose.Types.ObjectId.isValid(value) &&
+      !skipObjectIdConversion?.includes(key)
+    ) {
+      result[key] = new mongoose.Types.ObjectId(value);
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+};
+
+// Changes object to dot notation Eg. meta.card.id
+export const toDotNotation = (obj: any, prefix = "") => {
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      // detect Mongo operator ($in, $gte, $and, $or, etc.)
+      if (key.startsWith("$")) {
+        // Top-level operators (e.g. $and / $or at root) — pass through as-is
+        // so their array sub-filters reach Mongo unchanged.
+        if (!prefix) {
+          acc[key] = value;
+          return acc;
+        }
+        // Otherwise keep the operator grouped under the parent field
+        acc[prefix] = {
+          ...(acc[prefix] || {}),
+          [key]: value,
+        };
+        return acc;
+      }
+
+      const isPlainObject =
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value) &&
+        !(value instanceof Date) &&
+        !(value instanceof mongoose.Types.ObjectId);
+
+      if (isPlainObject) {
+        Object.assign(acc, toDotNotation(value, newKey));
+      } else {
+        acc[newKey] = value;
+      }
+
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
+};
+
+export const escapeRegex = (value: string) => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+export const prepareFilterForAggregation = (
+  filter: Record<string, any>,
+  skipObjectIdConversion?: string[],
+) => {
+  const dotFilter = toDotNotation(filter);
+  const converted = convertToObjectIds(dotFilter, skipObjectIdConversion);
+
+  // Transform plain strings to case-insensitive exact-match regex
+  for (const key in converted) {
+    const value = converted[key];
+
+    // Skip ObjectIds, Dates, arrays, operators, etc.
+    if (
+      typeof value === "string" &&
+      !mongoose.Types.ObjectId.isValid(value) &&
+      !key.startsWith("$")
+    ) {
+      converted[key] = { $regex: `^${escapeRegex(value)}$`, $options: "i" };
+    }
+  }
+
+  return converted;
 };
