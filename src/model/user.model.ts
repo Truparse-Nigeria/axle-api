@@ -59,6 +59,16 @@ const WalletSchema = new Schema(
   { _id: false },
 );
 
+// External provider customer/user identifiers. `eversend` holds the id of the
+// card user provisioned with Eversend, created once per user before their first
+// Eversend card can be issued.
+const IdentifierSchema = new Schema(
+  {
+    eversend: { type: String, trim: true },
+  },
+  { _id: false },
+);
+
 const ReferredBySchema = new Schema(
   {
     user: {
@@ -117,6 +127,11 @@ const userSchema = new Schema<IUserDocument>(
     messageToken: { type: String, trim: true },
     wallet: {
       type: WalletSchema,
+      default: () => ({}),
+    },
+    hasCard: { type: Boolean, default: false },
+    identifier: {
+      type: IdentifierSchema,
       default: () => ({}),
     },
   },

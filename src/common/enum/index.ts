@@ -83,7 +83,30 @@ export enum VendorEnum {
   VTPASS = "vtpass",
   SAFE_HAVEN = "safehaven",
   RELOADLY = "reloadly",
+  EVERSEND = "eversend",
   AXLE = "axle",
+}
+
+export enum CardVariantEnum {
+  PRO = "pro",
+  VANILLA = "vanilla",
+}
+
+export enum CardStatusEnum {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  FROZEN = "frozen",
+  TERMINATED = "terminated",
+}
+
+export enum CardTypeEnum {
+  PHYSICAL = "physical",
+  VIRTUAL = "virtual",
+}
+
+export enum ErrorLevelEnum {
+  PROVIDER = "PROVIDER",
+  SYSTEM = "SYSTEM",
 }
 
 export enum VtpassCableEnum {

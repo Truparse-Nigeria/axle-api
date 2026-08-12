@@ -20,6 +20,20 @@ export const TxnDesc = {
   wallet2Wallet: "Axle to axle transfer",
   wallet2Bank: "Outbound transfer",
   topUp: "Inbound Transfer",
+  dollarCardCreation: "Dollar card creation",
+  dollarCardFunding: "Dollar card funding",
+  dollarCardWithdrawal: "Dollar card withdrawal",
+};
+
+// Default billing/ID details used when provisioning an Eversend card user and
+// card. These are placeholders while KYC is not yet collected on the user — swap
+// them for the user's real KYC data once address/ID capture is in place.
+export const DEFAULT_CARD_ADDRESS = {
+  address: "8 The Green Ste R",
+  city: "Dover County",
+  state: "Delaware",
+  zipCode: "19901",
+  country: "US",
 };
 
 export const validationConstants = {

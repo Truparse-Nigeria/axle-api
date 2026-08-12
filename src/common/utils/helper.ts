@@ -4,8 +4,9 @@ import { customAlphabet } from "nanoid";
 import mongoose from "mongoose";
 import { ENVIRONMENT } from "../config";
 import { isAxiosError } from "axios";
-import { StatusEnum } from "../enum";
-import type { ISettings, IUser } from "../interface";
+import { CardVariantEnum, StatusEnum, VendorEnum } from "../enum";
+import type { ICardServiceCheck, ISettings, IUser } from "../interface";
+import AppError from "./app-error";
 
 export const createHash = async (value: string) => {
   return await Bun.password.hash(value, {
@@ -348,4 +349,95 @@ export const prepareFilterForAggregation = (
   }
 
   return converted;
+};
+
+// Map a card variant to the vendor that issues it. The "pro" variant is issued
+// by Eversend; everything else falls back to the in-house/default vendor.
+export const cardVendorByVariant = (variant: CardVariantEnum) => {
+  switch (variant) {
+    case CardVariantEnum.PRO:
+      return VendorEnum.EVERSEND;
+
+    default:
+      return VendorEnum.AXLE;
+  }
+};
+
+// Compute the amount to charge (in the funding/local currency) and the base
+// provider amount for a card creation, from the resolved card service config.
+export const cardCreationProperties = (
+  amount: number,
+  checkService: ICardServiceCheck,
+) => {
+  const { base, funding } = checkService.rate!;
+  // Funding rate = provider base rate + our funding markup
+  const rate = base + funding;
+
+  const creationFee = checkService.creationFee;
+  const providerCreationFee = checkService.providerCreationFee;
+
+  if (providerCreationFee > creationFee) {
+    throw new AppError(
+      "Oops! Card creation didn't go as planned. Let's try that again",
+      503,
+    );
+  }
+
+  const convertedAmount = (amount + creationFee) * rate; // Local-currency charge
+  const baseAmount = (amount + providerCreationFee) * base; // Provider-side cost
+
+  return {
+    rate,
+    convertedAmount,
+    baseAmount,
+  };
+};
+
+// Compute the local-currency charge (incl. funding fee) and provider-side cost
+// for funding a card, from the resolved card service config.
+export const cardFundingProperties = (
+  amount: number,
+  checkService: ICardServiceCheck,
+) => {
+  const { base, funding } = checkService.rate!;
+  const { providerPercent, percent, fixed } = checkService.fundingCharge;
+
+  // Funding rate = provider base rate + our funding markup
+  const rate = base + funding;
+
+  // Funding fee charged to the user
+  const baseFundingFeePercentage = (amount * providerPercent) / 100;
+  const fundingFeePercentage = (amount * percent) / 100;
+  const totalFundingFee = fundingFeePercentage + fixed;
+
+  const convertedAmount = (amount + totalFundingFee) * rate; // Local-currency charge
+  const baseAmount = (amount + baseFundingFeePercentage) * base; // Provider-side cost
+
+  return {
+    rate,
+    convertedAmount,
+    baseAmount,
+    fundingFee: totalFundingFee,
+  };
+};
+
+// Compute the local-currency payout and provider-side value for withdrawing
+// from a card back to the user's wallet.
+export const cardWithdrawalProperties = (
+  amount: number,
+  checkService: ICardServiceCheck,
+) => {
+  const { base, withdrawal } = checkService.rate!;
+
+  // Withdrawal rate = provider base rate minus our withdrawal spread
+  const rate = base - withdrawal;
+
+  const convertedAmount = amount * rate; // Local-currency payout to the user
+  const baseAmount = amount * base; // Provider-side value
+
+  return {
+    rate,
+    convertedAmount,
+    baseAmount,
+  };
 };

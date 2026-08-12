@@ -41,9 +41,15 @@ export interface IUser {
   jti?: string;
   messageToken?: string;
   wallet: IWallet;
+  hasCard?: boolean;
+  identifier?: IUserIdentifier;
   referredBy?: {
     user?: string;
     amount?: number;
     completed?: boolean;
   };
+}
+
+export interface IUserIdentifier {
+  eversend?: string;
 }

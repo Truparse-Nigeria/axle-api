@@ -81,3 +81,21 @@ export interface IEversendCardUserRes {
   message: string;
   data: IEversendCardUser;
 }
+
+export interface IEversendFundCardPayload {
+  cardId: string;
+  amount: string;
+  currency: string;
+}
+
+export interface IEversendWithdrawCardPayload {
+  cardId: string;
+  amount: string;
+  currency: string;
+}
+
+// Fund/withdraw both return the updated card, from which we read the new balance.
+export interface IEversendCardTransactionRes {
+  message: string;
+  card: IEversendCard;
+}

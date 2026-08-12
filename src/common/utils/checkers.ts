@@ -1,8 +1,14 @@
 import type { ClientSession } from "mongoose";
-import { User, type IUserDocument } from "@/model";
-import { FiatCurrencyEnum } from "../enum";
+import { Card, User, type IUserDocument } from "@/model";
+import { CardBrandEnum, CardVariantEnum, FiatCurrencyEnum } from "../enum";
 import { cacheKey } from "../constant";
-import type { IBiller, IDisco, ISettings, IUser } from "../interface";
+import type {
+  IBiller,
+  ICardServiceCheck,
+  IDisco,
+  ISettings,
+  IUser,
+} from "../interface";
 import AppError from "./app-error";
 import { deleteCache, getCache, incrCache, setCache } from "./cache";
 import { compareHash } from "./helper";
@@ -262,4 +268,60 @@ export const giftcardServiceCheck = async () => {
         charge,
       }
     : null;
+};
+
+// Resolve the card settings for a given variant/currency/brand and confirm the
+// requested purpose (create/fund/withdraw) is enabled. Returns the merged brand
+// properties + custom rates, or null when the service/brand is unavailable.
+export const cardServiceCheck = async (
+  currency: FiatCurrencyEnum,
+  cardBrand: CardBrandEnum,
+  purpose: "create" | "fund" | "withdraw",
+  variant: CardVariantEnum,
+): Promise<ICardServiceCheck | null> => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  const currencyKey = currency.toLowerCase();
+  const brandKey = cardBrand.toLowerCase();
+
+  const cardVariant = settings.cards[variant];
+  const brandSettings =
+    cardVariant?.currency[currencyKey]?.brandConfig?.[brandKey];
+
+  // Service must be active and the brand must permit this purpose
+  if (!cardVariant?.active || !brandSettings?.[purpose]) return null;
+
+  return {
+    ...brandSettings,
+    rate: cardVariant.customRates,
+  };
+};
+
+// Set a card's balance to the provider-reported value (absolute, not an
+// increment). On funding we also reset the decline counter.
+export const cardBalanceUpdate = async (
+  cardId: string,
+  user: IUserDocument,
+  balance: number,
+  option?: {
+    purpose?: "funding" | "withdrawal";
+    session?: ClientSession;
+  },
+) => {
+  const { session, purpose } = option || {};
+
+  return await Card.findOneAndUpdate(
+    { _id: cardId, user: user._id },
+    {
+      $set: {
+        balance,
+        ...(purpose === "funding" && { declineCount: 0 }),
+      },
+    },
+    { new: true, session },
+  );
 };
