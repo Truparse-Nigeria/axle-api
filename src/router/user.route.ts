@@ -62,7 +62,7 @@ router.post("/giftcard/order", orderGiftcard);
 router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
 
 // Cards
-router.post("/card/create", createCard);
+router.post("/card", createCard);
 router.post("/card/fund", fundCard);
 router.post("/card/withdraw", withdrawCard);
 
