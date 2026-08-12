@@ -2,6 +2,7 @@ import { AccessTypeEnum } from "@/common";
 import {
   buyCable,
   createCard,
+  fundCard,
   getSettings,
   getTransactions,
   login,
@@ -18,6 +19,7 @@ import {
   signup,
   validateMeterNumber,
   validateSmartcardNumber,
+  withdrawCard,
 } from "@/controller";
 import { createPin, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
@@ -61,6 +63,8 @@ router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
 
 // Cards
 router.post("/card/create", createCard);
+router.post("/card/fund", fundCard);
+router.post("/card/withdraw", withdrawCard);
 
 // Transactions
 router.post("/transactions", getTransactions(access));
