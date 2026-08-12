@@ -377,12 +377,12 @@ const SettingsSchema = new Schema<ISettingsDocument>(
       },
     },
     cards: {
-      pro: {
+      ascend: {
         active: { type: Boolean, default: true },
         instruction: {
           type: String,
           default:
-            "No Maintenance or Decline fees, Instant Withdrawals, fast than Vanilla",
+            "No Maintenance or Decline fees, Instant Withdrawals, faster than Origin",
         },
         customRates: {
           withdrawal: { type: Number, default: 120 },
@@ -435,7 +435,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
           },
         },
       },
-      vanilla: {
+      origin: {
         active: { type: Boolean, default: false },
         instruction: {
           type: String,

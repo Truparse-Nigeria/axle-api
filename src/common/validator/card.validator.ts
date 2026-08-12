@@ -16,7 +16,7 @@ export const createCardSchema = z.object({
   currency: z.enum(FiatCurrencyEnum),
   cardBrand: z.enum(CardBrandEnum),
   name: z.string().max(12, "Name must not be more than 12 characters"),
-  variant: z.enum(CardVariantEnum).default(CardVariantEnum.PRO),
+  variant: z.enum(CardVariantEnum).default(CardVariantEnum.ASCEND),
 });
 
 const pinField = z

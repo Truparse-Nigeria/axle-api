@@ -55,8 +55,8 @@ const CardSchema = new Schema<ICard>(
     },
     variant: {
       type: String,
-      enum: Object.values(CardVariantEnum), // pro in this case is Eversend
-      default: CardVariantEnum.PRO,
+      enum: Object.values(CardVariantEnum), // ascend in this case is Eversend
+      default: CardVariantEnum.ASCEND,
     },
     status: {
       type: String,

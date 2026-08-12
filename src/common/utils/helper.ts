@@ -351,11 +351,11 @@ export const prepareFilterForAggregation = (
   return converted;
 };
 
-// Map a card variant to the vendor that issues it. The "pro" variant is issued
-// by Eversend; everything else falls back to the in-house/default vendor.
+// Map a card variant to the vendor that issues it. The "ascend" variant is
+// issued by Eversend; everything else falls back to the in-house/default vendor.
 export const cardVendorByVariant = (variant: CardVariantEnum) => {
   switch (variant) {
-    case CardVariantEnum.PRO:
+    case CardVariantEnum.ASCEND:
       return VendorEnum.EVERSEND;
 
     default:

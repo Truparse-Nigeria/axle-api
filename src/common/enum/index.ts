@@ -88,8 +88,8 @@ export enum VendorEnum {
 }
 
 export enum CardVariantEnum {
-  PRO = "pro",
-  VANILLA = "vanilla",
+  ASCEND = "ascend",
+  ORIGIN = "origin",
 }
 
 export enum CardStatusEnum {
