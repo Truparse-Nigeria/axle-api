@@ -12,7 +12,7 @@ export interface IEversendRes<T> {
 
 export interface IEversendCreateCardPayload {
   title: string;
-  color: string;
+  color?: string;
   amount: string;
   userId: string;
   currency: string;
