@@ -81,7 +81,9 @@ export const fundCard = catchAsync(async (req, res) => {
 
   // Validate pin and NGN wallet balance before any external/provider calls
   await runCheck({ user, amount: convertedAmount, currency: chargeCurrency, pin });
-  delete req.body.pin;
+
+  // Mask the pin so it is never persisted on the transaction's requestPayload
+  req.body.pin = req.body.pin?.replace(/./g, "*");
 
   // Charge the user's NGN wallet
   const updatedUser = await chargeUser({
@@ -182,7 +184,7 @@ export const fundCard = catchAsync(async (req, res) => {
       ...txnPayload.meta,
       card: updatedCard
         ? {
-            initialBalance: cardExist.balance,
+            initialBalance: updatedCard.balance - amount,
             finalBalance: updatedCard.balance,
           }
         : txnPayload.meta.card,

@@ -1,13 +1,14 @@
 import {
   encryptData,
   HttpMethod,
-  type IEversendCardTransactionRes,
   type IEversendCardUserPayload,
   type IEversendCardUserRes,
   type IEversendCreateCardPayload,
   type IEversendCreateCardRes,
   type IEversendFundCardPayload,
+  type IEversendFundCardRes,
   type IEversendWithdrawCardPayload,
+  type IEversendWithdrawCardRes,
 } from "@/common";
 import { callEversend } from "./connect.eversend";
 
@@ -67,39 +68,35 @@ export const eversendCardUser = async (payload: IEversendCardUserPayload) => {
   return { data: data.data };
 };
 
-// Fund a card (money moves from the platform into the card). Endpoint/payload
-// follow the Eversend cards API — confirm against their docs if it changes.
+// Fund a card (money moves from the platform into the card). `cardId` is sent
+// in the request body; the response returns the card's new balance directly.
 export const eversendFundCard = async (payload: IEversendFundCardPayload) => {
-  const { cardId, ...body } = payload;
-
-  const { data, error } = await callEversend<IEversendCardTransactionRes>(
-    `/cards/${cardId}/deposit`,
+  const { data, error } = await callEversend<IEversendFundCardRes>(
+    "/cards/fund",
     HttpMethod.POST,
     {
-      data: body,
+      data: payload,
     },
   );
 
   if (error || !data) return { error };
 
-  return { data: { balance: data.data.card.amount }, meta: data.data };
+  return { data: { balance: data.data.balance }, meta: data.data };
 };
 
 // Withdraw from a card (money moves from the card back to the platform).
 export const eversendWithdrawCard = async (
   payload: IEversendWithdrawCardPayload,
 ) => {
-  const { cardId, ...body } = payload;
-
-  const { data, error } = await callEversend<IEversendCardTransactionRes>(
-    `/cards/${cardId}/withdraw`,
+  const { data, error } = await callEversend<IEversendWithdrawCardRes>(
+    "/cards/withdraw",
     HttpMethod.POST,
     {
-      data: body,
+      data: payload,
     },
   );
 
   if (error || !data) return { error };
 
-  return { data: { balance: data.data.card.amount }, meta: data.data };
+  return { data: { balance: data.data.balance }, meta: data.data };
 };

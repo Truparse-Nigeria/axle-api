@@ -154,7 +154,6 @@ export const createCard = catchAsync(async (req, res) => {
   if (vendor === VendorEnum.EVERSEND) {
     response = await eversendCreateCard({
       title: name,
-      color: "black",
       amount: String(amount),
       userId: user.identifier!.eversend!,
       currency,

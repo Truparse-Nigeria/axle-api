@@ -7,6 +7,7 @@ import {
   cardWithdrawalProperties,
   FiatCurrencyEnum,
   generateRequestID,
+  logger,
   pinCheck,
   PurposeEnum,
   refundUser,
@@ -36,7 +37,9 @@ export const withdrawCard = catchAsync(async (req, res) => {
 
   // Validate the user's pin
   await pinCheck(pin, user?.pin, String(user._id));
-  delete req.body.pin;
+
+  // Mask the pin so it is never persisted on the transaction's requestPayload
+  req.body.pin = req.body.pin?.replace(/./g, "*");
 
   // Card must exist, belong to the user, and not be terminated
   const cardExist = await Card.findOne({
@@ -132,7 +135,27 @@ export const withdrawCard = catchAsync(async (req, res) => {
       responsePayload: response ?? {},
     });
 
-    throw new AppError("Oh Snap! Card withdrawal failed. Try again!");
+    // Map known provider errors to friendlier, actionable messages
+    const errorText =
+      response?.error?.errorData?.message || response?.error?.message || "";
+
+    const errorMap: { check: string; message: string }[] = [
+      {
+        check: "Rate limit exceeded",
+        message: "Slow Down! Try again in 3 minutes",
+      },
+      {
+        check: "Insufficient funds in the card",
+        message:
+          "Insufficient remaining balance. A minimum balance must stay on the card.",
+      },
+    ];
+
+    const errorMessage =
+      errorMap.find((e) => errorText.includes(e.check))?.message ||
+      "Oh Snap! Card withdrawal failed. Try again!";
+
+    throw new AppError(errorMessage);
   }
 
   // Sync the card balance to the provider-reported value
@@ -152,23 +175,24 @@ export const withdrawCard = catchAsync(async (req, res) => {
     user,
     amount: convertedAmount,
     currency: payoutCurrency,
+  }).catch(() => {
+    logger.error(`Card withdrawal was not credited to user: ${reference}`);
   });
 
-  const newBalance =
-    creditedUser.wallet.fiat[payoutCurrency]?.balance ??
-    currentBalance + convertedAmount;
+  const walletBalance = creditedUser?.wallet?.fiat?.[payoutCurrency]?.balance;
 
   await Transaction.create({
     ...txnPayload,
     status: StatusEnum.SUCCESS,
     settlement: baseAmount - convertedAmount,
     responsePayload: response.meta,
-    initialBalance: currentBalance,
-    finalBalance: newBalance,
+    initialBalance:
+      (walletBalance ?? txnPayload.initialBalance) - convertedAmount,
+    finalBalance: walletBalance ?? txnPayload.finalBalance,
     meta: {
       ...txnPayload.meta,
       card: {
-        initialBalance: cardExist.balance,
+        initialBalance: updatedCard.balance + amount,
         finalBalance: updatedCard.balance,
       },
     },
