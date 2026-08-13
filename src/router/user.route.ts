@@ -1,6 +1,7 @@
 import { AccessTypeEnum } from "@/common";
 import {
   buyCable,
+  cardRate,
   createCard,
   fundCard,
   getSettings,
@@ -65,6 +66,7 @@ router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
 router.post("/card", createCard);
 router.post("/card/fund", fundCard);
 router.post("/card/withdraw", withdrawCard);
+router.get("/card/rate/:variant", cardRate);
 
 // Transactions
 router.post("/transactions", getTransactions(access));

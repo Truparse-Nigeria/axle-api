@@ -325,3 +325,13 @@ export const cardBalanceUpdate = async (
     { new: true, session },
   );
 };
+
+export const cardRateService = async (variant: CardVariantEnum) => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  return settings?.cards[variant]?.customRates;
+};
