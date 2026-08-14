@@ -436,7 +436,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         },
       },
       origin: {
-        active: { type: Boolean, default: false },
+        active: { type: Boolean, default: true },
         instruction: {
           type: String,
           default: "Has Maintenance ans Decline fees, Timed Withdrawals",
@@ -452,7 +452,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             brandConfig: {
               mastercard: {
                 name: { type: String, default: CardBrandEnum.MASTERCARD },
-                create: { type: Boolean, default: false },
+                create: { type: Boolean, default: true },
                 fund: { type: Boolean, default: true },
                 withdraw: { type: Boolean, default: true },
                 minCardBalance: { type: Number, default: 1 },
@@ -471,7 +471,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
               },
               visa: {
                 name: { type: String, default: CardBrandEnum.VISA },
-                create: { type: Boolean, default: false },
+                create: { type: Boolean, default: true },
                 fund: { type: Boolean, default: true },
                 withdraw: { type: Boolean, default: true },
                 minCardBalance: { type: Number, default: 1 },
