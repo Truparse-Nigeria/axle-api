@@ -23,6 +23,8 @@ export const eversendCreateCard = async (
     },
   );
 
+  console.log("eversendCreateCard", {data, error});
+
   if (error || !data) return { error };
 
   const card = data.data.card;
@@ -62,6 +64,8 @@ export const eversendCardUser = async (payload: IEversendCardUserPayload) => {
       data: payload,
     },
   );
+
+  console.log("eversendCardUser", {data, error});
 
   if (error || !data) return { error };
 
