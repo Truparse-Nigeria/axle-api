@@ -87,7 +87,7 @@ export const createCard = catchAsync(async (req, res) => {
       address: DEFAULT_CARD_ADDRESS.address,
       zipCode: DEFAULT_CARD_ADDRESS.zipCode,
       //TODO: KYC not yet collected — placeholder identity details for now
-      idType: "PASSPORT",
+      idType: "Passport",
       idNumber: String(user._id),
     };
 
