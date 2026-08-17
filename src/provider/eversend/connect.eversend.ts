@@ -29,7 +29,7 @@ export const callEversend = async <T>(
         ? { params: options?.params }
         : { ...options }),
       headers: {
-        Authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
       },
     };
 
