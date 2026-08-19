@@ -7,6 +7,9 @@ export const ENVIRONMENT = {
     ENCRYPT: Bun.env.ENCRYPT,
     ENCRYPT_IV: Bun.env.ENCRYPT_IV,
   },
+  PROXY: {
+    QUOTA_GUARD_URL: Bun.env.QUOTAGUARDSTATIC_URL,
+  },
   REDIS: {
     MAIN: Bun.env.REDIS_URL,
     QUEUE: Bun.env.REDIS_QUEUE_URL,
