@@ -39,6 +39,7 @@ export interface IEversendCard {
   color: string;
   name: string;
   amount: number;
+  balance?: number;
   brand: string;
   mask: string;
   number: string;

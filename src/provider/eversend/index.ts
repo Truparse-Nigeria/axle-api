@@ -44,7 +44,7 @@ export const eversendCreateCard = async (
       externalCustomerId: card.ownerId,
       externalCardId: card.id,
       cardBrand: card.brand,
-      balance: card.amount,
+      balance: card.balance,
       expirationDate: card.expiration,
       currency: card.currency,
       firstSix: card.mask.slice(0, 6),
