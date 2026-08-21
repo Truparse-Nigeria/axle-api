@@ -186,7 +186,6 @@ export const createCard = catchAsync(async (req, res) => {
   // avoid provider casing mismatches against the schema enums.
   const card = await Card.create({
     ...response.data,
-    cardBrand,
     currency,
     user: user._id,
     customName: name,
@@ -195,15 +194,35 @@ export const createCard = catchAsync(async (req, res) => {
     logger.error(`Card creation was not saved: ${e.message}`);
   });
 
+  // Mask sensitive card details before persisting them in the transaction payload.
+  // Each character of securityCode, expiration and number is replaced with "*"
+  // (e.g. securityCode "636" becomes "***").
+  const mask = (value: unknown) =>
+    value == null ? value : "*".repeat(String(value).length);
+
+  const responseMeta = response.meta as any;
+  const maskedMeta = responseMeta?.card
+    ? {
+        ...responseMeta,
+        card: {
+          ...responseMeta.card,
+          securityCode: mask(responseMeta.card.securityCode),
+          expiration: mask(responseMeta.card.expiration),
+          number: mask(responseMeta.card.number),
+        },
+      }
+    : responseMeta;
+
   // Create transaction
   await Transaction.create({
     ...txnPayload,
     status: StatusEnum.SUCCESS,
     settlement: convertedAmount - baseAmount,
-    responsePayload: response.meta,
+    responsePayload: maskedMeta,
     finalBalance: balance,
     view: {
       ...txnPayload.view,
+      cardBrand: card?.cardBrand,
       cardName: card?.cardName,
       lastFourDigit: card?.lastFour,
     },
