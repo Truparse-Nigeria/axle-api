@@ -23,6 +23,7 @@ export const TxnDesc = {
   dollarCardCreation: "Dollar card creation",
   dollarCardFunding: "Dollar card funding",
   dollarCardWithdrawal: "Dollar card withdrawal",
+  dollarCardTermination: "Dollar card termination",
 };
 
 // Default billing/ID details used when provisioning an Eversend card user and

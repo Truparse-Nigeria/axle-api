@@ -105,3 +105,23 @@ export interface IEversendWithdrawCardRes {
   message: string;
   balance: number;
 }
+
+// Terminate/freeze/unfreeze all take just the card id and return a status
+// message (e.g. "Card status changed successfully to active").
+export interface IEversendCardActionPayload {
+  cardId: string;
+}
+
+export interface IEversendCardActionRes {
+  message: string;
+}
+
+// GET /cards/:id — the live card, including its remaining balance (`amount`)
+// and total spend, nested two levels under the provider envelope.
+export interface IEversendGetCardRes {
+  message: string;
+  data: {
+    totalCardSpend: string;
+    card: IEversendCard;
+  };
+}

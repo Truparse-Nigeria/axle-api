@@ -1,6 +1,9 @@
 import {
   encryptData,
   HttpMethod,
+  type IEversendCardActionPayload,
+  type IEversendCardActionRes,
+  type IEversendGetCardRes,
   type IEversendCardUserPayload,
   type IEversendCardUserRes,
   type IEversendCreateCardPayload,
@@ -103,4 +106,71 @@ export const eversendWithdrawCard = async (
   if (error || !data) return { error };
 
   return { data: { balance: data.data.balance }, meta: data.data };
+};
+
+// Fetch a single card by its Eversend card id. Returns the live card (the
+// remaining balance lives on `card.amount`) and the total spend.
+export const eversendGetCard = async (externalCardId: string) => {
+  const { data, error } = await callEversend<IEversendGetCardRes>(
+    `/cards/${externalCardId}`,
+    HttpMethod.GET,
+  );
+
+  if (error || !data) return { error };
+
+  return {
+    data: data.data.data.card,
+    meta: { totalCardSpend: data.data.data.totalCardSpend },
+  };
+};
+
+// Schedule a card for termination (Eversend removes it ~24 hours later).
+export const eversendTerminateCard = async (
+  payload: IEversendCardActionPayload,
+) => {
+  const { data, error } = await callEversend<IEversendCardActionRes>(
+    "/cards/terminate",
+    HttpMethod.POST,
+    {
+      data: payload,
+    },
+  );
+
+  if (error || !data) return { error };
+
+  return { data: { message: data.data.message }, meta: data.data };
+};
+
+// Freeze a card (temporarily blocks it; can be reversed with unfreeze).
+export const eversendFreezeCard = async (
+  payload: IEversendCardActionPayload,
+) => {
+  const { data, error } = await callEversend<IEversendCardActionRes>(
+    "/cards/freeze",
+    HttpMethod.POST,
+    {
+      data: payload,
+    },
+  );
+
+  if (error || !data) return { error };
+
+  return { data: { message: data.data.message }, meta: data.data };
+};
+
+// Unfreeze a card, restoring it to active status.
+export const eversendUnfreezeCard = async (
+  payload: IEversendCardActionPayload,
+) => {
+  const { data, error } = await callEversend<IEversendCardActionRes>(
+    "/cards/unfreeze",
+    HttpMethod.POST,
+    {
+      data: payload,
+    },
+  );
+
+  if (error || !data) return { error };
+
+  return { data: { message: data.data.message }, meta: data.data };
 };

@@ -3,9 +3,11 @@ import {
   buyCable,
   cardRate,
   createCard,
+  freezeCard,
   fundCard,
   getSettings,
   getTransactions,
+  getUserCard,
   login,
   orderGiftcard,
   purchaseAirtime,
@@ -17,7 +19,9 @@ import {
   retrieveGiftcardCountries,
   retrieveGiftcardProducts,
   retrievePlans,
+  revealCard,
   signup,
+  terminateCard,
   validateMeterNumber,
   validateSmartcardNumber,
   withdrawCard,
@@ -64,8 +68,12 @@ router.get("/giftcard/redeem/:transactionId", redeemGiftcard);
 
 // Cards
 router.post("/card", createCard);
+router.get("/card", getUserCard);
 router.post("/card/fund", fundCard);
 router.post("/card/withdraw", withdrawCard);
+router.post("/card/reveal", revealCard);
+router.patch("/card/freeze", freezeCard);
+router.post("/card/terminate", terminateCard);
 router.get("/card/rate/:variant", cardRate);
 
 // Transactions

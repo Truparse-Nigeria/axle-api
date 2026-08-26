@@ -36,3 +36,18 @@ export const withdrawCardSchema = z.object({
   amount: z.number().positive(validationConstants.NUMBER_GREATER_THAN_ZERO),
   pin: pinField,
 });
+
+export const revealCardSchema = z.object({
+  cardId: z.string(),
+  pin: pinField,
+});
+
+export const freezeCardSchema = z.object({
+  cardId: z.string(),
+  pin: pinField,
+});
+
+export const terminateCardSchema = z.object({
+  cardId: z.string(),
+  pin: pinField,
+});
