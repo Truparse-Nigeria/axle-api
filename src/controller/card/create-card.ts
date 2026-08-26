@@ -226,7 +226,10 @@ export const createCard = catchAsync(async (req, res) => {
       cardName: card?.cardName,
       lastFourDigit: card?.lastFour,
     },
-    "meta.cardId": card?._id,
+    meta: {
+      ...txnPayload.meta,
+      cardId: card?._id,
+    },
   }).catch((e) => {
     logger.error(`Card creation transaction was not saved: ${e.message}`);
   });
