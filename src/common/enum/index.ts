@@ -27,6 +27,11 @@ export enum OtpContextEnum {
   RESET = "RESET_PIN",
 }
 
+export enum GloesimPackageTypeEnum {
+  DATA_ONLY = "DATA-ONLY",
+  DATA_VOICE_SMS = "DATA-VOICE-SMS",
+}
+
 export enum HttpMethod {
   GET = "GET",
   POST = "POST",
@@ -84,6 +89,7 @@ export enum VendorEnum {
   SAFE_HAVEN = "safehaven",
   RELOADLY = "reloadly",
   EVERSEND = "eversend",
+  GLOESIM = "gloesim",
   AXLE = "axle",
 }
 

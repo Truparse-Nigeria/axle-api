@@ -9,6 +9,8 @@ export const cacheKey = {
   CHEAP_DATA_KEY: "cheap-data",
   REGULAR_DATA_KEY: "regular-data",
   EVERSEND_TOKEN_KEY: "eversend-token",
+  GLOESIM_TOKEN_KEY: "gloesim-token",
+  GLOESIM_COUNTRY_KEY: "gloesim-country",
 };
 
 export const TxnDesc = {

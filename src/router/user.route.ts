@@ -15,6 +15,8 @@ import {
   redeemGiftcard,
   refreshSettings,
   resetPasscode,
+  retrieveEsimCountries,
+  retrieveEsimPackages,
   retrieveGiftcardCategories,
   retrieveGiftcardCountries,
   retrieveGiftcardProducts,
@@ -75,6 +77,10 @@ router.post("/card/reveal", revealCard);
 router.patch("/card/freeze", freezeCard);
 router.post("/card/terminate", terminateCard);
 router.get("/card/rate/:variant", cardRate);
+
+// eSIM
+router.get("/esim/countries", retrieveEsimCountries);
+router.get("/esim/packages/:countryId/:packageType", retrieveEsimPackages);
 
 // Transactions
 router.post("/transactions", getTransactions(access));

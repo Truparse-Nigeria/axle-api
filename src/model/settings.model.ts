@@ -638,6 +638,17 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         },
       },
     },
+    esim: {
+      enabled: { type: Boolean, default: true },
+      providers: {
+        gloesim: {
+          enabled: { type: Boolean, default: true },
+          rate: { type: Number, default: 1403 }, // Naira per USD
+          markup: { type: Number, default: 3 }, // in %
+          slug: { type: String, default: "gloesim" },
+        },
+      },
+    },
   },
   {
     timestamps: true,
@@ -648,3 +659,4 @@ export const Settings: Model<ISettingsDocument> = model<ISettingsDocument>(
   "Settings",
   SettingsSchema,
 );
+

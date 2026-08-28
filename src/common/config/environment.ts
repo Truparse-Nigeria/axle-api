@@ -71,6 +71,11 @@ export const ENVIRONMENT = {
     CLIENT_ID: Bun.env.EVERSEND_CLIENT_ID,
     CLIENT_SECRET: Bun.env.EVERSEND_CLIENT_SECRET,
   },
+  GLOESIM: {
+    URL: Bun.env.GLOESIM_URL,
+    EMAIL: Bun.env.GLOESIM_EMAIL,
+    PASSWORD: Bun.env.GLOESIM_PASSWORD,
+  },
 };
 
 (() => {

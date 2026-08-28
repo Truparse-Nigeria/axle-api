@@ -270,6 +270,39 @@ export const giftcardServiceCheck = async () => {
     : null;
 };
 
+// Resolves the currently enabled eSIM provider. Returns null when the eSIM
+// service is disabled or no provider is enabled. The returned object carries
+// the provider's `markup` (%) and `rate` (Naira per USD) used to price packages.
+export const esimServiceCheck = async () => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  const esimSettings = settings.esim;
+
+  // eSIM service must be turned on at the top level.
+  if (!esimSettings?.enabled) return null;
+
+  const providers = esimSettings?.providers;
+
+  if (!providers) return null;
+
+  const enabledProviders = Object.entries(providers).find(
+    ([_, provider]) => provider?.enabled,
+  );
+
+  if (!enabledProviders) return null;
+
+  return enabledProviders.length
+    ? {
+        name: enabledProviders[0],
+        ...enabledProviders[1],
+      }
+    : null;
+};
+
 // Resolve the card settings for a given variant/currency/brand and confirm the
 // requested purpose (create/fund/withdraw) is enabled. Returns the merged brand
 // properties + custom rates, or null when the service/brand is unavailable.

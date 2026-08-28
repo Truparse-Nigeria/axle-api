@@ -125,6 +125,18 @@ export interface ICrypto {
   options: Record<string, ICryptoOption>;
 }
 
+export interface IEsimProvider {
+  enabled: boolean;
+  rate: number; // Naira per USD
+  markup: number; // in %
+  slug: string;
+}
+
+export interface IEsim {
+  enabled: boolean;
+  providers: Record<string, IEsimProvider>;
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -135,4 +147,5 @@ export interface ISettings {
   cards: Record<string, ICardSettings>;
   airtimeToCash: IAirtimeToCash;
   crypto: ICrypto;
+  esim: IEsim;
 }
