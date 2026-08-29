@@ -20,7 +20,7 @@ export interface IGloesimRes<T> {
     perPage: number;
     currentPage: number;
     lastPage: number;
-  }
+  };
 }
 
 export interface IGloesimCountry {
@@ -62,7 +62,8 @@ export interface IGloesimPackage {
   id: string;
   name: string;
   extra_param: boolean;
-  price: string;
+  // The API has returned this as both a numeric string ("2.93") and a number.
+  price: string | number;
   data_quantity: number;
   data_unit: string;
   voice_quantity: number;
@@ -163,7 +164,10 @@ export interface INormalizedPackage {
 
   renewable: boolean;
   network: string;
-  activation: { trigger: "first-byte" | "install" | "unknown"; description: string };
+  activation: {
+    trigger: "first-byte" | "install" | "unknown";
+    description: string;
+  };
 
   connectivity: string[];
 
@@ -184,7 +188,7 @@ export interface INormalizedPackage {
 export interface IGloesimPackageDetail {
   id: string;
   name: string;
-  price: string;
+  price: string | number;
   data_quantity: number;
   data_unit: string;
   voice_quantity: number;
@@ -195,11 +199,19 @@ export interface IGloesimPackageDetail {
   // NOTE: `romaing_countries` is the API's spelling (typo for "roaming").
   romaing_countries?: IGloesimPackageCountry[];
   countries: IGloesimPackageCountry[];
+  package_type: GloesimPackageTypeEnum;
+  network: string
+  activation_type_description: string;
+  unthrottle_data: string | null;
+  throttle_speed: string |null;
+  connectivity: string;
 }
 
 export interface INormalizedPackageDetail {
   id: string;
   rawName: string;
+  packageType: GloesimPackageTypeEnum | string;
+  network?: string;
   price: INormalizedPrice;
   validity: { value: number; unit: string; display: string };
   data: TAllowance;
@@ -207,6 +219,8 @@ export interface INormalizedPackageDetail {
   sms: TAllowance;
   hasVoiceOrSms: boolean;
   isUnlimitedData: boolean;
+  throttle: TThrottle;
+  activation?: INormalizedPackage["activation"];
   connectivity: string[];
   countries: INormalizedCountry[];
   roamingCountries: INormalizedCountry[];
@@ -222,25 +236,22 @@ export interface IGloesimPurchaseDataOnly {
   iccid?: string;
 }
 
-// DATA-VOICE-SMS plans provision a real number, so they require KYC/address.
+// DATA-VOICE-SMS plans provision a real number; the provider only needs the
+// package and the device IMEI (which may be sent empty).
 export interface IGloesimPurchaseDataVoiceSms {
   package_type_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  contact_number: string;
   imei: string;
-  zipcode: string;
-  city: string;
-  state: string;
-  street_number: string;
-  street_name: string;
-  street_direction?: string;
 }
 
 export type TGloesimPurchaseInput =
-  | { packageType: GloesimPackageTypeEnum.DATA_ONLY; payload: IGloesimPurchaseDataOnly }
-  | { packageType: GloesimPackageTypeEnum.DATA_VOICE_SMS; payload: IGloesimPurchaseDataVoiceSms };
+  | {
+      packageType: GloesimPackageTypeEnum.DATA_ONLY;
+      payload: IGloesimPurchaseDataOnly;
+    }
+  | {
+      packageType: GloesimPackageTypeEnum.DATA_VOICE_SMS;
+      payload: IGloesimPurchaseDataVoiceSms;
+    };
 
 // ---------------------------------------------------------------------------
 // Purchase response shapes
@@ -259,6 +270,7 @@ export interface IGloesimSim {
   can_renew: boolean;
   universal_link: string;
   android_universal_link: string;
+  redeem_link: string;
   policy: string;
   sim_applied: boolean;
   number: string | null;
@@ -307,6 +319,7 @@ export interface INormalizedPurchase {
     matchingId: string;
     iosInstallUrl: string;
     androidInstallUrl: string;
+    redeemLink: string;
     applied: boolean;
     number: string | null;
     status: string;

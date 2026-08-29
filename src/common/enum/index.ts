@@ -76,6 +76,7 @@ export enum PurposeEnum {
   WALLET = "WALLET",
   TRANSFER = "TRANSFER",
   CARDS = "CARDS",
+  ESIM = "ESIM",
   REFER_AND_EARN = "REFER AND EARN",
 }
 

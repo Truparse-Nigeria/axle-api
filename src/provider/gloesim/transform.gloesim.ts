@@ -38,10 +38,13 @@ const nairaDisplay = (amount: number) =>
 // always in BOTH currencies. `markedUpUsd = usd * (1 + markup/100)` is the USD
 // price the user sees; `ngn = markedUpUsd * rate` is that price in Naira.
 const computePrice = (
-  rawPrice: string,
+  rawPrice: string | number,
   pricing: IGloesimPricing,
 ): INormalizedPrice => {
-  const baseUsd = Number.parseFloat(rawPrice);
+  // The API sends price as either a numeric string or a number — Number()
+  // handles both; fall back to 0 if it is somehow unparseable.
+  const parsed = Number(rawPrice);
+  const baseUsd = Number.isFinite(parsed) ? parsed : 0;
 
   const markedUpUsd = Number((baseUsd * (1 + pricing.markup / 100)).toFixed(2));
   const naira = Number((markedUpUsd * pricing.rate).toFixed(2));
@@ -93,7 +96,10 @@ const mapCountries = (
     })),
   }));
 
-const decodeThrottle = (pkg: IGloesimPackage): TThrottle => {
+const decodeThrottle = (pkg: {
+  unthrottle_data?: string | null;
+  throttle_speed?: string | null;
+}): TThrottle => {
   if (pkg.unthrottle_data && pkg.throttle_speed) {
     return {
       throttled: true,
@@ -228,6 +234,8 @@ export const transformGloesimPackageDetail = (
   return {
     id: detail.id,
     rawName: detail.name,
+    packageType: detail.package_type,
+    network: detail.network,
     price: computePrice(detail.price, pricing),
     validity: {
       value: detail.package_validity,
@@ -239,6 +247,13 @@ export const transformGloesimPackageDetail = (
     sms,
     hasVoiceOrSms: voice.kind !== "none" || sms.kind !== "none",
     isUnlimitedData: data.kind === "unlimited",
+    throttle: decodeThrottle(detail),
+    activation:
+      detail.activation_type_description !== undefined
+        ? decodeActivation(detail.activation_type_description)
+        : undefined,
+    // The detail endpoint sends a stale `connectivity` string; derive the real
+    // set from per-network coverage instead (same as the list transformer).
     connectivity: deriveConnectivity(detail.countries ?? []),
     countries: mapCountries(detail.countries ?? []),
     roamingCountries: mapCountries(detail.romaing_countries ?? []),
@@ -290,6 +305,7 @@ export const transformGloesimPurchase = (
       matchingId: sim?.matching_id,
       iosInstallUrl: sim?.universal_link,
       androidInstallUrl: sim?.android_universal_link,
+      redeemLink: sim?.redeem_link,
       applied: sim?.sim_applied,
       number: sim?.number ?? null,
       status: sim?.status,

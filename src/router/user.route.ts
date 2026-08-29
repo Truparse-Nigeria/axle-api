@@ -12,6 +12,7 @@ import {
   orderGiftcard,
   purchaseAirtime,
   purchaseElectricity,
+  purchaseEsim,
   redeemGiftcard,
   refreshSettings,
   resetPasscode,
@@ -81,6 +82,7 @@ router.get("/card/rate/:variant", cardRate);
 // eSIM
 router.get("/esim/countries", retrieveEsimCountries);
 router.get("/esim/packages/:countryId/:packageType", retrieveEsimPackages);
+router.post("/esim/purchase", purchaseEsim);
 
 // Transactions
 router.post("/transactions", getTransactions(access));

@@ -19,6 +19,7 @@ export const TxnDesc = {
   tvSubscription: "TV Subscription purchase",
   electricity: "Electricity purchase",
   buyGiftCard: "Giftcard purchase",
+  esimPurchase: "eSIM purchase",
   wallet2Wallet: "Axle to axle transfer",
   wallet2Bank: "Outbound transfer",
   topUp: "Inbound Transfer",
