@@ -72,8 +72,10 @@ export const purchaseEsim = catchAsync(async (req, res) => {
 
   // check that the package type matches the payload package type, so a caller
   // can't send a data-only payload against a data-voice-sms package (or vice
-  // versa) and get mispriced/mis-provisioned.
-  if (detail.data.packageType !== packageType) {
+  // versa) and get mispriced/mis-provisioned. Only enforce when the provider
+  // actually echoes a package type — some detail responses omit it, and we
+  // don't want to reject an otherwise-valid purchase on a missing field.
+  if (detail.data.packageType && detail.data.packageType !== packageType) {
     throw new AppError("Package type does not match the selected package", 400);
   }
 
@@ -84,8 +86,11 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   const amount = price.ngn.amount;
 
   // Settlement is our margin in Naira: the marked-up difference over the raw
-  // provider (base) USD price, converted at the provider rate.
-  const settlement = Number(amount) - Number(price.baseUsd * checkService.rate);
+  // provider (base) USD price, converted at the provider rate. Round to kobo so
+  // float noise doesn't leak into the ledger.
+  const settlement = Number(
+    (amount - price.baseUsd * checkService.rate).toFixed(2),
+  );
 
   // run check (pin + wallet balance) now that we know the amount, then drop the
   // pin so it never lands in the persisted request payload.
@@ -165,6 +170,8 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   txnPayload.view.esimStatus = purchase.status;
   txnPayload.view.iccid = purchase.esim.iccid;
   txnPayload.view.qrCodeText = purchase.esim.qrCodeText;
+  txnPayload.view.smdpAddress = purchase.esim.smdpAddress;
+  txnPayload.view.matchingId = purchase.esim.matchingId;
   txnPayload.view.iosInstallUrl = purchase.esim.iosInstallUrl;
   txnPayload.view.androidInstallUrl = purchase.esim.androidInstallUrl;
   txnPayload.view.redeemLink = purchase.esim.redeemLink;
@@ -172,6 +179,7 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   txnPayload.meta = {
     ...txnPayload.meta,
     ...purchase.esim,
+    simId: response.meta?.data?.sim_id ?? purchase.id,
   };
 
   await Transaction.create({
