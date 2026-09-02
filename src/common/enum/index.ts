@@ -121,3 +121,17 @@ export enum VtpassCableEnum {
   RENEW = "RENEW",
 }
 
+export enum KycEnum {
+  BVN = "bvn",
+  NIN = "nin",
+  PASSPORT = "passport",
+  DRIVERS_LICENSE = "driversLicense",
+}
+
+
+export enum SelfieStatusEnum {
+  NOT_SUBMITTED = 'NOT_SUBMITTED',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}

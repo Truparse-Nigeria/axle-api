@@ -4,6 +4,7 @@ import {
   deleteFields,
   FiatCurrencyEnum,
   GenderEnum,
+  SelfieStatusEnum,
   SENSITIVE_USER_FIELDS,
   type IUser,
 } from "../common";
@@ -87,6 +88,131 @@ const ReferredBySchema = new Schema(
   { _id: false },
 );
 
+const KycDetailSchema = new Schema(
+  {
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
+    middleName: {
+      type: String,
+      trim: true,
+    },
+    dateOfBirth: {
+      type: String,
+    },
+    phoneNumber: {
+      type: String,
+      trim: true,
+    },
+    image: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    expirationDate: { type: String },
+  },
+  { _id: false },
+);
+
+const KycTypeSchema = new Schema(
+  {
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    identifier: {
+      type: String,
+      trim: true,
+      select: false,
+      index: true,
+    },
+    details: {
+      type: KycDetailSchema,
+      select: false,
+    },
+  },
+  { _id: false },
+);
+
+const AddressDetailsSchema = new Schema(
+  {
+    line1: {
+      type: String,
+      trim: true,
+    },
+    line2: {
+      type: String,
+      trim: true,
+    },
+    state: {
+      type: String,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+    },
+    country: {
+      type: String,
+      trim: true,
+    },
+    postalCode: {
+      type: String,
+      trim: true,
+    },
+  },
+  { _id: false },
+);
+
+const AddressSchema = new Schema(
+  {
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    details: AddressDetailsSchema,
+  },
+  { _id: false },
+);
+
+const SelfieSchema = new Schema(
+  {
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: Object.values(SelfieStatusEnum),
+      default: SelfieStatusEnum.NOT_SUBMITTED,
+    },
+    details: {
+      file: {
+        type: String,
+      },
+    },
+  },
+  { _id: false },
+);
+
+const KycSchema = new Schema(
+  {
+    bvn: KycTypeSchema,
+    passport: KycTypeSchema,
+    driversLicense: KycTypeSchema,
+    nin: KycTypeSchema,
+    address: AddressSchema,
+    selfie: SelfieSchema,
+  },
+  { _id: false },
+);
+
 const userSchema = new Schema<IUserDocument>(
   {
     email: {
@@ -134,6 +260,8 @@ const userSchema = new Schema<IUserDocument>(
       type: IdentifierSchema,
       default: () => ({}),
     },
+    kyc: KycSchema,
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

@@ -6,3 +6,4 @@ export * from "./giftcard";
 export * from "./card";
 export * from "./transaction";
 export * from "./esim";
+export * from "./kyc";
