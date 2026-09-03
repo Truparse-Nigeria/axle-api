@@ -5,6 +5,7 @@ import {
   createCard,
   freezeCard,
   fundCard,
+  generateKycKey,
   getSettings,
   getTransactions,
   getUserCard,
@@ -27,6 +28,7 @@ import {
   terminateCard,
   validateMeterNumber,
   validateSmartcardNumber,
+  verifyKyc,
   withdrawCard,
 } from "@/controller";
 import { createPin, currentUser } from "@/controller/user";
@@ -83,6 +85,10 @@ router.get("/card/rate/:variant", cardRate);
 router.get("/esim/countries", retrieveEsimCountries);
 router.get("/esim/packages/:countryId/:packageType", retrieveEsimPackages);
 router.post("/esim/purchase", purchaseEsim);
+
+// KYC
+router.get("/kyc/key", generateKycKey);
+router.get("/kyc/verify", verifyKyc);
 
 // Transactions
 router.post("/transactions", getTransactions(access));

@@ -12,6 +12,7 @@ import {
 import { catchAsync } from "@/middleware";
 import { User, type IUserDocument } from "@/model";
 import { dojahVerification } from "@/provider/dojah";
+import { createJob } from "@/queue";
 
 // Break a name into normalized, comparable word tokens.
 const nameTokens = (value?: string): string[] =>
@@ -146,6 +147,16 @@ export const verifyKyc = catchAsync(async (req, res) => {
     throw new AppError(
       "KYC verification failed or is already completed. Please try again or contact support.",
     );
+  }
+
+  // Provision a permanent NGN bank account once BVN is verified
+  if (updatedUser?.kyc?.bvn?.completed && type === KycEnum.BVN) {
+    createJob({
+      type: "PROCESS_STATIC_ACCOUNT",
+      identifier: decryptData(identifier),
+      user: updatedUser.toJSON() as unknown as IUser & { _id: string },
+      dob: decryptData(details.dateOfBirth),
+    });
   }
 
   return res.status(200).json({

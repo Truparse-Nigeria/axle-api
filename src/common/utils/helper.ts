@@ -7,6 +7,7 @@ import { isAxiosError } from "axios";
 import { CardVariantEnum, StatusEnum, VendorEnum } from "../enum";
 import type { ICardServiceCheck, ISettings, IUser } from "../interface";
 import AppError from "./app-error";
+import { incrCache } from "./cache";
 
 export const createHash = async (value: string) => {
   return await Bun.password.hash(value, {
@@ -423,6 +424,32 @@ export const cardFundingProperties = (
 
 // Compute the local-currency payout and provider-side value for withdrawing
 // from a card back to the user's wallet.
+// Format a number as a comma-grouped, 2-decimal amount (e.g. 1234.5 → "1,234.50").
+export const currency = (amount: number) => {
+  return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+// Static-account external references are shaped `<prefix>_<entityId>_<reference>`.
+export const extractExternalReference = (externalReference?: string) => {
+  if (!externalReference) return null;
+
+  const externalRef = externalReference.split("_");
+  if (externalRef.length < 3) return null;
+
+  const entityId = externalRef[1] ?? null;
+  const reference = externalRef[2] ?? null;
+
+  return entityId && reference ? { entityId, reference } : null;
+};
+
+// Idempotency guard for inbound hooks: only the first caller (count === 1)
+// should process a given session; later callers see count > 1.
+export const lockSession = async (sessionId: string) => {
+  const lockSessionKey = `SESSION_${sessionId}`;
+
+  return await incrCache(lockSessionKey, 20);
+};
+
 export const cardWithdrawalProperties = (
   amount: number,
   checkService: ICardServiceCheck,

@@ -1,4 +1,5 @@
 import { logger, redis, type JOB_TYPE, type TJobData} from "@/common";
+import { processStaticAccount } from "@/job";
 import { sendEmail } from "@/provider";
 import {
   Worker,
@@ -25,6 +26,8 @@ export const mainWorker = new Worker<TJobData>(
     switch (type as JOB_TYPE) {
       case "SEND_EMAIL":
         return await sendEmail(job.data);
+      case "PROCESS_STATIC_ACCOUNT":
+        return await processStaticAccount(job.data);
       default:
         //TODO:  Add monitor in the future
         logger.error(`Unknown job type: ${type}`);

@@ -1,8 +1,9 @@
+import type { IProcessStaticAccount } from "@/job";
 import type { ISendMail } from "../interface";
 
-export type JOB_TYPE = "SEND_EMAIL";
+export type JOB_TYPE = "SEND_EMAIL" | "PROCESS_STATIC_ACCOUNT";
 
-export type TJobData = ISendMail;
+export type TJobData = ISendMail | IProcessStaticAccount;
 
 export const cacheKey = {
   SETTINGS: "settings",
