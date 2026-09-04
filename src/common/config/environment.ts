@@ -84,6 +84,11 @@ export const ENVIRONMENT = {
     ACCOUNT_NUMBER: Bun.env.SAFE_HAVEN_ACCOUNT_NUMBER,
     ACCOUNT_ID: Bun.env.SAFE_HAVEN_ACCOUNT_ID,
   },
+  DOJAH: {
+    URL: Bun.env.DOJAH_URL,
+    APP_ID: Bun.env.DOJAH_APP_ID,
+    SECRET_KEY: Bun.env.DOJAH_SECRET_KEY,
+  },
 };
 
 (() => {
