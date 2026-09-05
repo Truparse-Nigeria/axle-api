@@ -10,5 +10,16 @@ export const retrieveEsimCountries = catchAsync(async (_req, res) => {
     throw new AppError("Unable to retrieve countries", 404);
   }
 
-  return sendResponse(res, 200, null, response.data);
+  return sendResponse(
+    res,
+    200,
+    null,
+    response.data.map((c) => {
+      return {
+        id: c.id,
+        name: c.name,
+        flag: c.image_url,
+      };
+    }),
+  );
 });

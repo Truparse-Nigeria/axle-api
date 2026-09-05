@@ -6,7 +6,7 @@ export const esimPackagesRetrieveSchema = z.object({
     .number()
     .int("countryId must be an integer")
     .positive("countryId must be greater than zero"),
-  packageType: z.nativeEnum(GloesimPackageTypeEnum),
+  packageType: z.enum(GloesimPackageTypeEnum),
   page: z.coerce.number().int().positive().optional().default(1),
 });
 

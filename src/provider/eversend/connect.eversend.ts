@@ -30,8 +30,7 @@ export const callEversend = async <T>(
 ): Promise<IApiResponse<IEversendRes<T>>> => {
   try {
     const token = await EversendTokenHandler();
-    console.log("Eversend Token:", token);
-
+    
     const config: AxiosRequestConfig = {
       url,
       method,
