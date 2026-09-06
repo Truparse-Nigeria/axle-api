@@ -133,7 +133,6 @@ export interface IPriceAmount {
 export interface INormalizedPrice {
   usd: IPriceAmount;
   ngn: IPriceAmount;
-  baseUsd: number;
 }
 
 export interface INormalizedZone {

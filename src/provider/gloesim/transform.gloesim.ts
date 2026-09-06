@@ -52,7 +52,6 @@ const computePrice = (
   return {
     usd: { amount: markedUpUsd, display: `$${markedUpUsd.toFixed(2)}` },
     ngn: { amount: naira, display: nairaDisplay(naira) },
-    baseUsd,
   };
 };
 

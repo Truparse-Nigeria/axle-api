@@ -89,7 +89,7 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   // provider (base) USD price, converted at the provider rate. Round to kobo so
   // float noise doesn't leak into the ledger.
   const settlement = Number(
-    (amount - price.baseUsd * checkService.rate).toFixed(2),
+    (amount - Number(detail.meta.data.price) * checkService.rate).toFixed(2),
   );
 
   // run check (pin + wallet balance) now that we know the amount, then drop the
