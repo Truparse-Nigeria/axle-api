@@ -24,7 +24,11 @@ import {
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { Transaction } from "@/model";
-import { gloesimPackageDetail, gloesimPurchase } from "@/provider";
+import {
+  gloesimCountry,
+  gloesimPackageDetail,
+  gloesimPurchase,
+} from "@/provider";
 
 // The transaction `view` only holds scalar (string | number) values, so render
 // a data/voice/sms allowance as a display string.
@@ -41,7 +45,7 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   // it enforces the right required fields for a data-only vs data-voice-sms
   // purchase and carries the currency (default NGN) and pin.
   const payload = await validateRequestPayload(req.body, esimPurchaseSchema);
-  const { packageType, packageId, currency, pin } = payload;
+  const { packageType, packageId, currency, pin, countryId } = payload;
 
   // validate use from req.user
   const user = req.user;
@@ -59,7 +63,10 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   // fetch the package details based on the provider condition. This prices the
   // package (marks up the USD and converts to Naira) so we know what to charge.
   let detail = null;
+  let country = null;
   if (checkService.slug === VendorEnum.GLOESIM) {
+    country = await gloesimCountry();
+
     detail = await gloesimPackageDetail(packageId, {
       markup: checkService.markup,
       rate: checkService.rate,
@@ -167,11 +174,12 @@ export const purchaseEsim = catchAsync(async (req, res) => {
   // Surface the install details (QR/SM-DP+/install links) on the view as
   // scalars — the buyer needs them to install the eSIM — and keep the sim id in
   // meta so the eSIM can be re-queried later.
+  txnPayload.view.country =
+    country?.data?.find((country) => country.id === Number(countryId))?.name ??
+    "";
   txnPayload.view.esimStatus = purchase.status;
   txnPayload.view.iccid = purchase.esim.iccid;
   txnPayload.view.qrCodeText = purchase.esim.qrCodeText;
-  txnPayload.view.smdpAddress = purchase.esim.smdpAddress;
-  txnPayload.view.matchingId = purchase.esim.matchingId;
   txnPayload.view.iosInstallUrl = purchase.esim.iosInstallUrl;
   txnPayload.view.androidInstallUrl = purchase.esim.androidInstallUrl;
   txnPayload.view.redeemLink = purchase.esim.redeemLink;

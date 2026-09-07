@@ -12,11 +12,12 @@ export const esimPackagesRetrieveSchema = z.object({
 
 const esimPurchaseBase = {
   packageId: z.string().min(1, "packageId is required"),
+  countryId: z.coerce
+    .number()
+    .int("countryId must be an integer")
+    .positive("countryId must be greater than zero"),
   pin: z.string().min(1, "pin is required"),
-  currency: z
-    .enum(FiatCurrencyEnum)
-    .optional()
-    .default(FiatCurrencyEnum.NGN),
+  currency: z.enum(FiatCurrencyEnum).optional().default(FiatCurrencyEnum.NGN),
 };
 
 export const esimPurchaseSchema = z.discriminatedUnion("packageType", [
