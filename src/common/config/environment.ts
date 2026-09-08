@@ -89,6 +89,11 @@ export const ENVIRONMENT = {
     APP_ID: Bun.env.DOJAH_APP_ID,
     SECRET_KEY: Bun.env.DOJAH_SECRET_KEY,
   },
+  VITALSWAP: {
+    BASE_URL: Bun.env.VITALSWAP_BASE_URL,
+    BUSINESS_USER_ID: Bun.env.VITALSWAP_BUSINESS_USER_ID,
+    API_KEY: Bun.env.VITALSWAP_API_KEY,
+  },
 };
 
 (() => {

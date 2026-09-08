@@ -5,3 +5,4 @@ export * from "./eversend"
 export * from "./gloesim";
 export * from "./dojah";
 export * from "./safehaven";
+export * from "./vitalswap";
