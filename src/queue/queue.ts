@@ -1,15 +1,15 @@
 import { logger, redis, type TJobData } from "@/common";
-import { Queue, QueueEvents } from "bullmq";
+import { Queue, QueueEvents, type ConnectionOptions } from "bullmq";
 
 // Create a new connection in every node instance
 const mainQueue = new Queue<TJobData>("mainQueue", {
-  connection: redis.queue,
+  connection: redis.queue as ConnectionOptions,
 });
 
 // EVENT LISTENERS
 // create a queue event listener
 const mainQueueEvent = new QueueEvents("mainQueue", {
-  connection: redis.queue,
+  connection: redis.queue as ConnectionOptions,
 });
 
 mainQueueEvent.on("failed", ({ jobId, failedReason }) => {
@@ -28,19 +28,15 @@ mainQueueEvent.on("completed", ({ jobId, returnvalue }) => {
 // Register all recurring (repeatable) jobs. Uses job schedulers so a single
 // schedule is upserted per id — safe to call on every boot/instance.
 const registerRepeatableJobs = async () => {
-  await mainQueue
-    .upsertJobScheduler(
-      "requery-vtpass-transactions",
-      { every: 5 * 60 * 1000 }, // every 5 minutes
-      {
-        name: "REQUERY_VTPASS_TRANSACTIONS",
-        data: { type: "REQUERY_VTPASS_TRANSACTIONS" },
-        opts: { removeOnComplete: true, removeOnFail: { count: 0 } },
-      }
-    )
-    .catch((err) => {
-      logger.error(`Failed to register repeatable jobs: ${err}`);
-    });
+  await mainQueue.upsertJobScheduler(
+    "generate-multicurrency-account",
+    { every: 10 * 60 * 1000 }, // every 10 minutes
+    {
+      name: "GENERATE_MULTICURRENCY_ACCOUNT",
+      data: { type: "GENERATE_MULTICURRENCY_ACCOUNT" },
+      opts: { removeOnComplete: true, removeOnFail: { count: 0 } },
+    },
+  );
 };
 
 export { mainQueue, mainQueueEvent, registerRepeatableJobs };

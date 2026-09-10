@@ -137,6 +137,16 @@ export interface IEsim {
   providers: Record<string, IEsimProvider>;
 }
 
+export interface IMultiCurrencyOption {
+  enabled: boolean;
+  providers: Record<string, IProvider>;
+}
+
+export interface IMultiCurrency {
+  enabled: boolean;
+  currencies: Record<string, IMultiCurrencyOption>;
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -148,4 +158,5 @@ export interface ISettings {
   airtimeToCash: IAirtimeToCash;
   crypto: ICrypto;
   esim: IEsim;
+  multiCurrency: IMultiCurrency;
 }

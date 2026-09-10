@@ -6,6 +6,7 @@ import {
   GenderEnum,
   SelfieStatusEnum,
   SENSITIVE_USER_FIELDS,
+  WalletStatusEnum,
   type IUser,
 } from "../common";
 
@@ -16,7 +17,12 @@ const FiatAccountSchema = new Schema(
     accountNumber: { type: String, required: true, trim: true },
     accountName: { type: String, required: true, trim: true },
     bankName: { type: String, required: true, trim: true },
-    provider: { type: String, trim: true },
+    provider: { type: String, trim: true, select: false },
+    externalReference: { type: String, trim: true },
+    rtpRoutingNumber: { type: String, trim: true },
+    wireRoutingNumber: { type: String, trim: true },
+    status: { type: String, trim: true },
+    routing: { type: String, trim: true },
   },
   { _id: false },
 );
@@ -34,6 +40,11 @@ const currencyWallet = (accountSchema: Schema) =>
   new Schema(
     {
       balance: { type: Number, default: 0 },
+      status: {
+        type: String,
+        enum: Object.values(WalletStatusEnum),
+        default: WalletStatusEnum.PENDING,
+      },
       accounts: { type: [accountSchema], default: [] },
     },
     { _id: false },
@@ -66,6 +77,14 @@ const WalletSchema = new Schema(
 const IdentifierSchema = new Schema(
   {
     eversend: { type: String, trim: true },
+    vitalswap: {
+      user: { type: String, trim: true },
+      wallet: {
+        USD: { type: String, trim: true },
+        EUR: { type: String, trim: true },
+        GBP: { type: String, trim: true },
+      },
+    },
   },
   { _id: false },
 );
@@ -278,6 +297,25 @@ const hideSensitiveFields = (_doc: unknown, ret: Record<string, any>) => {
 
 userSchema.set("toJSON", { transform: hideSensitiveFields });
 userSchema.set("toObject", { transform: hideSensitiveFields });
+
+// The multicurrency sweep (generate-multicurrency job) polls for wallets still
+// mid-provisioning. PROCESSING is a rare, transient state, so a partial index
+// per non-NGN currency keeps each index tiny and matches only the sweep's
+// target set instead of the mostly-PENDING/GENERATED population.
+for (const currency of [
+  FiatCurrencyEnum.USD,
+  FiatCurrencyEnum.GBP,
+  FiatCurrencyEnum.EUR,
+]) {
+  userSchema.index(
+    { [`wallet.fiat.${currency}.status`]: 1 },
+    {
+      partialFilterExpression: {
+        [`wallet.fiat.${currency}.status`]: WalletStatusEnum.PROCESSING,
+      },
+    },
+  );
+}
 
 export const User: Model<IUserDocument> = model<IUserDocument>(
   "User",

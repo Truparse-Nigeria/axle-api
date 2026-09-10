@@ -125,7 +125,7 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: "",
         image: data.entity.data.id.data.id_url,
         expiryDate: expiry_date,
-        country: nationalityCode[nationality as keyof typeof nationalityCode],
+        country: nationalityCode[nationality as keyof typeof nationalityCode] || nationality,
       },
     };
   }

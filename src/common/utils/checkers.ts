@@ -13,6 +13,7 @@ import AppError from "./app-error";
 import { deleteCache, getCache, incrCache, setCache } from "./cache";
 import { compareHash } from "./helper";
 import { retrieveSettings } from "./settings";
+import { vitalSwapPayingAccountConsent } from "@/provider";
 
 export const walletCheck = (balance: number, amount: number) => {
   if (balance < Math.abs(amount)) {
@@ -303,6 +304,38 @@ export const esimServiceCheck = async () => {
     : null;
 };
 
+// Resolves the currently enabled multi-currency provider for the requested
+// currency. Returns null when the service, currency, or provider is disabled.
+export const checkMultiCurrencyService = async (
+  currency: FiatCurrencyEnum,
+) => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  const multiCurrencySettings = settings.multiCurrency;
+
+  if (!multiCurrencySettings?.enabled) return null;
+
+  const currencySettings =
+    multiCurrencySettings.currencies[currency.toLowerCase()];
+
+  if (!currencySettings?.enabled) return null;
+
+  const enabledProvider = Object.entries(currencySettings.providers).find(
+    ([_, provider]) => provider?.enabled,
+  );
+
+  if (!enabledProvider) return null;
+
+  return {
+    name: enabledProvider[0],
+    ...enabledProvider[1],
+  };
+};
+
 // Resolve the card settings for a given variant/currency/brand and confirm the
 // requested purpose (create/fund/withdraw) is enabled. Returns the merged brand
 // properties + custom rates, or null when the service/brand is unavailable.
@@ -367,4 +400,14 @@ export const cardRateService = async (variant: CardVariantEnum) => {
   }
 
   return settings?.cards[variant]?.customRates;
+};
+
+export const checkConsent = async (id: string) => {
+  const consent = await vitalSwapPayingAccountConsent(id);
+
+  if (consent.error || !consent.data) {
+    throw new AppError("Unable to set up your profile. Try again");
+  }
+
+  return { data: consent.data };
 };

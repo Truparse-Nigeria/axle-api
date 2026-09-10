@@ -6,7 +6,7 @@ export interface IVitalSwapCreateCustomerPayload {
   password: string;
   accept_terms: boolean;
   identity: {
-    bvn: string;
+    bvn?: string;
     nationality: string;
     state_of_residence: string;
     id_number: string;

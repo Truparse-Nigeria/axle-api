@@ -649,6 +649,41 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         },
       },
     },
+    multiCurrency: {
+      enabled: { type: Boolean, default: true },
+      currencies: {
+        usd: {
+          enabled: { type: Boolean, default: true },
+          providers: {
+            vitalswap: {
+              enabled: { type: Boolean, default: true },
+              rate: { type: Number, default: 2.5 },
+              slug: { type: String, default: "vitalswap" },
+            },
+          },
+        },
+        eur: {
+          enabled: { type: Boolean, default: true },
+          providers: {
+            vitalswap: {
+              enabled: { type: Boolean, default: true },
+              rate: { type: Number, default: 2.5 },
+              slug: { type: String, default: "vitalswap" },
+            },
+          },
+        },
+        gbp: {
+          enabled: { type: Boolean, default: true },
+          providers: {
+            vitalswap: {
+              enabled: { type: Boolean, default: true },
+              rate: { type: Number, default: 2.5 },
+              slug: { type: String, default: "vitalswap" },
+            },
+          },
+        },
+      },
+    },
   },
   {
     timestamps: true,
@@ -659,4 +694,3 @@ export const Settings: Model<ISettingsDocument> = model<ISettingsDocument>(
   "Settings",
   SettingsSchema,
 );
-

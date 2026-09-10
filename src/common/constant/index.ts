@@ -1,9 +1,22 @@
-import type { IProcessStaticAccount } from "@/job";
+import type {
+  IGenerateMultiCurrency,
+  IProcessStaticAccount,
+  IVitalSwapIdentifer,
+} from "@/job";
 import type { ISendMail } from "../interface";
+import { FiatCurrencyEnum } from "../enum";
 
-export type JOB_TYPE = "SEND_EMAIL" | "PROCESS_STATIC_ACCOUNT";
+export type JOB_TYPE =
+  | "SEND_EMAIL"
+  | "PROCESS_STATIC_ACCOUNT"
+  | "GENERATE_MULTICURRENCY_ACCOUNT"
+  | "VITALSWAP_WALLET";
 
-export type TJobData = ISendMail | IProcessStaticAccount;
+export type TJobData =
+  | ISendMail
+  | IProcessStaticAccount
+  | IGenerateMultiCurrency
+  | IVitalSwapIdentifer;
 
 export const cacheKey = {
   SETTINGS: "settings",
@@ -57,3 +70,11 @@ export interface IApiResponse<T = null> {
   data?: T;
   error?: Record<string, any> | null;
 }
+
+// Non-NGN fiat currencies provisioned through the multicurrency flow. NGN is
+// handled by the safehaven static-account job and never enters PROCESSING here.
+export const MULTICURRENCY_FIATS = [
+  FiatCurrencyEnum.USD,
+  FiatCurrencyEnum.GBP,
+  FiatCurrencyEnum.EUR,
+] as const;

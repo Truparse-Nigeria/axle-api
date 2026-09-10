@@ -16,6 +16,13 @@ export enum FiatCurrencyEnum {
   EUR = "EUR",
 }
 
+export enum FiatCurrencyCountryEnum {
+  NGN = "NG",
+  USD = "US",
+  GBP = "GB",
+  EUR = "EU",
+}
+
 export enum CryptoCurrencyEnum {
   USDT = "USDT",
   USDC = "USDC",
@@ -92,6 +99,7 @@ export enum VendorEnum {
   EVERSEND = "eversend",
   GLOESIM = "gloesim",
   AXLE = "axle",
+  VITALSWAP = "vitalswap",
 }
 
 export enum CardVariantEnum {
@@ -134,4 +142,10 @@ export enum SelfieStatusEnum {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
+}
+
+export enum WalletStatusEnum {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  GENERATED = 'GENERATED',
 }

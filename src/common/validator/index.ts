@@ -5,3 +5,4 @@ export * from "./giftcard.validator";
 export * from "./card.validator";
 export * from "./super-query.validator";
 export * from "./esim.validator";
+export * from "./user.validator";

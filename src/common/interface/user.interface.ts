@@ -3,6 +3,7 @@ import type {
   FiatCurrencyEnum,
   GenderEnum,
   SelfieStatusEnum,
+  WalletStatusEnum,
 } from "../enum";
 
 export interface IFiatAccount {
@@ -10,6 +11,11 @@ export interface IFiatAccount {
   accountName: string;
   bankName: string;
   provider?: string;
+  externalReference?: string;
+  rtpRoutingNumber?: string;
+  wireRoutingNumber?: string;
+  status?: string
+  routing?: string
 }
 
 export interface ICryptoAccount {
@@ -20,6 +26,7 @@ export interface ICryptoAccount {
 
 export interface ICurrencyWallet<TAccount> {
   balance: number;
+  status: WalletStatusEnum;
   accounts: TAccount[];
 }
 
@@ -103,4 +110,8 @@ export interface IUser {
 
 export interface IUserIdentifier {
   eversend?: string;
+  vitalswap?: {
+    user: string;
+    wallets: Record<FiatCurrencyEnum, string>
+  }
 }

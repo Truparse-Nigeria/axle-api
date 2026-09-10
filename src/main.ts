@@ -6,6 +6,7 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { errorHandler } from "./middleware";
+import { mainWorker, registerRepeatableJobs } from "./queue";
 import { hookRouter, otpRouter, userRouter } from "./router";
 
 let ALLOWED_ORIGINS = [] as string[] | boolean;
@@ -67,6 +68,10 @@ const server = app.listen(PORT, async () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`Environment: ${ENVIRONMENT.APP.ENV}`);
   logger.info(`App name: ${APP_NAME}`);
+
+  // Boot the BullMQ worker and upsert all repeatable job schedulers.
+  void mainWorker;
+  await registerRepeatableJobs();
 });
 
 app.use("/api/v1/health-check", (req, res) => {

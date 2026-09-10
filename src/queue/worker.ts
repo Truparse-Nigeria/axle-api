@@ -1,5 +1,5 @@
-import { logger, redis, type JOB_TYPE, type TJobData} from "@/common";
-import { processStaticAccount } from "@/job";
+import { logger, redis, type JOB_TYPE, type TJobData } from "@/common";
+import { generateMultiCurrency, processStaticAccount, vitalSwapIdentifer } from "@/job";
 import { sendEmail } from "@/provider";
 import {
   Worker,
@@ -28,12 +28,16 @@ export const mainWorker = new Worker<TJobData>(
         return await sendEmail(job.data);
       case "PROCESS_STATIC_ACCOUNT":
         return await processStaticAccount(job.data);
+      case "GENERATE_MULTICURRENCY_ACCOUNT":
+        return await generateMultiCurrency();
+      case "VITALSWAP_WALLET":
+        return await vitalSwapIdentifer(job.data);
       default:
         //TODO:  Add monitor in the future
         logger.error(`Unknown job type: ${type}`);
     }
   },
-  mainWorkerOptions
+  mainWorkerOptions,
 );
 
 mainWorker.on("error", (err: any) => {

@@ -65,7 +65,9 @@ export const vitalSwapPayingAccountProducts = async () => {
     IVitalSwapPayingAccountProduct[]
   >("/v1/paying-accounts/products", HttpMethod.GET);
 
-  if (error || !data) return { error };
+  if (error || !data) {
+    throw new AppError("Unable to retrieve products", 400);
+  }
 
   await setCache<IVitalSwapPayingAccountProduct[]>(
     key,
@@ -87,6 +89,10 @@ export const vitalSwapCreatePayingAccount = async (
     );
 
   if (error || !data) return { error };
+  
+  if ( "success" in data && data.success === false)  {
+    throw new AppError("Unable to create paying account", 400);
+  }
 
   return { data };
 };
