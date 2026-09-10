@@ -7,6 +7,14 @@ import {
 } from "@/common";
 import { catchAsync } from "@/middleware";
 
+const widget = (type: KycEnum) => {
+  switch (type) {
+    case KycEnum.BVN:
+      return "6a97d7174af79662e6db29fd";
+    case KycEnum.NIN:
+      return ""
+}
+
 export const generateKycKey = catchAsync(async (req, res) => {
   const user = req.user;
   const { type } = req.query;
@@ -29,5 +37,7 @@ export const generateKycKey = catchAsync(async (req, res) => {
 
   return sendResponse(res, 200, "KYC key generated successfully", {
     reference: generatedKey,
+    widget: widget(type as KycEnum),
+    email: "info@useaxle.co"
   });
 });
