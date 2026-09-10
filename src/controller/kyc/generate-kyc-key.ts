@@ -12,8 +12,15 @@ const widget = (type: KycEnum) => {
     case KycEnum.BVN:
       return "6a97d7174af79662e6db29fd";
     case KycEnum.NIN:
-      return ""
-}
+      return "";
+    case KycEnum.PASSPORT:
+      return "";
+    case KycEnum.DRIVERS_LICENSE:
+      return "";
+    default:
+      throw new AppError("Invalid KYC type");
+  }
+};
 
 export const generateKycKey = catchAsync(async (req, res) => {
   const user = req.user;
@@ -36,7 +43,7 @@ export const generateKycKey = catchAsync(async (req, res) => {
   await setCache(`kyc_key_${user._id}`, generatedKey, 60 * 60 * 24); // Cache for 24 hours
 
   return sendResponse(res, 200, "KYC key generated successfully", {
-    reference: generatedKey,
+    reference: `${generatedKey}_${user._id}`,
     widget: widget(type as KycEnum),
     email: "info@useaxle.co"
   });
