@@ -34,7 +34,7 @@ export const generateKycKey = catchAsync(async (req, res) => {
     throw new AppError("User not found");
   }
 
-  if (user.kyc[type as KycEnum].completed) {
+  if (user?.kyc?.[type as KycEnum]?.completed) {
     throw new AppError("KYC already completed");  
   }
 
