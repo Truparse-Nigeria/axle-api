@@ -39,6 +39,19 @@ export const CurrencySetup = catchAsync(async (req, res) => {
     );
   }
 
+  //Check for KYC
+  if (!req.user?.kyc?.address?.completed) {
+    throw new AppError(
+      "You need to complete your address KYC before creating a wallet",
+    );
+  }
+
+  if (!req.user?.kyc?.nin?.completed || !req.user?.kyc?.passport?.completed) {
+    throw new AppError(
+      "You need to complete your NIN or Passport KYC before creating a wallet",
+    );
+  }
+
   const user = req.user;
   if (!user) throw new AppError("User not found");
 
@@ -59,7 +72,7 @@ export const CurrencySetup = catchAsync(async (req, res) => {
       const consent = await checkConsent(user.identifier.vitalswap.user);
 
       return sendResponse(res, 200, "Currency setup successful", {
-        identifier: user.identifier?.vitalswap.user,
+        identifier: user.identifier?.vitalswap?.user,
         consent: consent.data,
       });
     }
@@ -73,18 +86,18 @@ export const CurrencySetup = catchAsync(async (req, res) => {
       password: "password",
       accept_terms: true,
       identity: {
-        bvn: user.kyc.bvn.identifier ?? undefined,
+        bvn: user?.kyc?.bvn?.identifier ?? undefined,
         nationality:
-          user.kyc.bvn.identifier || user.kyc.nin.identifier
+          user?.kyc?.bvn?.identifier || user?.kyc?.nin?.identifier
             ? "Nigerian"
-            : user.kyc.passport.details.country || "",
-        id_number: user.kyc.nin.identifier ? "NIN" : "Passport",
-        id_type: user.kyc.nin.identifier
-          ? decryptData(user.kyc.nin.identifier)
-          : decryptData(user.kyc.passport.identifier!),
-        date_of_birth: user.kyc.nin.details.dateOfBirth
-          ? decryptData(user.kyc.nin.details.dateOfBirth)
-          : decryptData(user.kyc.passport.details.dateOfBirth),
+            : user?.kyc?.passport?.details?.country || "",
+        id_number: user?.kyc?.nin?.identifier ? "NIN" : "Passport",
+        id_type: user?.kyc?.nin?.identifier
+          ? decryptData(user?.kyc?.nin?.identifier)
+          : decryptData(user?.kyc?.passport?.identifier!),
+        date_of_birth: user?.kyc?.nin?.details?.dateOfBirth
+          ? decryptData(user?.kyc?.nin?.details?.dateOfBirth)
+          : decryptData(user?.kyc?.passport?.details?.dateOfBirth),
         id_image_url: "https://example.com/id.jpg",
         selfie_image_url: "https://example.com/id.jpg",
         state_of_residence: "Lagos",
