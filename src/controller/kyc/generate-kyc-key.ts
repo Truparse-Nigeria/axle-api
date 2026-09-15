@@ -38,9 +38,9 @@ export const generateKycKey = catchAsync(async (req, res) => {
     throw new AppError("KYC already completed");
   }
 
-  const generatedKey = generateRandomString(32);
+  const generatedKey = generateRandomString(32, "KYC");
 
-  const reference = generatedKey;
+  const reference = `${generatedKey}_${user._id}`;
 
   await setCache(`kyc_key_${user._id}`, reference, 60 * 60 * 24); // Cache for 24 hours
 
