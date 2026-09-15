@@ -1,5 +1,6 @@
 import {
   AppError,
+  ENVIRONMENT,
   generateRandomString,
   KycEnum,
   sendResponse,
@@ -10,11 +11,11 @@ import { catchAsync } from "@/middleware";
 const widget = (type: KycEnum) => {
   switch (type) {
     case KycEnum.BVN:
-      return "6a97d7174af79662e6db29fd";
+      return ENVIRONMENT.DOJAH.BVN;
     case KycEnum.NIN:
-      return "";
+      return ENVIRONMENT.DOJAH.NIN;
     case KycEnum.PASSPORT:
-      return "";
+      return ENVIRONMENT.DOJAH.PASSPORT;
     case KycEnum.DRIVERS_LICENSE:
       return "";
     default:
