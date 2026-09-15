@@ -4,6 +4,7 @@ import {
   generateRequestID,
   KycEnum,
   VendorEnum,
+  WalletStatusEnum,
   type IBaseJobType,
   type IUser,
 } from "@/common";
@@ -60,6 +61,9 @@ export const processStaticAccount = async (
           bankName,
           provider: VendorEnum.SAFE_HAVEN,
         },
+      },
+      $set: {
+        "wallet.fiat.NGN.status": WalletStatusEnum.GENERATED,
       },
     },
     { new: true },
