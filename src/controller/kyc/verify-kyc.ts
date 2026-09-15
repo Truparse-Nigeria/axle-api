@@ -129,6 +129,7 @@ export const verifyKyc = catchAsync(async (req, res) => {
   // Exclude the current user so this check also works for legacy/incomplete KYC
   // records belonging to the same account.
   const identifierAlreadyUsed = await User.exists({
+    _id: { $ne: user._id },
     [`${fieldToUpdate}.identifier`]: identifier,
   });
 

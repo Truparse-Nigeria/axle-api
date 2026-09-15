@@ -91,6 +91,7 @@ export const ENVIRONMENT = {
     BVN: Bun.env.DOJAH_BVN,
     PASSPORT: Bun.env.DOJAH_PASSPORT,
     NIN: Bun.env.DOJAH_NIN,
+    ADDRESS: Bun.env.DOJAH_ADDRESS,
   },
   VITALSWAP: {
     BASE_URL: Bun.env.VITALSWAP_BASE_URL,
