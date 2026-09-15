@@ -134,6 +134,7 @@ export enum KycEnum {
   NIN = "nin",
   PASSPORT = "passport",
   DRIVERS_LICENSE = "driversLicense",
+  ADDRESS = "address",
 }
 
 

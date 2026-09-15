@@ -50,6 +50,14 @@ const containedIn = (
   return tokens.length > 0 && tokens.every((token) => stored.has(token));
 };
 
+// KYC types that carry identity details (address KYC holds a different shape).
+const IDENTITY_KYC_TYPES = [
+  KycEnum.BVN,
+  KycEnum.NIN,
+  KycEnum.PASSPORT,
+  KycEnum.DRIVERS_LICENSE,
+] as const;
+
 const assertKycIdentityConsistency = (
   existingKyc: IUserDocument["kyc"] | undefined,
   newType: KycEnum,
@@ -59,7 +67,7 @@ const assertKycIdentityConsistency = (
 
   const newDob = safeDecryptDob(newDetails.dateOfBirth);
 
-  for (const type of Object.values(KycEnum)) {
+  for (const type of IDENTITY_KYC_TYPES) {
     if (type === newType) continue;
 
     const existing = existingKyc[type];
@@ -115,6 +123,7 @@ export const verifyKyc = catchAsync(async (req, res) => {
     [KycEnum.DRIVERS_LICENSE]: "kyc.driversLicense",
     [KycEnum.PASSPORT]: "kyc.passport",
     [KycEnum.NIN]: "kyc.nin",
+    [KycEnum.ADDRESS]: "kyc.address",
   };
 
   const kycType = type as KycEnum;
@@ -146,7 +155,8 @@ export const verifyKyc = catchAsync(async (req, res) => {
     "+kyc.bvn.details +kyc.nin.details +kyc.passport.details +kyc.driversLicense.details",
   );
 
-  assertKycIdentityConsistency(existingKyc?.kyc, type as KycEnum, details);
+  if (type !== KycEnum.ADDRESS)
+    assertKycIdentityConsistency(existingKyc?.kyc, type as KycEnum, details);
 
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id, [`${fieldToUpdate}.completed`]: { $ne: true } },

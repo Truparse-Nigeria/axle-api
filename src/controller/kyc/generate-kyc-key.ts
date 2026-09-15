@@ -16,6 +16,8 @@ const widget = (type: KycEnum) => {
       return ENVIRONMENT.DOJAH.NIN;
     case KycEnum.PASSPORT:
       return ENVIRONMENT.DOJAH.PASSPORT;
+    case KycEnum.ADDRESS:
+      return ENVIRONMENT.DOJAH.ADDRESS;
     case KycEnum.DRIVERS_LICENSE:
       return "";
     default:
