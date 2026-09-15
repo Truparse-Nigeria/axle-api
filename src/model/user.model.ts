@@ -131,6 +131,9 @@ const KycDetailSchema = new Schema(
     image: {
       type: String,
     },
+    selfie: {
+      type: String,
+    },
     country: {
       type: String,
     },

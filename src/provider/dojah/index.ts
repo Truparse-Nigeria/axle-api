@@ -18,6 +18,7 @@ export interface IKYCDetails {
   phoneNumber: string;
   image: string;
   country?: string;
+  selfie?: string;
   expiryDate?: string;
 }
 
@@ -50,6 +51,7 @@ export const dojahVerification = async (reference: string) => {
       phone_number2,
       phone_number,
       image_url,
+      
     } = data.entity.data.government_data.data.bvn.entity;
 
     userDetails = {
@@ -63,6 +65,7 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: phone_number1 || phone_number2 || phone_number,
         image: image_url,
         country: "NG",
+        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
@@ -90,6 +93,7 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: phone_number1 || phone_number2 || phone_number,
         image: image_url,
         country: "NG",
+        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
@@ -126,6 +130,7 @@ export const dojahVerification = async (reference: string) => {
         image: data.entity.data.id.data.id_url,
         expiryDate: expiry_date,
         country: nationalityCode[nationality as keyof typeof nationalityCode] || nationality,
+        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
@@ -162,6 +167,7 @@ export const dojahVerification = async (reference: string) => {
         image: data.entity.data.id.data.id_url,
         country: nationalityCode[nationality as keyof typeof nationalityCode],
         expiryDate: expiry_date,
+        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }

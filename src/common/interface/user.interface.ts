@@ -42,6 +42,7 @@ export interface IKycDetailSchema {
   dateOfBirth: string;
   phoneNumber: string;
   image: string;
+  selfie?: string;
   country?: string;
   expirationDate?: string;
 }
