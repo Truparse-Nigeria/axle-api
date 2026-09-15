@@ -110,14 +110,6 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const { identifier, type, details } = response.data.userDetails;
 
-  // Load previously approved KYC details (select:false on the schema) so we can
-  // ensure the new document belongs to the same person.
-  const existingKyc = await User.findById(user._id).select(
-    "+kyc.bvn.details +kyc.nin.details +kyc.passport.details +kyc.driversLicense.details",
-  );
-
-  assertKycIdentityConsistency(existingKyc?.kyc, type as KycEnum, details);
-
   const kycFieldMap: Record<KycEnum, string> = {
     [KycEnum.BVN]: "kyc.bvn",
     [KycEnum.DRIVERS_LICENSE]: "kyc.driversLicense",
@@ -125,7 +117,35 @@ export const verifyKyc = catchAsync(async (req, res) => {
     [KycEnum.NIN]: "kyc.nin",
   };
 
-  const fieldToUpdate = kycFieldMap[type as KycEnum];
+  const kycType = type as KycEnum;
+  const fieldToUpdate = kycFieldMap[kycType];
+
+  if (!fieldToUpdate) {
+    throw new AppError("Unsupported KYC verification type", 400);
+  }
+
+  // KYC identifiers are deterministically encrypted by the provider adapter,
+  // so equal identifiers have equal stored values and can be compared safely.
+  // Exclude the current user so this check also works for legacy/incomplete KYC
+  // records belonging to the same account.
+  const identifierAlreadyUsed = await User.exists({
+    [`${fieldToUpdate}.identifier`]: identifier,
+  });
+
+  if (identifierAlreadyUsed) {
+    throw new AppError(
+      `This ${kycType} has already been used by another account`,
+      409,
+    );
+  }
+
+  // Load previously approved KYC details (select:false on the schema) so we can
+  // ensure the new document belongs to the same person.
+  const existingKyc = await User.findById(user._id).select(
+    "+kyc.bvn.details +kyc.nin.details +kyc.passport.details +kyc.driversLicense.details",
+  );
+
+  assertKycIdentityConsistency(existingKyc?.kyc, type as KycEnum, details);
 
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id, [`${fieldToUpdate}.completed`]: { $ne: true } },
