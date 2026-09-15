@@ -35,16 +35,18 @@ export const generateKycKey = catchAsync(async (req, res) => {
   }
 
   if (user?.kyc?.[type as KycEnum]?.completed) {
-    throw new AppError("KYC already completed");  
+    throw new AppError("KYC already completed");
   }
 
   const generatedKey = generateRandomString(32, "KYC_");
 
-  await setCache(`kyc_key_${user._id}`, generatedKey, 60 * 60 * 24); // Cache for 24 hours
+  const reference = `${generatedKey}_${user._id}`;
+
+  await setCache(`kyc_key_${user._id}`, reference, 60 * 60 * 24); // Cache for 24 hours
 
   return sendResponse(res, 200, "KYC key generated successfully", {
-    reference: `${generatedKey}_${user._id}`,
+    reference,
     widget: widget(type as KycEnum),
-    email: "info@useaxle.co"
+    email: "info@useaxle.co",
   });
 });
