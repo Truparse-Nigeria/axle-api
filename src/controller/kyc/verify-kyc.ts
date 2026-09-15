@@ -2,6 +2,7 @@ import {
   AppError,
   decryptData,
   deleteFields,
+  encryptData,
   getCache,
   KycEnum,
   SelfieStatusEnum,
@@ -137,9 +138,11 @@ export const verifyKyc = catchAsync(async (req, res) => {
             completed: true,
             status: SelfieStatusEnum.APPROVED,
             details: {
-              file:
+              file: encryptData(
                 response.data.selfie ||
-                response.data.userDetails?.details?.selfie,
+                  response.data.userDetails?.details?.selfie ||
+                  "",
+              ),
             },
           },
         }),
