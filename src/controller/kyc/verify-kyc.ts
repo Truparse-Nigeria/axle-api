@@ -97,14 +97,13 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const cachedRef = await getCache(`kyc_key_${user._id}`);
 
-  console.log(cachedRef, reference);
-
-
   if (!cachedRef || cachedRef !== reference) {
     throw new AppError("Invalid KYC reference", 400);
   }
 
   const response = await dojahVerification(reference);
+
+  console.log(response);
 
   if (!response.data || response.error) {
     throw new AppError("KYC Verification failed. Try again");
