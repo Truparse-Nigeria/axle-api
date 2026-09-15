@@ -103,8 +103,6 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const response = await dojahVerification(reference);
 
-  console.log(response);
-
   if (!response.data || response.error) {
     throw new AppError("KYC Verification failed. Try again");
   }

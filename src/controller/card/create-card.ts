@@ -44,8 +44,6 @@ export const createCard = catchAsync(async (req, res) => {
     variant,
   );
 
-  console.log("checkService", checkService);
-
   if (!checkService) throw new AppError("Service not available");
 
   // Performs all calculations and conversions

@@ -53,7 +53,6 @@ export function encryptData(data: string) {
 
     return encrypted;
   } catch (error) {
-    console.error("Encryption error:", error);
     throw new Error(`Failed to encrypt data: ${data}`);
   }
 }
