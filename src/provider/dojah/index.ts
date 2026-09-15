@@ -70,6 +70,8 @@ export const dojahVerification = async (reference: string) => {
     };
   }
 
+ console.log(JSON.stringify(data.entity, null, 2));
+
   if (data.entity.verification_type === "NIN") {
     const {
       first_name,
