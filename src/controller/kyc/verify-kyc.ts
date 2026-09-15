@@ -97,6 +97,9 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const cachedRef = await getCache(`kyc_key_${user._id}`);
 
+  console.log(cachedRef, reference);
+
+
   if (!cachedRef || cachedRef !== reference) {
     throw new AppError("Invalid KYC reference", 400);
   }
