@@ -131,11 +131,16 @@ export const verifyKyc = catchAsync(async (req, res) => {
     {
       $set: {
         [fieldToUpdate]: { completed: true, identifier, details },
-        ...(response.data.selfie && {
+        ...((response.data.selfie ||
+          response.data.userDetails?.details?.selfie) && {
           "kyc.selfie": {
             completed: true,
             status: SelfieStatusEnum.APPROVED,
-            details: { file: response.data.selfie },
+            details: {
+              file:
+                response.data.selfie ||
+                response.data.userDetails?.details?.selfie,
+            },
           },
         }),
       },
