@@ -30,7 +30,7 @@ export const dojahVerification = async (reference: string) => {
       params: {
         reference_id: reference,
       },
-    }
+    },
   );
 
   if (error || !data) return { error };
@@ -51,7 +51,6 @@ export const dojahVerification = async (reference: string) => {
       phone_number2,
       phone_number,
       image_url,
-      
     } = data.entity.data.government_data.data.bvn.entity;
 
     userDetails = {
@@ -65,12 +64,14 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: phone_number1 || phone_number2 || phone_number,
         image: image_url,
         country: "NG",
-        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
+        selfie:
+          data?.entity?.selfie_url ??
+          data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
 
- console.log(JSON.stringify(data.entity, null, 2));
+  console.log(JSON.stringify(data.entity, null, 2));
 
   if (data.entity.verification_type === "NIN") {
     const {
@@ -95,7 +96,9 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: phone_number1 || phone_number2 || phone_number,
         image: image_url,
         country: "NG",
-        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
+        selfie:
+          data?.entity?.selfie_url ??
+          data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
@@ -131,8 +134,12 @@ export const dojahVerification = async (reference: string) => {
         phoneNumber: "",
         image: data.entity.data.id.data.id_url,
         expiryDate: expiry_date,
-        country: nationalityCode[nationality as keyof typeof nationalityCode] || nationality,
-        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
+        country:
+          nationalityCode[nationality as keyof typeof nationalityCode] ||
+          nationality,
+        selfie:
+          data?.entity?.selfie_url ??
+          data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
@@ -169,10 +176,18 @@ export const dojahVerification = async (reference: string) => {
         image: data.entity.data.id.data.id_url,
         country: nationalityCode[nationality as keyof typeof nationalityCode],
         expiryDate: expiry_date,
-        selfie: data?.entity?.selfie_url ?? data.entity?.data?.selfie?.data?.selfie_url,
+        selfie:
+          data?.entity?.selfie_url ??
+          data.entity?.data?.selfie?.data?.selfie_url,
       },
     };
   }
 
-  return { data: { userDetails, selfie: data.entity.selfie_url } };
+  return {
+    data: {
+      userDetails,
+      selfie: data.entity.selfie_url,
+      meta: data.entity.verification_status,
+    },
+  };
 };

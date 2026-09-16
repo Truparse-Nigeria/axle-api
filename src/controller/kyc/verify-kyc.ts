@@ -112,8 +112,6 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const response = await dojahVerification(reference);
 
-  console.log(response)
-
   if (!response.data || response.error) {
     throw new AppError("KYC Verification failed. Try again");
   }
@@ -130,6 +128,8 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const kycType = type as KycEnum;
   const fieldToUpdate = kycFieldMap[kycType];
+
+  console.log(kycType, fieldToUpdate)
 
   if (!fieldToUpdate) {
     throw new AppError("Unsupported KYC verification type", 400);
