@@ -66,7 +66,7 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     const { data, error } = await vitalSwapCreatePayingAccount({
       wallet_id: user.identifier.vitalswap.wallets[currency],
       product_id: product.product_id,
-      bvn: user.kyc.bvn.identifier,
+      bvn: user?.kyc?.bvn?.identifier,
     });
 
     if (error || !data) {

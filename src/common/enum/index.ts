@@ -74,13 +74,6 @@ export enum StatusEnum {
   REVERSAL = "REVERSAL",
 }
 
-export enum KycStatusEnum {
-  PENDING = "PENDING",
-  PROCESSING = "PROCESSING",
-  SUCCESS = "SUCCESS",
-  FAILED = "FAILED",
-}
-
 export enum PurposeEnum {
   POWER = "POWER",
   AIRTIME = "AIRTIME",
@@ -148,4 +141,11 @@ export enum WalletStatusEnum {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
   GENERATED = 'GENERATED',
+}
+
+export enum SelfieStatusEnum {
+  NOT_SUBMITTED = "NOT_SUBMITTED",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
 }

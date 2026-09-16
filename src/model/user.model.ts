@@ -4,7 +4,7 @@ import {
   deleteFields,
   FiatCurrencyEnum,
   GenderEnum,
-  KycStatusEnum,
+  SelfieStatusEnum,
   SENSITIVE_USER_FIELDS,
   StatusEnum,
   WalletStatusEnum,
@@ -138,29 +138,16 @@ const KycDetailSchema = new Schema(
     country: {
       type: String,
     },
-    expirationDate: { type: String },
+    idUrl: { type: String },
   },
   { _id: false },
 );
 
 const KycTypeSchema = new Schema(
   {
-    completed: {
-      type: String,
-      enum: Object.values(KycStatusEnum),
-      default: KycStatusEnum.PENDING,
-    },
-    reason: String,
-    identifier: {
-      type: String,
-      trim: true,
-      select: false,
-      index: true,
-    },
-    details: {
-      type: KycDetailSchema,
-      select: false,
-    },
+    completed: { type: Boolean, default: false },
+    identifier: { type: String, trim: true, select: false, index: true },
+    details: { type: KycDetailSchema, select: false },
   },
   { _id: false },
 );
@@ -197,12 +184,7 @@ const AddressDetailsSchema = new Schema(
 
 const AddressSchema = new Schema(
   {
-    completed: {
-      type: String,
-      enum: Object.values(KycStatusEnum),
-      default: KycStatusEnum.PENDING,
-    },
-    reason: String,
+    completed: { type: Boolean, default: false },
     details: AddressDetailsSchema,
   },
   { _id: false },
@@ -210,17 +192,13 @@ const AddressSchema = new Schema(
 
 const SelfieSchema = new Schema(
   {
-    completed: {
+    completed: { type: Boolean, default: false },
+    status: {
       type: String,
-      enum: Object.values(KycStatusEnum),
-      default: KycStatusEnum.PENDING,
+      enum: Object.values(SelfieStatusEnum),
+      default: SelfieStatusEnum.NOT_SUBMITTED,
     },
-    reason: String,
-    details: {
-      file: {
-        type: String,
-      },
-    },
+    details: { file: String },
   },
   { _id: false },
 );
@@ -229,7 +207,6 @@ const KycSchema = new Schema(
   {
     bvn: KycTypeSchema,
     passport: KycTypeSchema,
-    driversLicense: KycTypeSchema,
     nin: KycTypeSchema,
     address: AddressSchema,
     selfie: SelfieSchema,

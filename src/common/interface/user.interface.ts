@@ -2,7 +2,6 @@ import type {
   CryptoCurrencyEnum,
   FiatCurrencyEnum,
   GenderEnum,
-  KycStatusEnum,
   SelfieStatusEnum,
   WalletStatusEnum,
 } from "../enum";
@@ -42,32 +41,16 @@ export interface IKycDetailSchema {
   middleName?: string;
   dateOfBirth: string;
   phoneNumber: string;
-  image: string;
-  selfie?: string;
+  image?: string;
+  idUrl?: string;
   country?: string;
   expirationDate?: string;
 }
 
 export interface IKycTypeSchema {
-  completed: KycStatusEnum;
-  reason?: string;
+  completed?: boolean;
   identifier?: string;
-  details: IKycDetailSchema;
-}
-
-export interface IKycSchema {
-  bvn: IKycTypeSchema;
-  nin: IKycTypeSchema;
-  passport: IKycTypeSchema;
-  driversLicense: IKycTypeSchema;
-  address: IKycAddressSchema;
-  selfie: ISelfieSchema;
-}
-
-export interface IKycAddressSchema {
-  completed: KycStatusEnum;
-  reason?: string;
-  details: IKycDetailAddressSchema;
+  details?: IKycDetailSchema;
 }
 
 export interface IKycDetailAddressSchema {
@@ -79,13 +62,23 @@ export interface IKycDetailAddressSchema {
   postalCode: string;
 }
 
+export interface IKycAddressSchema {
+  completed?: boolean;
+  details?: IKycDetailAddressSchema;
+}
+
 export interface ISelfieSchema {
-  completed: KycStatusEnum;
-  reason?: string;
-  status: SelfieStatusEnum;
-  details: {
-    file: string;
-  };
+  completed?: boolean;
+  status?: SelfieStatusEnum;
+  details?: { file: string };
+}
+
+export interface IKycSchema {
+  bvn: IKycTypeSchema;
+  nin: IKycTypeSchema;
+  passport: IKycTypeSchema;
+  address?: IKycAddressSchema;
+  selfie?: ISelfieSchema;
 }
 
 export interface IUser {

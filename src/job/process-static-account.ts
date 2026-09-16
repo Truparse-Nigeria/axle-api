@@ -2,6 +2,7 @@ import {
   ENVIRONMENT,
   FiatCurrencyEnum,
   generateRequestID,
+  safeDecryptData,
   KycEnum,
   VendorEnum,
   WalletStatusEnum,
@@ -30,7 +31,7 @@ export const processStaticAccount = async (
   const externalReference = generateRequestID();
 
   const response = await safehavenSubAccount({
-    phoneNumber: kyc?.bvn?.details?.phoneNumber || phone,
+    phoneNumber: safeDecryptData(kyc?.bvn?.details?.phoneNumber || "") || phone,
     externalReference,
     emailAddress: email,
     autoSweep: true,

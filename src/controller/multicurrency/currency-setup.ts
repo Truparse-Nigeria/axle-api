@@ -39,21 +39,21 @@ export const CurrencySetup = catchAsync(async (req, res) => {
     );
   }
 
+  const user = req.user;
+  if (!user) throw new AppError("User not found");
+
   //Check for KYC
-  if (!req.user?.kyc?.address?.completed) {
+  if (!user?.kyc?.address?.completed) {
     throw new AppError(
       "You need to complete your address KYC before creating a wallet",
     );
   }
 
-  if (!req.user?.kyc?.nin?.completed || !req.user?.kyc?.passport?.completed) {
+  if (!user?.kyc?.nin?.completed && !user?.kyc?.passport?.completed) {
     throw new AppError(
       "You need to complete your NIN or Passport KYC before creating a wallet",
     );
   }
-
-  const user = req.user;
-  if (!user) throw new AppError("User not found");
 
   if (user.wallet.fiat[currency].accounts.length > 0) {
     throw new AppError("Currency already setup");
@@ -77,7 +77,14 @@ export const CurrencySetup = catchAsync(async (req, res) => {
       });
     }
 
-    // TODO: complete the vitalswap details
+
+    const identity = user.kyc.nin?.completed
+      ? user.kyc.nin
+      : user.kyc.passport;
+    const address = user.kyc.address?.details;
+    if (!identity?.identifier || !identity.details || !address) {
+      throw new AppError("Complete identity and address KYC first", 400);
+    }
     const { data, error } = await vitalSwapCreateCustomer({
       first_name: user.firstName,
       last_name: user.lastName,
@@ -86,28 +93,23 @@ export const CurrencySetup = catchAsync(async (req, res) => {
       password: "password",
       accept_terms: true,
       identity: {
-        bvn: user?.kyc?.bvn?.identifier ?? undefined,
-        nationality:
-          user?.kyc?.bvn?.identifier || user?.kyc?.nin?.identifier
-            ? "Nigerian"
-            : user?.kyc?.passport?.details?.country || "",
-        id_number: user?.kyc?.nin?.identifier ? "NIN" : "Passport",
-        id_type: user?.kyc?.nin?.identifier
-          ? decryptData(user?.kyc?.nin?.identifier)
-          : decryptData(user?.kyc?.passport?.identifier!),
-        date_of_birth: user?.kyc?.nin?.details?.dateOfBirth
-          ? decryptData(user?.kyc?.nin?.details?.dateOfBirth)
-          : decryptData(user?.kyc?.passport?.details?.dateOfBirth),
-        id_image_url: "https://example.com/id.jpg",
-        selfie_image_url: "https://example.com/id.jpg",
-        state_of_residence: "Lagos",
-        city: "string",
-        country: "string",
-        country_iso: "string",
-        lga_of_residence: "string",
-        postal_code: "string",
-        address: "string",
-        address_number: "string",
+        bvn: user.kyc.bvn?.identifier
+          ? decryptData(user.kyc.bvn.identifier)
+          : undefined,
+        nationality: user.kyc.nin?.completed ? "Nigerian" : identity?.details?.country || "",
+        id_number: decryptData(identity.identifier),
+        id_type: user.kyc.nin?.completed ? "NIN" : "Passport",
+        date_of_birth: decryptData(identity.details.dateOfBirth),
+        id_image_url: identity.details.image || "",
+        selfie_image_url: user.kyc.selfie?.details?.file || "",
+        state_of_residence: address.state,
+        city: address.city,
+        country: address.country,
+        country_iso: user.kyc.nin?.completed ? "NG" : address.country,
+        lga_of_residence: address.city,
+        postal_code: address.postalCode,
+        address: decryptData(address.line1),
+        address_number: decryptData(address.line1),
       },
     });
 

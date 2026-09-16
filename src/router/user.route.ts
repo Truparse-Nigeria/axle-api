@@ -5,7 +5,11 @@ import {
   createCard,
   freezeCard,
   fundCard,
-  generateKycKey,
+  getStateAndCity,
+  lookupIdentity,
+  uploadSelfie,
+  verifyIdentity,
+  verifyAddress,
   getSettings,
   getTransactions,
   getUserCard,
@@ -28,7 +32,6 @@ import {
   terminateCard,
   validateMeterNumber,
   validateSmartcardNumber,
-  verifyKyc,
   withdrawCard,
 } from "@/controller";
 import { createPin, currentUser } from "@/controller/user";
@@ -87,8 +90,11 @@ router.get("/esim/packages/:countryId/:packageType", retrieveEsimPackages);
 router.post("/esim/purchase", purchaseEsim);
 
 // KYC
-router.get("/kyc/key", generateKycKey);
-router.get("/kyc/verify", verifyKyc);
+router.get("/kyc", lookupIdentity);
+router.post("/kyc", verifyIdentity);
+router.post("/kyc/address", verifyAddress);
+router.get("/kyc/state-and-city", getStateAndCity);
+router.post("/kyc/selfie", uploadSelfie);
 
 // Transactions
 router.post("/transactions", getTransactions(access));

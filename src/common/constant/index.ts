@@ -64,7 +64,7 @@ export const SENSITIVE_TRANSACTION_FIELDS =
 
 // Single source of truth for user fields that must never reach an API response.
 export const SENSITIVE_USER_FIELDS =
-  "+passcode +pin +jti +referredBy +messageToken +isDeleted +__v +kyc.bvn.details +kyc.bvn.identifier +kyc.driversLicense.details +kyc.driversLicense.identifier +kyc.passport.details +kyc.passport.identifier";
+  "+passcode +pin +jti +referredBy +messageToken +isDeleted +__v +kyc.bvn.details +kyc.bvn.identifier +kyc.nin.details +kyc.nin.identifier +kyc.passport.details +kyc.passport.identifier";
 
 export interface IApiResponse<T = null> {
   data?: T;
@@ -78,3 +78,5 @@ export const MULTICURRENCY_FIATS = [
   FiatCurrencyEnum.GBP,
   FiatCurrencyEnum.EUR,
 ] as const;
+
+export * from "./state-city";

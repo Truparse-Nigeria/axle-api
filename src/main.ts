@@ -5,9 +5,10 @@ import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import { migrateKycStatus } from "./common/utils/migrate-kyc-status";
 import { errorHandler } from "./middleware";
 import { mainWorker, registerRepeatableJobs } from "./queue";
-import { hookRouter, otpRouter, userRouter } from "./router";
+import { hookRouter, otpRouter, uploadRouter, userRouter } from "./router";
 
 let ALLOWED_ORIGINS = [] as string[] | boolean;
 
@@ -63,6 +64,7 @@ app.use(
 const PORT = ENVIRONMENT.APP.PORT;
 const APP_NAME = ENVIRONMENT.APP.NAME;
 await connectDb();
+await migrateKycStatus();
 
 const server = app.listen(PORT, async () => {
   logger.info(`Server running on port ${PORT}`);
@@ -85,6 +87,7 @@ app.use("/api/v1/health-check", (req, res) => {
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/otp", otpRouter);
 app.use("/api/v1/hook", hookRouter);
+app.use("/api/v1/upload", uploadRouter);
 
 app.all("/*splat", (req, res) => {
   logger.error(

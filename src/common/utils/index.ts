@@ -12,3 +12,5 @@ export * from "./reloadly-product-formatter";
 export * from "./encryption";
 export * from "./super-query";
 export * from "./nationality";
+export * from "./kyc";
+export * from "./s3-client-upload";
