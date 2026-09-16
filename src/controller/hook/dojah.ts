@@ -41,10 +41,6 @@ export const dojahHook = catchAsync(async (req, res) => {
       throw new AppError("Invalid KYC type");
   }
 
-  if (type && user.kyc?.[type as keyof typeof user.kyc]?.completed === KycStatusEnum.SUCCESS) {
-    throw new AppError("KYC already completed");
-  }
-
   await validateWithDojah({
     reference: payload.reference_id,
     user,
