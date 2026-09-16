@@ -5,7 +5,6 @@ import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import { migrateKycStatus } from "./common/utils/migrate-kyc-status";
 import { errorHandler } from "./middleware";
 import { mainWorker, registerRepeatableJobs } from "./queue";
 import { hookRouter, otpRouter, uploadRouter, userRouter } from "./router";
@@ -64,7 +63,6 @@ app.use(
 const PORT = ENVIRONMENT.APP.PORT;
 const APP_NAME = ENVIRONMENT.APP.NAME;
 await connectDb();
-await migrateKycStatus();
 
 const server = app.listen(PORT, async () => {
   logger.info(`Server running on port ${PORT}`);
