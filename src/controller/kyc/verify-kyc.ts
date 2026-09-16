@@ -118,8 +118,6 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const { identifier, type, details } = response.data.userDetails;
 
-  console.log(response.data.userDetails)
-
   const kycFieldMap: Record<KycEnum, string> = {
     [KycEnum.BVN]: "kyc.bvn",
     [KycEnum.DRIVERS_LICENSE]: "kyc.driversLicense",
@@ -131,7 +129,7 @@ export const verifyKyc = catchAsync(async (req, res) => {
   const kycType = type as KycEnum;
   const fieldToUpdate = kycFieldMap[kycType];
 
-  console.log(kycType, fieldToUpdate)
+  console.log(response.data.status)
 
   if (!fieldToUpdate) {
     throw new AppError("Unsupported KYC verification type", 400);

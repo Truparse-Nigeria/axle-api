@@ -54,8 +54,6 @@ export const dojahVerification = async (reference: string) => {
     details: {} as IKYCDetails,
   };
 
-  console.log(JSON.stringify(data.entity, null, 2));
-
   if (data.entity.verification_type.toUpperCase() === "BVN") {
     const {
       first_name,
