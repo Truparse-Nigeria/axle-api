@@ -47,8 +47,6 @@ export const dojahVerification = async (reference: string) => {
     },
   );
 
-  console.log(error, data);
-
   if (error || !data) return { error };
 
   if (data.entity?.verification_status === "ongoing") {
