@@ -146,7 +146,8 @@ const KycDetailSchema = new Schema(
 const KycTypeSchema = new Schema(
   {
     completed: {
-      type: Object.values(KycStatusEnum),
+      type: String,
+      enum: Object.values(KycStatusEnum),
       default: KycStatusEnum.PENDING,
     },
     reason: String,
@@ -197,7 +198,8 @@ const AddressDetailsSchema = new Schema(
 const AddressSchema = new Schema(
   {
     completed: {
-      type: Object.values(KycStatusEnum),
+      type: String,
+      enum: Object.values(KycStatusEnum),
       default: KycStatusEnum.PENDING,
     },
     reason: String,
@@ -209,7 +211,8 @@ const AddressSchema = new Schema(
 const SelfieSchema = new Schema(
   {
     completed: {
-      type: Object.values(KycStatusEnum),
+      type: String,
+      enum: Object.values(KycStatusEnum),
       default: KycStatusEnum.PENDING,
     },
     reason: String,
