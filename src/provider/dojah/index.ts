@@ -51,6 +51,10 @@ export const dojahVerification = async (reference: string) => {
 
   if (error || !data) return { error };
 
+  if (data.entity?.verification_status === "ongoing") {
+    throw new AppError("KYC process was abandoned", 400);
+  }
+
   let userDetails = {
     identifier: encryptData(data.entity.verification_value),
     type: "",
