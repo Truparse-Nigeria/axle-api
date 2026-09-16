@@ -13,8 +13,6 @@ export const dojahHook = catchAsync(async (req, res) => {
   console.log("dojah hook", req.body);
   const payload = sanitizeFilter(req.body) as IDojahVerificationRes;
 
-  console.log(req.headers);
-
   const userId = payload.reference_id.split("_")[0];
 
   const user = await User.findById(userId).schemaLevelProjections(false);
@@ -47,6 +45,7 @@ export const dojahHook = catchAsync(async (req, res) => {
   });
 
   if (payload.verification_type.toLowerCase() !== "ongoing") {
+    console.log("send email, for kyc completed");
     createJob({
       type: "SEND_EMAIL",
       priority: 1,
