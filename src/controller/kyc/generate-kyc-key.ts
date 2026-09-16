@@ -51,6 +51,6 @@ export const generateKycKey = catchAsync(async (req, res) => {
   return sendResponse(res, 200, "KYC key generated successfully", {
     reference,
     widget: widget(type as KycEnum),
-    email: "info@useaxle.co",
+    email: user.email,
   });
 });
