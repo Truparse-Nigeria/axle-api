@@ -6,7 +6,7 @@ import {
   KycEnum,
   KycStatusEnum,
   type IKycDetailSchema,
-  type IUser
+  type IUser,
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { User, type IUserDocument } from "@/model";
@@ -190,7 +190,11 @@ export const verifyKyc = catchAsync(async (req, res) => {
   }
 
   // Provision a permanent NGN bank account once BVN is verified
-  if (updatedUser?.kyc?.bvn?.completed && type === KycEnum.BVN) {
+  if (
+    updatedUser?.kyc?.bvn?.completed &&
+    type === KycEnum.BVN &&
+    response.data?.status === KycStatusEnum.SUCCESS
+  ) {
     createJob({
       type: "PROCESS_STATIC_ACCOUNT",
       identifier: decryptData(identifier),
