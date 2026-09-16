@@ -88,10 +88,6 @@ export const ENVIRONMENT = {
     URL: Bun.env.DOJAH_URL,
     APP_ID: Bun.env.DOJAH_APP_ID,
     SECRET_KEY: Bun.env.DOJAH_SECRET_KEY,
-    BVN: Bun.env.DOJAH_BVN,
-    PASSPORT: Bun.env.DOJAH_PASSPORT,
-    NIN: Bun.env.DOJAH_NIN,
-    ADDRESS: Bun.env.DOJAH_ADDRESS,
   },
   DIGITAL_OCEAN: {
     SPACES_KEYID: Bun.env.DOS_SPACES_KEYID,
