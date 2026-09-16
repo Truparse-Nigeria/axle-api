@@ -74,6 +74,13 @@ export enum StatusEnum {
   REVERSAL = "REVERSAL",
 }
 
+export enum KycStatusEnum {
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+}
+
 export enum PurposeEnum {
   POWER = "POWER",
   AIRTIME = "AIRTIME",

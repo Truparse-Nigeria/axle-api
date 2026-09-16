@@ -2,6 +2,7 @@ import type {
   CryptoCurrencyEnum,
   FiatCurrencyEnum,
   GenderEnum,
+  KycStatusEnum,
   SelfieStatusEnum,
   WalletStatusEnum,
 } from "../enum";
@@ -48,7 +49,8 @@ export interface IKycDetailSchema {
 }
 
 export interface IKycTypeSchema {
-  completed?: boolean;
+  completed: KycStatusEnum;
+  reason?: string;
   identifier?: string;
   details: IKycDetailSchema;
 }
@@ -63,7 +65,8 @@ export interface IKycSchema {
 }
 
 export interface IKycAddressSchema {
-  completed?: boolean;
+  completed: KycStatusEnum;
+  reason?: string;
   details: IKycDetailAddressSchema;
 }
 
@@ -77,7 +80,8 @@ export interface IKycDetailAddressSchema {
 }
 
 export interface ISelfieSchema {
-  completed: boolean;
+  completed: KycStatusEnum;
+  reason?: string;
   status: SelfieStatusEnum;
   details: {
     file: string;

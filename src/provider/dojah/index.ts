@@ -5,6 +5,7 @@ import {
   IS_DEVELOPMENT,
   KycEnum,
   nationalityCode,
+  StatusEnum,
   type IDojahVerificationRes,
 } from "@/common";
 import { callDojah } from "./connect.dojah";
@@ -20,6 +21,17 @@ export interface IKYCDetails {
   country?: string;
   selfie?: string;
   expiryDate?: string;
+}
+
+const statusTransformer = (stat: string) => {
+  switch (stat) {
+    case "Success":
+      return StatusEnum.SUCCESS;
+    case "Failed":
+      return StatusEnum.FAILED;
+    default:
+      return StatusEnum.PROCESSING;
+  }
 }
 
 export const dojahVerification = async (reference: string) => {
@@ -38,10 +50,13 @@ export const dojahVerification = async (reference: string) => {
   let userDetails = {
     identifier: encryptData(data.entity.verification_value),
     type: "",
+    status: StatusEnum,
     details: {} as IKYCDetails,
   };
 
-  if (data.entity.verification_type === "BVN") {
+  console.log(JSON.stringify(data.entity, null, 2));
+
+  if (data.entity.verification_type.toUpperCase() === "BVN") {
     const {
       first_name,
       last_name,
@@ -71,9 +86,7 @@ export const dojahVerification = async (reference: string) => {
     };
   }
 
-  console.log(JSON.stringify(data.entity, null, 2));
-
-  if (data.entity.verification_type === "NIN") {
+  if (data.entity.verification_type.toUpperCase() === "NIN") {
     const {
       first_name,
       last_name,
@@ -103,7 +116,7 @@ export const dojahVerification = async (reference: string) => {
     };
   }
 
-  if (data.entity.verification_type === "DL_ID") {
+  if (data.entity.verification_type.toUpperCase() === "DL_ID") {
     const {
       first_name,
       last_name,
@@ -144,7 +157,7 @@ export const dojahVerification = async (reference: string) => {
     };
   }
 
-  if (data.entity.verification_type === "PASSPORT_ID") {
+  if (data.entity.verification_type.toUpperCase() === "PASSPORT_ID") {
     const {
       first_name,
       last_name,
@@ -187,7 +200,7 @@ export const dojahVerification = async (reference: string) => {
     data: {
       userDetails,
       selfie: data.entity.selfie_url,
-      meta: data.entity.verification_status,
+      status: statusTransformer(data.entity?.verification_status),
     },
   };
 };

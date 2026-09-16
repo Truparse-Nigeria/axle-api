@@ -4,8 +4,10 @@ import {
   deleteFields,
   FiatCurrencyEnum,
   GenderEnum,
+  KycStatusEnum,
   SelfieStatusEnum,
   SENSITIVE_USER_FIELDS,
+  StatusEnum,
   WalletStatusEnum,
   type IUser,
 } from "../common";
@@ -145,9 +147,10 @@ const KycDetailSchema = new Schema(
 const KycTypeSchema = new Schema(
   {
     completed: {
-      type: Boolean,
-      default: false,
+      type: Object.values(KycStatusEnum),
+      default: KycStatusEnum.PENDING,
     },
+    reason: String,
     identifier: {
       type: String,
       trim: true,
@@ -195,9 +198,10 @@ const AddressDetailsSchema = new Schema(
 const AddressSchema = new Schema(
   {
     completed: {
-      type: Boolean,
-      default: false,
+      type: Object.values(KycStatusEnum),
+      default: KycStatusEnum.PENDING,
     },
+    reason: String,
     details: AddressDetailsSchema,
   },
   { _id: false },
@@ -206,9 +210,10 @@ const AddressSchema = new Schema(
 const SelfieSchema = new Schema(
   {
     completed: {
-      type: Boolean,
-      default: false,
+      type: Object.values(KycStatusEnum),
+      default: KycStatusEnum.PENDING,
     },
+    reason: String,
     status: {
       type: String,
       enum: Object.values(SelfieStatusEnum),
