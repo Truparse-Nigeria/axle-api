@@ -5,7 +5,6 @@ import {
   FiatCurrencyEnum,
   GenderEnum,
   KycStatusEnum,
-  SelfieStatusEnum,
   SENSITIVE_USER_FIELDS,
   StatusEnum,
   WalletStatusEnum,
@@ -214,11 +213,6 @@ const SelfieSchema = new Schema(
       default: KycStatusEnum.PENDING,
     },
     reason: String,
-    status: {
-      type: String,
-      enum: Object.values(SelfieStatusEnum),
-      default: SelfieStatusEnum.NOT_SUBMITTED,
-    },
     details: {
       file: {
         type: String,

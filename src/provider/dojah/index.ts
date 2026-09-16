@@ -4,8 +4,10 @@ import {
   HttpMethod,
   IS_DEVELOPMENT,
   KycEnum,
+  KycStatusEnum,
   nationalityCode,
   StatusEnum,
+  toSentenceCase,
   type IDojahVerificationRes,
 } from "@/common";
 import { callDojah } from "./connect.dojah";
@@ -26,11 +28,11 @@ export interface IKYCDetails {
 const statusTransformer = (stat: string) => {
   switch (stat) {
     case "Success":
-      return StatusEnum.SUCCESS;
+      return KycStatusEnum.SUCCESS;
     case "Failed":
-      return StatusEnum.FAILED;
+      return KycStatusEnum.FAILED;
     default:
-      return StatusEnum.PROCESSING;
+      return KycStatusEnum.PROCESSING;
   }
 }
 
@@ -199,6 +201,7 @@ export const dojahVerification = async (reference: string) => {
       userDetails,
       selfie: data.entity.selfie_url,
       status: statusTransformer(data.entity?.verification_status),
+      reason: toSentenceCase(data.entity.message),
     },
   };
 };

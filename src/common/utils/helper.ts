@@ -468,3 +468,12 @@ export const cardWithdrawalProperties = (
     baseAmount,
   };
 };
+
+export const toSentenceCase = (str: string) => {
+  if (!str) return "";
+
+  return str
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/^\w/, (char) => char.toUpperCase());
+};

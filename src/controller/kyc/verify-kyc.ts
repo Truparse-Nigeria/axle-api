@@ -1,14 +1,12 @@
 import {
   AppError,
   decryptData,
-  deleteFields,
   encryptData,
   getCache,
   KycEnum,
-  SelfieStatusEnum,
-  SENSITIVE_USER_FIELDS,
+  KycStatusEnum,
   type IKycDetailSchema,
-  type IUser,
+  type IUser
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { User, type IUserDocument } from "@/model";
@@ -118,6 +116,10 @@ export const verifyKyc = catchAsync(async (req, res) => {
 
   const { identifier, type, details } = response.data.userDetails;
 
+  if (user?.kyc?.[type as KycEnum]?.completed === KycStatusEnum.SUCCESS) {
+    throw new AppError("KYC already completed");
+  }
+
   const kycFieldMap: Record<KycEnum, string> = {
     [KycEnum.BVN]: "kyc.bvn",
     [KycEnum.DRIVERS_LICENSE]: "kyc.driversLicense",
@@ -129,16 +131,10 @@ export const verifyKyc = catchAsync(async (req, res) => {
   const kycType = type as KycEnum;
   const fieldToUpdate = kycFieldMap[kycType];
 
-  console.log(response.data.status)
-
   if (!fieldToUpdate) {
     throw new AppError("Unsupported KYC verification type", 400);
   }
 
-  // KYC identifiers are deterministically encrypted by the provider adapter,
-  // so equal identifiers have equal stored values and can be compared safely.
-  // Exclude the current user so this check also works for legacy/incomplete KYC
-  // records belonging to the same account.
   const identifierAlreadyUsed = await User.exists({
     _id: { $ne: user._id },
     [`${fieldToUpdate}.identifier`]: identifier,
@@ -151,8 +147,6 @@ export const verifyKyc = catchAsync(async (req, res) => {
     );
   }
 
-  // Load previously approved KYC details (select:false on the schema) so we can
-  // ensure the new document belongs to the same person.
   const existingKyc = await User.findById(user._id).select(
     "+kyc.bvn.details +kyc.nin.details +kyc.passport.details +kyc.driversLicense.details",
   );
@@ -164,12 +158,17 @@ export const verifyKyc = catchAsync(async (req, res) => {
     { _id: user._id, [`${fieldToUpdate}.completed`]: { $ne: true } },
     {
       $set: {
-        [fieldToUpdate]: { completed: true, identifier, details },
+        [fieldToUpdate]: {
+          completed: response.data?.status,
+          reason: response.data?.reason,
+          identifier,
+          details,
+        },
         ...((response.data.selfie ||
           response.data.userDetails?.details?.selfie) && {
           "kyc.selfie": {
-            completed: true,
-            status: SelfieStatusEnum.APPROVED,
+            completed: response.data?.status,
+            reason: response.data?.reason,
             details: {
               file: encryptData(
                 response.data.selfie ||

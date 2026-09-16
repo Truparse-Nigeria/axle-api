@@ -144,14 +144,6 @@ export enum KycEnum {
   ADDRESS = "address",
 }
 
-
-export enum SelfieStatusEnum {
-  NOT_SUBMITTED = 'NOT_SUBMITTED',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
-
 export enum WalletStatusEnum {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
