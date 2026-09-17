@@ -7,6 +7,8 @@ export const createJob = async <T extends TJobData>(job: T) => {
       delay: job.delay,
       priority: job.priority,
       jobId: job.jobId,
+      attempts: job.attempts,
+      backoff: job.attempts ? { type: "exponential", delay: 60_000 } : undefined,
     })
     .catch((err) => {
       //TODO: Add monitor in the future

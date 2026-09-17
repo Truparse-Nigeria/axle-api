@@ -4,17 +4,20 @@ import type {
   IVitalSwapIdentifer,
 } from "@/job";
 import type { ISendMail } from "../interface";
+import type { IUploadImageToDigitalOceanJob } from "../interface";
 import { FiatCurrencyEnum } from "../enum";
 
 export type JOB_TYPE =
   | "SEND_EMAIL"
   | "PROCESS_STATIC_ACCOUNT"
+  | "UPLOAD_IMAGE_TO_DIGITAL_OCEAN"
   | "GENERATE_MULTICURRENCY_ACCOUNT"
   | "VITALSWAP_WALLET";
 
 export type TJobData =
   | ISendMail
   | IProcessStaticAccount
+  | IUploadImageToDigitalOceanJob
   | IGenerateMultiCurrency
   | IVitalSwapIdentifer;
 

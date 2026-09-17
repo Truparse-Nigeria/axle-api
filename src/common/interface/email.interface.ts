@@ -6,6 +6,7 @@ export interface IBaseJobType {
   priority?: number;
   delay?: number; // In milliseconds (passed directly to BullMQ)
   jobId?: string;
+  attempts?: number;
 }
 
 export interface ISendMail extends IBaseJobType {

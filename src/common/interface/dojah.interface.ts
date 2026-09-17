@@ -1,4 +1,14 @@
 import type { KycEnum } from "../enum";
+import type { IBaseJobType } from "./email.interface";
+
+export interface IUploadImageToDigitalOceanJob extends IBaseJobType {
+  identifier: string;
+  userId: string;
+  kycType: KycEnum.BVN | KycEnum.NIN;
+  imageBase64?: string;
+  idBase64?: string;
+}
+
 export interface IBaseKYCDetails {
   first_name?: string;
   firstName?: string;

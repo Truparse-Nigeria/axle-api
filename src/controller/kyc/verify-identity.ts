@@ -66,6 +66,25 @@ export const verifyIdentity = catchAsync(async (req, res) => {
   );
   if (!updatedUser) throw new AppError("KYC already completed", 400);
 
+  const latest = await getCache<IDojahCachedDetails>(
+    `IDENTIFIER_${type}:${finalizerData.identifier}`,
+  );
+  if (latest?.image || latest?.idUrl) {
+    await User.updateOne(
+      {
+        _id: user._id,
+        [`kyc.${type}.completed`]: true,
+        [`kyc.${type}.identifier`]: finalizerData.identifier,
+      },
+      {
+        $set: {
+          ...(latest.image && { [`kyc.${type}.details.image`]: latest.image }),
+          ...(latest.idUrl && { [`kyc.${type}.details.idUrl`]: latest.idUrl }),
+        },
+      },
+    );
+  }
+
   await deleteCache(attemptKey);
   await deleteCache(`IDENTIFIER_${finalizerData.type}:${finalizerData.identifier}`);
   await deleteCache(`IDENTITY_FINALIZER_${finalizer}`);
