@@ -65,7 +65,7 @@ export const vitalSwapPayingAccountProducts = async () => {
     IVitalSwapPayingAccountProduct[]
   >("/v1/paying-accounts/products", HttpMethod.GET);
 
-  console.log(data);
+  console.log({ data, error });
 
   if (error || !data) {
     throw new AppError("Unable to retrieve products", 400);
