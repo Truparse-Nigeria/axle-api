@@ -59,7 +59,7 @@ export const authGuard = (accessType: AccessTypeEnum) =>
 
     const user = await getModel(accessType)
       .findById(verifiedRefreshToken?.id)
-      .select("+jti +passcode +pin");
+      .schemaLevelProjections(false);
 
     if (!user) {
       throw new AppError("Expired session", 401);
