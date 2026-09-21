@@ -22,6 +22,8 @@ export const vitalSwapCreateCustomer = async (
     { data: payload },
   );
 
+  console.log("vitalSwapCreateCustomer", data, error);
+
   if (error || !data) return { error };
 
   if (data.user_id) throw new AppError("Unable to complete setup", 400);
