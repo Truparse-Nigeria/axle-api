@@ -18,7 +18,7 @@ import {
 } from "@/provider";
 
 export const createFiatAccount = catchAsync(async (req, res) => {
-  const { currency } = await validateRequestPayload(req.body, currencySchema);
+  const { currency } = await validateRequestPayload(req.params, currencySchema);
 
   if (currency === FiatCurrencyEnum.NGN) {
     throw new AppError(
