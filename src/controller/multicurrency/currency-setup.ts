@@ -35,6 +35,8 @@ const runWalletIDSetup = async (
 export const currencySetup = catchAsync(async (req, res) => {
   const { currency } = await validateRequestPayload(req.body, currencySchema);
 
+  console.log(currency);
+
   if (currency === FiatCurrencyEnum.NGN) {
     throw new AppError(
       `You are not allow to create ${currency} wallet using this process.`,
@@ -97,6 +99,8 @@ export const currencySetup = catchAsync(async (req, res) => {
       throw new AppError("Complete identity and address KYC first", 400);
     }
 
+    console.log("Creating vitalswap user");
+
     const { data, error } = await vitalSwapCreateCustomer({
       first_name: user.firstName,
       last_name: user.lastName,
@@ -126,6 +130,8 @@ export const currencySetup = catchAsync(async (req, res) => {
         address_number: decryptData(address.line1),
       },
     });
+
+    console.log("Vitalswap user created");
 
     if (error || !data) {
       throw new AppError("Unable to set up your profile. Try again");
