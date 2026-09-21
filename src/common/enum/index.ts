@@ -133,8 +133,8 @@ export enum KycEnum {
   BVN = "bvn",
   NIN = "nin",
   PASSPORT = "passport",
-  DRIVERS_LICENSE = "driversLicense",
   ADDRESS = "address",
+  SELFIE = "selfie",
 }
 
 export enum WalletStatusEnum {

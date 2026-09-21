@@ -33,6 +33,8 @@ import {
   validateMeterNumber,
   validateSmartcardNumber,
   withdrawCard,
+  createFiatAccount,
+  currencySetup,
 } from "@/controller";
 import { createPin, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
@@ -98,5 +100,9 @@ router.post("/kyc/selfie", uploadSelfie);
 
 // Transactions
 router.post("/transactions", getTransactions(access));
+
+// Multi currency
+router.get("/wallet/currency/setup/:currency", currencySetup);
+router.get("/wallet/currency/account/:currency", createFiatAccount);
 
 export { router as userRouter };

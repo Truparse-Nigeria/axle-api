@@ -97,5 +97,7 @@ export const generateMultiCurrency = async () => {
       $set: set,
       $push: push,
     });
+
+    //TODO: Notify customer that account was created
   }
 };

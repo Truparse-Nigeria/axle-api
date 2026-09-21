@@ -5,6 +5,7 @@ import {
   currencySchema,
   decryptData,
   FiatCurrencyEnum,
+  KycEnum,
   sendResponse,
   validateRequestPayload,
   VendorEnum,
@@ -16,6 +17,7 @@ import {
   vitalSwapPayingAccountProducts,
 } from "@/provider";
 import { createJob } from "@/queue";
+import { format } from "date-fns";
 
 const runWalletIDSetup = async (
   user: IUserDocument,
@@ -30,12 +32,12 @@ const runWalletIDSetup = async (
   }
 };
 
-export const CurrencySetup = catchAsync(async (req, res) => {
+export const currencySetup = catchAsync(async (req, res) => {
   const { currency } = await validateRequestPayload(req.body, currencySchema);
 
   if (currency === FiatCurrencyEnum.NGN) {
     throw new AppError(
-      `You are not allow to create ${currency} wallet at the moment`,
+      `You are not allow to create ${currency} wallet using this process.`,
     );
   }
 
@@ -43,17 +45,28 @@ export const CurrencySetup = catchAsync(async (req, res) => {
   if (!user) throw new AppError("User not found");
 
   //Check for KYC
-  if (!user?.kyc?.address?.completed) {
+  const hasIdentityVerification =
+    user.kyc?.nin?.completed || user.kyc?.passport?.completed;
+
+  if (!hasIdentityVerification) {
     throw new AppError(
-      "You need to complete your address KYC before creating a wallet",
+      "You cannot create a business without a verified NIN or Passport. Complete your personal KYC first or contact support for assistance.",
     );
   }
 
-  if (!user?.kyc?.nin?.completed && !user?.kyc?.passport?.completed) {
-    throw new AppError(
-      "You need to complete your NIN or Passport KYC before creating a wallet",
-    );
-  }
+  // Other required KYC fields
+  const requiredKyc = [
+    KycEnum.ADDRESS,
+    KycEnum.SELFIE,
+  ];
+
+  requiredKyc.forEach((field) => {
+    if (!user.kyc?.[field]?.completed) {
+      throw new AppError(
+        `You cannot create a business without a verified ${field.toUpperCase()}. Complete your personal KYC first or contact support for assistance.`,
+      );
+    }
+  });
 
   if (user.wallet.fiat[currency].accounts.length > 0) {
     throw new AppError("Currency already setup");
@@ -72,19 +85,18 @@ export const CurrencySetup = catchAsync(async (req, res) => {
       const consent = await checkConsent(user.identifier.vitalswap.user);
 
       return sendResponse(res, 200, "Currency setup successful", {
-        identifier: user.identifier?.vitalswap?.user,
         consent: consent.data,
       });
     }
 
+    const identity = user.kyc?.nin?.completed ? user.kyc.nin : user.kyc.passport;
+    const address = user.kyc?.address?.details;
 
-    const identity = user.kyc.nin?.completed
-      ? user.kyc.nin
-      : user.kyc.passport;
-    const address = user.kyc.address?.details;
+
     if (!identity?.identifier || !identity.details || !address) {
       throw new AppError("Complete identity and address KYC first", 400);
     }
+
     const { data, error } = await vitalSwapCreateCustomer({
       first_name: user.firstName,
       last_name: user.lastName,
@@ -96,11 +108,13 @@ export const CurrencySetup = catchAsync(async (req, res) => {
         bvn: user.kyc.bvn?.identifier
           ? decryptData(user.kyc.bvn.identifier)
           : undefined,
-        nationality: user.kyc.nin?.completed ? "Nigerian" : identity?.details?.country || "",
+        nationality: user.kyc.nin?.completed
+          ? "Nigerian"
+          : identity?.details?.country || "",
         id_number: decryptData(identity.identifier),
-        id_type: user.kyc.nin?.completed ? "NIN" : "Passport",
-        date_of_birth: decryptData(identity.details.dateOfBirth),
-        id_image_url: identity.details.image || "",
+        id_type: user.kyc.nin?.completed ? "National Identification Number" : "Passport",
+        date_of_birth: format(new Date(decryptData(identity.details.dateOfBirth)), "yyyy-MM-dd"),
+        id_image_url: identity.details?.image || identity.details?.idUrl || "",
         selfie_image_url: user.kyc.selfie?.details?.file || "",
         state_of_residence: address.state,
         city: address.city,
@@ -125,7 +139,6 @@ export const CurrencySetup = catchAsync(async (req, res) => {
     const consent = await checkConsent(data.user_id);
 
     return sendResponse(res, 200, "Currency setup successful", {
-      identifier: data.user_id,
       consent: consent.data,
     });
   }
