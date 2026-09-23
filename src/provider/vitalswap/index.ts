@@ -90,6 +90,8 @@ export const vitalSwapCreatePayingAccount = async (
       { data: payload },
     );
 
+    console.log(data, error)
+
     console.log(error?.errorData?.details?.field_errors)
 
   if (error || !data) return { error };
