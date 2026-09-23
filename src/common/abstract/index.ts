@@ -281,11 +281,14 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
   }
 
   console.log("show set", set)
+  console.log("show data", vitalSwapUserId)
 
   const user = await User.findOneAndUpdate(
     { "identifier.vitalswap.user": vitalSwapUserId },
     { $set: set },
   ).schemaLevelProjections(false);
+
+  console.log("user", user?.identifier)
 
 
   if(!user) throw new AppError("User not found");
