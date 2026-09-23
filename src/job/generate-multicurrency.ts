@@ -59,6 +59,8 @@ export const generateMultiCurrency = async () => {
     .select("identifier.vitalswap.user wallet.fiat")
     .lean();
 
+    console.log(users.length)
+
   if (!users.length) return;
 
   for (const user of users) {
@@ -67,6 +69,8 @@ export const generateMultiCurrency = async () => {
 
     // (2) Confirm the vitalswap customer is active before touching wallets.
     const { data, error } = await vitalSwapGetCustomer(customerId);
+
+    console.log(data,error)
 
     if (error || !data) continue;
     if (data.status?.toLowerCase() !== "active") continue;
@@ -90,6 +94,9 @@ export const generateMultiCurrency = async () => {
         $each: wallet.virtual_bank_accounts.map(toFiatAccount),
       };
     }
+
+    console.log(set)
+    console.log(push)
 
     if (!Object.keys(set).length) continue;
 
