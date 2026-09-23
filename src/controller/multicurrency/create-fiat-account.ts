@@ -10,6 +10,7 @@ import {
   sendResponse,
   WalletStatusEnum,
   setVitalSwapWalletId,
+  safeDecryptData,
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { User } from "@/model";
@@ -79,7 +80,7 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     const { data, error } = await vitalSwapCreatePayingAccount({
       wallet_id: walletId,
       product_id: product.product_id,
-      bvn: user?.kyc?.bvn?.identifier,
+      ...(user?.kyc?.bvn?.identifier && {bvn: safeDecryptData(user?.kyc?.bvn?.identifier)}),
     });
 
     if (error || !data) {
