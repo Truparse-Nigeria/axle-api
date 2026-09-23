@@ -80,7 +80,7 @@ const IdentifierSchema = new Schema(
     eversend: { type: String, trim: true },
     vitalswap: {
       user: { type: String, trim: true },
-      wallet: {
+      wallets: {
         USD: { type: String, trim: true },
         EUR: { type: String, trim: true },
         GBP: { type: String, trim: true },
