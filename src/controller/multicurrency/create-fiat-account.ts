@@ -63,8 +63,16 @@ export const createFiatAccount = catchAsync(async (req, res) => {
       throw new AppError(`Unable to create ${currency} account`, 400);
     }
 
+    const walletId = user.identifier.vitalswap.wallets?.[currency];
+
+    if (!walletId) {
+      throw new AppError(
+        `Your ${currency} wallet is still being set up. Try again shortly.`,
+      );
+    }
+
     const { data, error } = await vitalSwapCreatePayingAccount({
-      wallet_id: user.identifier.vitalswap.wallets[currency],
+      wallet_id: walletId,
       product_id: product.product_id,
       bvn: user?.kyc?.bvn?.identifier,
     });
