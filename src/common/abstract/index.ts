@@ -268,9 +268,8 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
 
   const { data, error } = await vitalSwapGetCustomer(vitalSwapUserId);
 
-  console.log("xyz", data, error);
-
-  if (error || !data)  throw new AppError("Unable to retrieve customer info", 400);
+  if (error || !data)
+    throw new AppError("Unable to retrieve customer info", 400);
 
   const set: Record<string, string> = {};
 
@@ -280,18 +279,13 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
     )?.wallet_id!;
   }
 
-  console.log("show set", set)
-  console.log("show data", vitalSwapUserId)
-
   const user = await User.findOneAndUpdate(
     { "identifier.vitalswap.user": vitalSwapUserId },
     { $set: set },
+    { new: true },
   ).schemaLevelProjections(false);
 
-  console.log("user", user?.identifier)
-
-
-  if(!user) throw new AppError("User not found");
+  if (!user) throw new AppError("User not found");
 
   console.log(user.identifier?.vitalswap?.wallets);
 
