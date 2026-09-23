@@ -4,6 +4,7 @@ import {
   checkMultiCurrencyService,
   currencySchema,
   decryptData,
+  encryptData,
   FiatCurrencyEnum,
   KycEnum,
   sendResponse,
@@ -55,10 +56,7 @@ export const currencySetup = catchAsync(async (req, res) => {
   }
 
   // Other required KYC fields
-  const requiredKyc = [
-    KycEnum.ADDRESS,
-    KycEnum.SELFIE,
-  ];
+  const requiredKyc = [KycEnum.ADDRESS, KycEnum.SELFIE];
 
   requiredKyc.forEach((field) => {
     if (!user.kyc?.[field]?.completed) {
@@ -89,13 +87,17 @@ export const currencySetup = catchAsync(async (req, res) => {
       });
     }
 
-    const identity = user.kyc?.nin?.completed ? user.kyc.nin : user.kyc.passport;
+    const identity = user.kyc?.nin?.completed
+      ? user.kyc.nin
+      : user.kyc.passport;
     const address = user.kyc?.address?.details;
-
 
     if (!identity?.identifier || !identity.details || !address) {
       throw new AppError("Complete identity and address KYC first", 400);
     }
+
+    const emailSplit = user.email.split("@");
+    const email = `${encryptData(emailSplit[0]!)}@${emailSplit[1]}`;
 
     const { data, error } = await vitalSwapCreateCustomer({
       first_name: user.firstName,
@@ -112,8 +114,13 @@ export const currencySetup = catchAsync(async (req, res) => {
           ? "Nigerian"
           : identity?.details?.country || "",
         id_number: decryptData(identity.identifier),
-        id_type: user.kyc.nin?.completed ? "National Identification Number" : "Passport",
-        date_of_birth: format(new Date(decryptData(identity.details.dateOfBirth)), "yyyy-MM-dd"),
+        id_type: user.kyc.nin?.completed
+          ? "National Identification Number"
+          : "Passport",
+        date_of_birth: format(
+          new Date(decryptData(identity.details.dateOfBirth)),
+          "yyyy-MM-dd",
+        ),
         id_image_url: identity.details?.image || identity.details?.idUrl || "",
         selfie_image_url: user.kyc.selfie?.details?.file || "",
         state_of_residence: address.state,
