@@ -23,12 +23,13 @@ import { format } from "date-fns";
 const runWalletIDSetup = async (
   user: IUserDocument,
   currency: FiatCurrencyEnum,
+  vitalSwapUserId: string,
 ) => {
-  if (!user.identifier?.vitalswap?.wallets[currency]) {
+  if (!user.identifier?.vitalswap?.wallets?.[currency]) {
     createJob({
       type: "VITALSWAP_WALLET",
-      jobId: `VITALSWAP_WALLET_${user.identifier?.vitalswap?.user}`,
-      vitalSwapUserId: user.identifier?.vitalswap?.user,
+      jobId: `VITALSWAP_WALLET_${vitalSwapUserId}`,
+      vitalSwapUserId,
     });
   }
 };
@@ -79,7 +80,7 @@ export const currencySetup = catchAsync(async (req, res) => {
     await vitalSwapPayingAccountProducts();
 
     if (user.identifier?.vitalswap?.user) {
-      await runWalletIDSetup(user, currency);
+      await runWalletIDSetup(user, currency, user.identifier.vitalswap.user);
       const consent = await checkConsent(user.identifier.vitalswap.user);
 
       return sendResponse(res, 200, "Currency setup successful", {
@@ -142,7 +143,7 @@ export const currencySetup = catchAsync(async (req, res) => {
       $set: { "identifier.vitalswap.user": data.user_id },
     });
 
-    await runWalletIDSetup(user, currency);
+    await runWalletIDSetup(user, currency, data.user_id);
     const consent = await checkConsent(data.user_id);
 
     return sendResponse(res, 200, "Currency setup successful", {
