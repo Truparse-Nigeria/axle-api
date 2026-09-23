@@ -1,5 +1,9 @@
 import { Transaction, User, type IUserDocument } from "@/model";
-import { safehavenBanks, safehavenStatus } from "@/provider";
+import {
+  safehavenBanks,
+  safehavenStatus,
+  vitalSwapGetCustomer,
+} from "@/provider";
 import type { Response } from "express";
 import mongoose from "mongoose";
 import { TxnDesc } from "../constant";
@@ -253,4 +257,33 @@ export const createTxnAndTopupAbstract = async ({
   }
 
   return { updatedUser, createdTransaction };
+};
+
+export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
+  const MULTICURRENCY_FIATS = [
+    FiatCurrencyEnum.USD,
+    FiatCurrencyEnum.GBP,
+    FiatCurrencyEnum.EUR,
+  ] as const;
+
+  const { data, error } = await vitalSwapGetCustomer(vitalSwapUserId);
+
+  if (error || !data)  throw new AppError("Unable to retrieve customer info", 400);
+
+  const set: Record<string, string> = {};
+
+  for (let fiat of MULTICURRENCY_FIATS) {
+    set[`identifier.vitalswap.wallets.${fiat}`] = data.wallets.find(
+      (wallet) => wallet.currency === fiat,
+    )?.wallet_id!;
+  }
+
+  const user = await User.findOneAndUpdate(
+    { "identifier.vitalswap.user": vitalSwapUserId },
+    { $set: set },
+  ).schemaLevelProjections(false);
+
+  if(!user) throw new AppError("User not found");
+
+  return user;
 };

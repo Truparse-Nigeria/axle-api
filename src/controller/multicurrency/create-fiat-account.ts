@@ -9,6 +9,7 @@ import {
   FiatCurrencyCountryEnum,
   sendResponse,
   WalletStatusEnum,
+  setVitalSwapWalletId,
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { User } from "@/model";
@@ -66,9 +67,13 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     const walletId = user.identifier.vitalswap.wallets?.[currency];
 
     if (!walletId) {
-      throw new AppError(
-        `Your ${currency} wallet is still being set up. Try again shortly.`,
-      );
+      const fullUser = await setVitalSwapWalletId(user.identifier.vitalswap.user);
+
+      if (!fullUser?.identifier?.vitalswap?.wallets?.[currency]) {
+        throw new AppError(
+          `Your ${currency} wallet is still being set up. Try again shortly.`,
+        );
+      }
     }
 
     const { data, error } = await vitalSwapCreatePayingAccount({
