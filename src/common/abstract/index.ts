@@ -280,6 +280,8 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
     )?.wallet_id!;
   }
 
+  console.log("show set", set)
+
   const user = await User.findOneAndUpdate(
     { "identifier.vitalswap.user": vitalSwapUserId },
     { $set: set },
