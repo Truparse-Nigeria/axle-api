@@ -9,32 +9,18 @@ import {
   IS_DEVELOPMENT,
   KycEnum,
   sendResponse,
+  setVitalSwapWalletId,
   testIdentity,
   validateRequestPayload,
   VendorEnum,
 } from "@/common";
 import { catchAsync } from "@/middleware";
-import { User, type IUserDocument } from "@/model";
+import { User } from "@/model";
 import {
   vitalSwapCreateCustomer,
   vitalSwapPayingAccountProducts,
 } from "@/provider";
-import { createJob } from "@/queue";
 import { format } from "date-fns";
-
-const runWalletIDSetup = async (
-  user: IUserDocument,
-  currency: FiatCurrencyEnum,
-  vitalSwapUserId: string,
-) => {
-  if (!user.identifier?.vitalswap?.wallets?.[currency]) {
-    createJob({
-      type: "VITALSWAP_WALLET",
-      jobId: `VITALSWAP_WALLET_${vitalSwapUserId}`,
-      vitalSwapUserId,
-    });
-  }
-};
 
 export const currencySetup = catchAsync(async (req, res) => {
   const { currency } = await validateRequestPayload(req.params, currencySchema);
@@ -82,7 +68,7 @@ export const currencySetup = catchAsync(async (req, res) => {
     await vitalSwapPayingAccountProducts();
 
     if (user.identifier?.vitalswap?.user) {
-      await runWalletIDSetup(user, currency, user.identifier.vitalswap.user);
+       setVitalSwapWalletId(user.identifier.vitalswap.user, user._id.toString());
       const consent = await checkConsent(user.identifier.vitalswap.user);
 
       return sendResponse(res, 200, "Currency setup successful", {
@@ -145,7 +131,8 @@ export const currencySetup = catchAsync(async (req, res) => {
       $set: { "identifier.vitalswap.user": data.user_id },
     });
 
-    await runWalletIDSetup(user, currency, data.user_id);
+     setVitalSwapWalletId(data.user_id, user._id.toString());
+     
     const consent = await checkConsent(data.user_id);
 
     return sendResponse(res, 200, "Currency setup successful", {

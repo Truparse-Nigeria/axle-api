@@ -76,6 +76,7 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     if (!walletId) {
       const fullUser = await setVitalSwapWalletId(
         user.identifier.vitalswap.user,
+        user._id.toString(),
       );
 
       if (!fullUser?.identifier?.vitalswap?.wallets?.[currency]) {

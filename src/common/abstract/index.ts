@@ -13,11 +13,11 @@ import {
   FiatCurrencyEnum,
   PurposeEnum,
   StatusEnum,
-  VendorEnum
+  VendorEnum,
 } from "../enum";
 import type {
   IProcessTransactionParams,
-  ISafehavenTransferResponse
+  ISafehavenTransferResponse,
 } from "../interface";
 import {
   AppError,
@@ -258,7 +258,10 @@ export const createTxnAndTopupAbstract = async ({
   return { updatedUser, createdTransaction };
 };
 
-export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
+export const setVitalSwapWalletId = async (
+  vitalSwapUserId: string,
+  userId: string,
+) => {
   const MULTICURRENCY_FIATS = [
     FiatCurrencyEnum.USD,
     FiatCurrencyEnum.GBP,
@@ -278,9 +281,9 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
     )?.wallet_id!;
   }
 
-  const user = await User.findOneAndUpdate(
-    { "identifier.vitalswap.user": vitalSwapUserId },
-    { $set: set },
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $set: { ...set }, "identifier.vitalswap.user": vitalSwapUserId },
     { new: true },
   ).schemaLevelProjections(false);
 
