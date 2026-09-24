@@ -511,9 +511,9 @@ export const toFiatAccount = (
   routing: account.routing ?? undefined,
 });
 
-export const testBVN = () => {
+export const testIdentity = (number = 11) => {
   let randomNumber = Math.floor(Math.random() * 1e11).toString();
-  while (randomNumber.length < 11) {
+  while (randomNumber.length < number) {
     randomNumber = "0" + randomNumber;
   }
 

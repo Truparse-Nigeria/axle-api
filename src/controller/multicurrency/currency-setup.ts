@@ -9,7 +9,7 @@ import {
   IS_DEVELOPMENT,
   KycEnum,
   sendResponse,
-  testBVN,
+  testIdentity,
   validateRequestPayload,
   VendorEnum,
 } from "@/common";
@@ -111,12 +111,12 @@ export const currencySetup = catchAsync(async (req, res) => {
       accept_terms: true,
       identity: {
         bvn: user.kyc.bvn?.identifier
-          ? IS_DEVELOPMENT ? testBVN() : decryptData(user.kyc.bvn.identifier)
+          ? IS_DEVELOPMENT ? testIdentity() : decryptData(user.kyc.bvn.identifier)
           : undefined,
         nationality: user.kyc.nin?.completed
           ? "Nigerian"
           : identity?.details?.country || "",
-        id_number: decryptData(identity.identifier),
+        id_number:IS_DEVELOPMENT ? testIdentity(12) : decryptData(identity.identifier),
         id_type: user.kyc.nin?.completed
           ? "National Identification Number"
           : "Passport",
