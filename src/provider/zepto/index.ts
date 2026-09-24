@@ -41,5 +41,5 @@ export const sendEmail = async ({
       htmlbody: template,
     })
     .then((resp) => console.log("success"))
-    .catch((error) => console.log("error"));
+    .catch((error) => console.log("error", error));
 };
