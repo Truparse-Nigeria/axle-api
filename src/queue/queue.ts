@@ -30,7 +30,7 @@ mainQueueEvent.on("completed", ({ jobId, returnvalue }) => {
 const registerRepeatableJobs = async () => {
   await mainQueue.upsertJobScheduler(
     "generate-multicurrency-account",
-    { every: 10 * 60 * 1000 }, // every 10 minutes
+    { every: 2 * 60 * 1000 }, // every 2 minutes
     {
       name: "GENERATE_MULTICURRENCY_ACCOUNT",
       data: { type: "GENERATE_MULTICURRENCY_ACCOUNT" },

@@ -16,6 +16,8 @@ import { sanitizeFilter } from "mongoose";
 export const vitalSwapHook = catchAsync(async (req, res) => {
   const payload = sanitizeFilter(req.body) as IVitalSwapHook;
 
+  console.log("vital swap webhook", payload);
+
   const virtualBankAccount = async (
     payload: IVitalSwapCreatedVirtualBankAccountHook,
   ) => {
