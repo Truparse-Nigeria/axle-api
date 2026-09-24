@@ -37,7 +37,8 @@ export const vitalSwapGetCustomer = async (customerId: string) => {
 
   if (error || !data) return { error };
 
-  if (!data.record_id) throw new AppError("Unable to retrieve customer info", 400);
+  if (!data.record_id)
+    throw new AppError("Unable to retrieve customer info", 400);
 
   return { data };
 };
@@ -61,11 +62,12 @@ export const vitalSwapPayingAccountProducts = async () => {
   const products = await getCache<IVitalSwapPayingAccountProduct[]>(key);
   if (products) return { data: products };
 
-  const { data, error } = await callVitalSwap<
-    IVitalSwapPayingAccountProduct[]
-  >("/v1/paying-accounts/products", HttpMethod.GET);
+  const { data, error } = await callVitalSwap<IVitalSwapPayingAccountProduct[]>(
+    "/v1/paying-accounts/products",
+    HttpMethod.GET,
+  );
 
-  console.log({ data, error });
+  console.log(error?.errorData?.details?.field_errors);
 
   if (error || !data) {
     throw new AppError("Unable to retrieve products", 400);
@@ -90,13 +92,11 @@ export const vitalSwapCreatePayingAccount = async (
       { data: payload },
     );
 
-    console.log(data, error)
-
-    console.log(error?.errorData?.details?.field_errors)
+  console.log("paying account", error?.errorData?.details?.field_errors);
 
   if (error || !data) return { error };
-  
-  if ( "success" in data && data.success === false)  {
+
+  if ("success" in data && data.success === false) {
     throw new AppError("Unable to create paying account", 400);
   }
 

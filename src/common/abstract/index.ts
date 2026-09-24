@@ -286,7 +286,5 @@ export const setVitalSwapWalletId = async (vitalSwapUserId: string) => {
 
   if (!user) throw new AppError("User not found");
 
-  console.log(user.identifier?.vitalswap?.wallets);
-
   return user;
 };
