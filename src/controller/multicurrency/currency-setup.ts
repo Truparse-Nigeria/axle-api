@@ -91,7 +91,7 @@ export const currencySetup = catchAsync(async (req, res) => {
     const { data, error } = await vitalSwapCreateCustomer({
       first_name: user.firstName,
       last_name: user.lastName,
-      email: user.email,
+      email:IS_DEVELOPMENT ?  user.email : email,
       phone_number: user.dialCode + user.phone,
       password: "password",
       accept_terms: true,
