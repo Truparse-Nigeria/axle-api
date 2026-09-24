@@ -68,7 +68,9 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     const walletId = user.identifier.vitalswap.wallets?.[currency];
 
     if (!walletId) {
-      const fullUser = await setVitalSwapWalletId(user.identifier.vitalswap.user);
+      const fullUser = await setVitalSwapWalletId(
+        user.identifier.vitalswap.user,
+      );
 
       if (!fullUser?.identifier?.vitalswap?.wallets?.[currency]) {
         throw new AppError(
@@ -80,10 +82,24 @@ export const createFiatAccount = catchAsync(async (req, res) => {
     const { data, error } = await vitalSwapCreatePayingAccount({
       wallet_id: walletId,
       product_id: product.product_id,
-      ...(user?.kyc?.bvn?.identifier && {bvn: safeDecryptData(user?.kyc?.bvn?.identifier)}),
+      ...(user?.kyc?.bvn?.identifier && {
+        bvn: safeDecryptData(user?.kyc?.bvn?.identifier),
+      }),
     });
 
     if (error || !data) {
+      if (
+        error?.errorDate?.errror
+          .toLowerCase()
+          .includes(
+            `A ${currency} paying account is already pending for this customer. Wait for it to become ACTIVE before creating another.`.toLowerCase(),
+          )
+      ) {
+        throw new AppError(
+          `Your ${currency} account is still being processed. Try again shortly or contact support.`,
+        );
+      }
+
       throw new AppError(
         `Unable to create ${currency} account. Try again`,
         400,
