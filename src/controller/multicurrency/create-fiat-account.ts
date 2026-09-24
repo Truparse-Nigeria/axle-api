@@ -33,6 +33,8 @@ export const createFiatAccount = catchAsync(async (req, res) => {
   const user = req.user;
   if (!user) throw new AppError("User not found");
 
+  console.log(user.identifier);
+
   if (user.wallet.fiat[currency].accounts.length > 0) {
     throw new AppError("Currency already setup");
   }
