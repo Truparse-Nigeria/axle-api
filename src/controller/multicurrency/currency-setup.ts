@@ -6,8 +6,10 @@ import {
   decryptData,
   encryptData,
   FiatCurrencyEnum,
+  IS_DEVELOPMENT,
   KycEnum,
   sendResponse,
+  testBVN,
   validateRequestPayload,
   VendorEnum,
 } from "@/common";
@@ -109,7 +111,7 @@ export const currencySetup = catchAsync(async (req, res) => {
       accept_terms: true,
       identity: {
         bvn: user.kyc.bvn?.identifier
-          ? decryptData(user.kyc.bvn.identifier)
+          ? IS_DEVELOPMENT ? testBVN() : decryptData(user.kyc.bvn.identifier)
           : undefined,
         nationality: user.kyc.nin?.completed
           ? "Nigerian"

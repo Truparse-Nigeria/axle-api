@@ -1,9 +1,10 @@
-import { Transaction, User, type IUserDocument } from "@/model";
+import { Transaction, User } from "@/model";
 import {
   safehavenBanks,
   safehavenStatus,
   vitalSwapGetCustomer,
 } from "@/provider";
+import { createJob } from "@/queue";
 import type { Response } from "express";
 import mongoose from "mongoose";
 import { TxnDesc } from "../constant";
@@ -12,12 +13,11 @@ import {
   FiatCurrencyEnum,
   PurposeEnum,
   StatusEnum,
-  VendorEnum,
+  VendorEnum
 } from "../enum";
 import type {
   IProcessTransactionParams,
-  ISafehavenTransferResponse,
-  IUser,
+  ISafehavenTransferResponse
 } from "../interface";
 import {
   AppError,
@@ -28,7 +28,6 @@ import {
   refundUser,
   sendResponse,
 } from "../utils";
-import { createJob } from "@/queue";
 
 // Abstract all safehaven checks in hooks
 export const SafehavenHookAbstract = async (

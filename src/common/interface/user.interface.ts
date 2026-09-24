@@ -12,6 +12,7 @@ export interface IFiatAccount {
   bankName: string;
   provider?: string;
   externalReference?: string;
+  externalId?: string;
   rtpRoutingNumber?: string;
   wireRoutingNumber?: string;
   status?: string

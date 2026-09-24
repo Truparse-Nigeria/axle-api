@@ -1,11 +1,22 @@
+import { isAxiosError } from "axios";
 import { differenceInSeconds, endOfDay, format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { customAlphabet } from "nanoid";
 import mongoose from "mongoose";
+import { customAlphabet } from "nanoid";
 import { ENVIRONMENT } from "../config";
-import { isAxiosError } from "axios";
-import { CardVariantEnum, StatusEnum, VendorEnum } from "../enum";
-import type { ICardServiceCheck, ISettings, IUser } from "../interface";
+import {
+  CardVariantEnum,
+  FiatCurrencyEnum,
+  StatusEnum,
+  VendorEnum
+} from "../enum";
+import type {
+  ICardServiceCheck,
+  IFiatAccount,
+  ISettings,
+  IUser,
+  IVitalSwapVirtualBankAccount
+} from "../interface";
 import AppError from "./app-error";
 import { incrCache } from "./cache";
 
@@ -52,7 +63,6 @@ export const generateRandomCode = (length: number, prefix?: string): string => {
   const nanoid = customAlphabet("123456789BACDEFGHIJKLMNPQRSTUVWXYZ", length);
   return prefix ? `${prefix}-${nanoid()}` : nanoid();
 };
-
 
 // Human-readable, timezone-stamped reference for a transaction
 export const generateRequestID = (prefix?: string) => {
@@ -476,4 +486,36 @@ export const toSentenceCase = (str: string) => {
     .toLowerCase()
     .replace(/[_-]+/g, " ")
     .replace(/^\w/, (char) => char.toUpperCase());
+};
+
+export const checkForCurrencyBankAccount = (
+  accounts: IVitalSwapVirtualBankAccount[],
+  currency: FiatCurrencyEnum,
+) =>
+  (accounts ?? []).find(
+    (account) => account.currency_code.toLowerCase() === currency.toLowerCase(),
+  );
+
+export const toFiatAccount = (
+  account: IVitalSwapVirtualBankAccount,
+): IFiatAccount => ({
+  accountNumber: account.account_number,
+  accountName: account.account_name,
+  bankName: account.bank_name,
+  provider: VendorEnum.VITALSWAP,
+  externalReference: account.vendor_reference ?? undefined,
+  externalId: account.account_id ?? undefined,
+  rtpRoutingNumber: account.rtp_routing_number ?? undefined,
+  wireRoutingNumber: account.wire_routing_number ?? undefined,
+  status: account.status ?? undefined,
+  routing: account.routing ?? undefined,
+});
+
+export const testBVN = () => {
+  let randomNumber = Math.floor(Math.random() * 1e11).toString();
+  while (randomNumber.length < 11) {
+    randomNumber = "0" + randomNumber;
+  }
+
+  return randomNumber;
 };

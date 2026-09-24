@@ -72,7 +72,7 @@ export const createFiatAccount = catchAsync(async (req, res) => {
 
       if (!fullUser?.identifier?.vitalswap?.wallets?.[currency]) {
         throw new AppError(
-          `Your ${currency} wallet is still being set up. Try again shortly.`,
+          `Your ${currency} wallet is still being set up. Try again shortly or contact support.`,
         );
       }
     }
