@@ -464,6 +464,18 @@ export const lockSession = async (sessionId: string) => {
   return await incrCache(lockSessionKey, 20);
 };
 
+// Short-lived per-user lock so concurrent debits from the same user are
+// rejected while one is still in flight.
+export const lockUser = async (userId: string) => {
+  const lockSessionKey = `USER_TXN_${userId}`;
+
+  const lockedUser = await incrCache(lockSessionKey, 5);
+
+  if (lockedUser > 1) {
+    throw new AppError("Transaction is in progress", 400);
+  }
+};
+
 export const cardWithdrawalProperties = (
   amount: number,
   checkService: ICardServiceCheck,

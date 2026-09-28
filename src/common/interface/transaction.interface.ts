@@ -1,5 +1,5 @@
-import type { Document } from "mongoose";
-import type { StatusEnum } from "../enum";
+import type { ClientSession, Document } from "mongoose";
+import type { FiatCurrencyEnum, StatusEnum } from "../enum";
 import type { IUser } from "./user.interface";
 
 export interface ITransactionPayload {
@@ -25,3 +25,10 @@ export interface ITransactionPayload {
 }
 
 export interface ITransaction extends Document, ITransactionPayload {}
+
+export interface IWalletToWallet {
+  recipientTag: string;
+  amount: number;
+  currency: FiatCurrencyEnum;
+  session?: ClientSession;
+}

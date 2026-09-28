@@ -46,6 +46,11 @@ export const TxnDesc = {
   dollarCardTermination: "Dollar card termination",
 };
 
+// Option keys under `settings.moneyTransfer.options`
+export const ServiceCheck = {
+  WALLET_TO_WALLET: "walletToWallet",
+};
+
 // Default billing/ID details used when provisioning an Eversend card user and
 // card. These are placeholders while KYC is not yet collected on the user — swap
 // them for the user's real KYC data once address/ID capture is in place.

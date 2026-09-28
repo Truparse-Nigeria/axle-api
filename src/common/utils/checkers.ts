@@ -165,7 +165,7 @@ export const refundUser = async (option: {
 export const billServiceCheck = async (
   category: keyof Pick<
     ISettings,
-    "airtime" | "electricity" | "cable" | "regularData"
+    "airtime" | "electricity" | "cable" | "regularData" | "moneyTransfer"
   >,
   entity: string,
 ) => {
@@ -183,6 +183,7 @@ export const billServiceCheck = async (
   let operator:
     | (typeof settings.electricity)["discos"]
     | (typeof settings.cable)["networks"]
+    | (typeof settings.moneyTransfer)["options"]
     | IBiller["networks"]
     | undefined;
 
@@ -192,6 +193,9 @@ export const billServiceCheck = async (
       break;
     case "cable":
       operator = (categorySettings as typeof settings.cable)?.networks;
+      break;
+    case "moneyTransfer":
+      operator = (categorySettings as typeof settings.moneyTransfer)?.options;
       break;
     default:
       /**

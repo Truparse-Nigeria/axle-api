@@ -147,6 +147,11 @@ export interface IMultiCurrency {
   currencies: Record<string, IMultiCurrencyOption>;
 }
 
+export interface IMoneyTransfer {
+  enabled: boolean;
+  options: Record<string, INetwork>;
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -159,4 +164,5 @@ export interface ISettings {
   crypto: ICrypto;
   esim: IEsim;
   multiCurrency: IMultiCurrency;
+  moneyTransfer: IMoneyTransfer;
 }

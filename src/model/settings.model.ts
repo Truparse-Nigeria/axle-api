@@ -684,6 +684,22 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         },
       },
     },
+    moneyTransfer: {
+      enabled: { type: Boolean, default: true },
+      options: {
+        walletToWallet: {
+          name: { type: String, default: "walletToWallet" },
+          enabled: { type: Boolean, default: true },
+          providers: {
+            axle: {
+              enabled: { type: Boolean, default: true },
+              rate: { type: Number, default: 0 },
+              slug: { type: String, default: "walletToWallet" },
+            },
+          },
+        },
+      },
+    },
   },
   {
     timestamps: true,

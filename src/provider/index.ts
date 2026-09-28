@@ -6,3 +6,4 @@ export * from "./gloesim";
 export * from "./dojah";
 export * from "./safehaven";
 export * from "./vitalswap";
+export * from "./axle";

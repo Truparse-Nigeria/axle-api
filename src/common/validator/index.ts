@@ -7,3 +7,4 @@ export * from "./super-query.validator";
 export * from "./esim.validator";
 export * from "./user.validator";
 export * from "./kyc.validator";
+export * from "./money-transfer.validator";
