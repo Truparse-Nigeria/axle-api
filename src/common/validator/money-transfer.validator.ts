@@ -29,6 +29,7 @@ export const sendMoneyToWalletSchema = z
       .regex(/^\d{4}$/, "PIN must contain only numbers"),
     recipientTag: recipientTagSchema,
     currency: z.enum(FiatCurrencyEnum),
+    category: z.string().optional(),
   })
   .strip();
 

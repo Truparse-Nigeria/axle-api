@@ -25,7 +25,7 @@ import { createJob } from "@/queue";
 import mongoose from "mongoose";
 
 export const sendMoneyToWallet = catchAsync(async (req, res) => {
-  const { amount, pin, recipientTag, currency } = await validateRequestPayload(
+  const { amount, pin, recipientTag, currency, category } = await validateRequestPayload(
     req.body,
     sendMoneyToWalletSchema,
   );
@@ -101,6 +101,7 @@ export const sendMoneyToWallet = catchAsync(async (req, res) => {
           description: TxnDesc.wallet2Wallet,
           amount,
           currency,
+          category
         },
         meta: { ...req.meta },
       };
