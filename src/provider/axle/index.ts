@@ -12,10 +12,12 @@ export const axleWalletReceive = async ({
   const absAmount = Math.abs(amount);
   const balanceField = `wallet.fiat.${currency}.balance`;
 
+  // Match on tag only: wallet balances are schema defaults, so older users may
+  // not have the path persisted yet — $inc creates it on first credit.
   const recipient = await User.findOneAndUpdate(
     {
       tag: recipientTag,
-      [balanceField]: { $exists: true },
+      isDeleted: { $ne: true },
     },
     {
       $inc: { [balanceField]: absAmount },
