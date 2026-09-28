@@ -701,6 +701,8 @@ const SettingsSchema = new Schema<ISettingsDocument>(
       },
     },
     general: {
+      email: { type: String, default: "support@useaxle.co" },
+      phone: { type: String, default: "08011111111" },
       socials: {
         facebook: {
           type: String,

@@ -164,6 +164,8 @@ export interface ISocials {
 }
 
 export interface IGeneral {
+  email: string;
+  phone: string;
   socials: ISocials;
 }
 
