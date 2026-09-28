@@ -36,6 +36,7 @@ import {
   createFiatAccount,
   currencySetup,
   sendMoneyToWallet,
+  recipientValidator,
 } from "@/controller";
 import { createPin, createTag, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
@@ -109,5 +110,6 @@ router.get("/wallet/currency/account/:currency", createFiatAccount);
 
 // Money transfer
 router.post("/transfer/wallet", sendMoneyToWallet);
+router.post("/money-transfer/wallet/enquiry", recipientValidator);
 
 export { router as userRouter };

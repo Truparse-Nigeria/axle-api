@@ -31,3 +31,7 @@ export const sendMoneyToWalletSchema = z
     currency: z.enum(FiatCurrencyEnum),
   })
   .strip();
+
+export const checkRecipientSchema = z.object({
+  recipientTag: recipientTagSchema,
+});
