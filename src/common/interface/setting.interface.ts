@@ -152,6 +152,21 @@ export interface IMoneyTransfer {
   options: Record<string, INetwork>;
 }
 
+export interface ISocials {
+  facebook: string;
+  x: string;
+  instagram: string;
+  website: string;
+  telegram: string;
+  tiktok: string;
+  youtube: string;
+  whatsapp: string;
+}
+
+export interface IGeneral {
+  socials: ISocials;
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -165,4 +180,5 @@ export interface ISettings {
   esim: IEsim;
   multiCurrency: IMultiCurrency;
   moneyTransfer: IMoneyTransfer;
+  general: IGeneral;
 }

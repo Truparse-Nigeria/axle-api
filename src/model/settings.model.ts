@@ -700,6 +700,24 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         },
       },
     },
+    general: {
+      socials: {
+        facebook: {
+          type: String,
+          default: "https://facebook.com/useaxle.co",
+        },
+        x: { type: String, default: "https://x.com/useaxle.co" },
+        instagram: { type: String, default: "https://x.com/useaxle.co" },
+        website: {
+          type: String,
+          default: "https://useaxle.co",
+        },
+        telegram: { type: String, default: "https://t.me/useaxle.co" },
+        tiktok: { type: String, default: "https://tiktok.com/@useaxle.co" },
+        youtube: { type: String, default: "https://youtube.com/@useaxle.co" },
+        whatsapp: { type: String, default: "" },
+      },
+    },
   },
   {
     timestamps: true,
