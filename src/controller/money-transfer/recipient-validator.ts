@@ -33,13 +33,13 @@ export const recipientValidator = catchAsync(async (req, res) => {
 
   const attempts = await incrCache(enquiryKey, secondsUntilEndOfDay());
 
-  if (attempts > 5) {
-    return sendResponse(
-      res,
-      400,
-      "Wrong verification limit reach. Try again tomorrow!."
-    );
-  }
+  // if (attempts > 5) {
+  //   return sendResponse(
+  //     res,
+  //     400,
+  //     "Wrong verification limit reach. Try again tomorrow!."
+  //   );
+  // }
 
   const getUser = await User.findOne({ tag: recipientTag });
 
