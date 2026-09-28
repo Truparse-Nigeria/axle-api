@@ -93,6 +93,7 @@ export interface IUser {
   gender: GenderEnum;
   passcode: string;
   pin?: string;
+  tag?: string;
   jti?: string;
   messageToken?: string;
   wallet: IWallet;

@@ -36,7 +36,7 @@ import {
   createFiatAccount,
   currencySetup,
 } from "@/controller";
-import { createPin, currentUser } from "@/controller/user";
+import { createPin, createTag, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
 
@@ -56,6 +56,7 @@ router.use(authGuard(access));
 
 router.get("/me", currentUser(access));
 router.patch("/create-pin", createPin);
+router.patch("/create-tag", createTag);
 
 // Bill payments
 router.post("/bill/airtime", purchaseAirtime);

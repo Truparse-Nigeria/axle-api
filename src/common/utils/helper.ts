@@ -224,6 +224,10 @@ export const checkOnboarding = (user: IUser) => {
     onboarding.push("PIN");
   }
 
+  if (!user?.tag) {
+    onboarding.push("TAG");
+  }
+
   return onboarding;
 };
 

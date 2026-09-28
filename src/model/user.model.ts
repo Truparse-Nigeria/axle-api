@@ -224,6 +224,7 @@ const userSchema = new Schema<IUserDocument>(
       lowercase: true,
       trim: true,
     },
+    tag: { type: String, trim: true, unique: true, sparse: true },
     phone: { type: String, required: true, trim: true },
     dialCode: { type: String, required: true, trim: true },
     referralCode: { type: String, trim: true, unique: true, sparse: true },
