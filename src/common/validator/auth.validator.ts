@@ -17,6 +17,26 @@ export const createPinSchema = z
   })
   .strip();
 
+export const changePinSchema = z
+  .object({
+    pin: z
+      .string()
+      .length(4, "PIN must be exactly 4 digits")
+      .regex(/^\d{4}$/, "PIN must contain only numbers"),
+    oldPin: z
+      .string()
+      .length(4, "PIN must be exactly 4 digits")
+      .regex(/^\d{4}$/, "PIN must contain only numbers"),
+  })
+  .strip();
+
+export const changePasscodeSchema = z
+  .object({
+    passcode: passcodeSchema,
+    oldPasscode: z.string().trim().min(1, "Old passcode is required"),
+  })
+  .strip();
+
 export const signupSchema = z.object({
   firstName: z.string().trim().min(2, "First name is too short"),
   lastName: z.string().trim().min(2, "Last name is too short"),

@@ -37,8 +37,9 @@ import {
   currencySetup,
   sendMoneyToWallet,
   recipientValidator,
+  changePasscode,
 } from "@/controller";
-import { createPin, createTag, currentUser } from "@/controller/user";
+import { changePin, createPin, createTag, currentUser } from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
 
@@ -59,6 +60,8 @@ router.use(authGuard(access));
 router.get("/me", currentUser(access));
 router.patch("/create-pin", createPin);
 router.patch("/create-tag", createTag);
+router.patch("/change-pin", changePin);
+router.patch("/change-passcode", changePasscode(access));
 
 // Bill payments
 router.post("/bill/airtime", purchaseAirtime);
