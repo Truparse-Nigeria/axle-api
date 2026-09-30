@@ -39,7 +39,13 @@ import {
   recipientValidator,
   changePasscode,
 } from "@/controller";
-import { changePin, createPin, createTag, currentUser } from "@/controller/user";
+import {
+  changePin,
+  createPin,
+  createTag,
+  currentUser,
+  resetPin,
+} from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
 
@@ -60,6 +66,7 @@ router.use(authGuard(access));
 router.get("/me", currentUser(access));
 router.patch("/create-pin", createPin);
 router.patch("/create-tag", createTag);
+router.post("/reset-pin", resetPin);
 router.patch("/change-pin", changePin);
 router.patch("/change-passcode", changePasscode(access));
 

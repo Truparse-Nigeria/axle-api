@@ -30,6 +30,15 @@ export const changePinSchema = z
   })
   .strip();
 
+export const resetPinSchema = z.object({
+  finalizer: z.string().trim().max(12),
+  context: z.enum(OtpContextEnum),
+  pin: z
+    .string()
+    .length(4, "PIN must be exactly 4 digits")
+    .regex(/^\d{4}$/, "PIN must contain only numbers"),
+});
+
 export const changePasscodeSchema = z
   .object({
     passcode: passcodeSchema,
