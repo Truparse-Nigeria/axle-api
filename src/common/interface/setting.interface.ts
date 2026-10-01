@@ -6,6 +6,11 @@ export interface IProvider {
   charge?: number;
   slug: string;
   code?: string;
+  NIP?: number; // Only used for bank transfers
+  stamp?: {
+    fee: number;
+    above: number;
+  };
 }
 
 export interface INetworkBase {

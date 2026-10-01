@@ -704,8 +704,13 @@ const SettingsSchema = new Schema<ISettingsDocument>(
           providers: {
             safehaven: {
               enabled: { type: Boolean, default: true },
-              rate: { type: Number, default: 0 },
-              slug: { type: String, default: "walletToBank" },
+              rate: { type: Number, default: 12 }, // Transfer fee charged to the user
+              NIP: { type: Number, default: 10 }, // What the provider charges us
+              slug: { type: String, default: "safehaven" },
+              stamp: {
+                fee: { type: Number, default: 50 },
+                above: { type: Number, default: 10000 },
+              },
             },
           },
         },

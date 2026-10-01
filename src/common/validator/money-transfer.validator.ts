@@ -50,3 +50,22 @@ export const enquiryNameSchema = z.object({
 export const beneficiaryIdSchema = z.object({
   id: z.string().regex(/^[a-f\d]{24}$/i, "Invalid beneficiary id"),
 });
+
+export const sendMoneyToBankSchema = z
+  .object({
+    amount: z
+      .number()
+      .positive(validationConstants.NUMBER_GREATER_THAN_ZERO)
+      .max(
+        Number.MAX_SAFE_INTEGER - 100_000_000,
+        "Amount exceeds maximum limit.",
+      ),
+    pin: z
+      .string()
+      .trim()
+      .length(4, "PIN must be exactly 4 digits")
+      .regex(/^\d{4}$/, "PIN must contain only numbers"),
+    beneficiaryId: z.string().trim().min(1, "Beneficiary is required"),
+    narration: z.string().trim().max(100).default(""),
+  })
+  .strip();

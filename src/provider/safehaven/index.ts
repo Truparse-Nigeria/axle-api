@@ -1,11 +1,13 @@
 import {
   AppError,
+  ENVIRONMENT,
   getCache,
   HttpMethod,
   IS_DEVELOPMENT,
   setCache,
   type IBank,
   type ICreateSafeHavenAccountV2,
+  type ISafeHavenBankTransferPayload,
   type INameEnquiry,
   type ISafeHavenBank,
   type ISafeHavenNameEnquiry,
@@ -58,6 +60,41 @@ export const safehavenNameEnquiry = async (payload: INameEnquiry) => {
       bankCode: data.data.bankCode,
       bankName: bank?.bankName ?? "",
     },
+  };
+};
+
+// Outbound transfer to a bank account (uses the name enquiry session)
+export const safehavenBankTransfer = async (
+  payload: ISafeHavenBankTransferPayload,
+) => {
+  const { data, error } = await callSafehaven<
+    ISafeHavenResponse<ISafehavenTransferResponse>
+  >(`/transfers`, HttpMethod.POST, {
+    data: {
+      nameEnquiryReference: payload.sessionRef,
+      debitAccountNumber:
+        payload.debitAccountNumber ?? ENVIRONMENT.SAFEHAVEN.ACCOUNT_NUMBER,
+      beneficiaryBankCode: payload.bankCode,
+      beneficiaryAccountNumber: payload.accountNumber,
+      amount: payload.amount,
+      saveBeneficiary: false,
+      narration: payload.narration,
+      paymentReference: payload.reference,
+    },
+  });
+
+  // Only refund when Safehaven actually answered with a rejection. A timeout
+  // or network failure is ambiguous (the transfer may have gone through), so
+  // it stays pending and is settled by the reversal hook.
+  if (error || !data) {
+    const rejected = !!error && ("statusCode" in error || !!error.errorData);
+    return { error, shouldRefund: rejected };
+  }
+
+  return {
+    data: data.data,
+    error: null,
+    shouldRefund: data.statusCode !== 200,
   };
 };
 

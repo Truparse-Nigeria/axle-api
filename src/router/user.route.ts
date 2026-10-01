@@ -40,6 +40,7 @@ import {
   changePasscode,
   retrieveBanks,
   enquireName,
+  sendMoneyToBank,
   retrieveBeneficiaries,
   removeBeneficiary,
 } from "@/controller";
@@ -127,6 +128,7 @@ router.post("/transfer/wallet", sendMoneyToWallet);
 router.post("/money-transfer/wallet/enquiry", recipientValidator);
 router.get("/money-transfer/banks", retrieveBanks);
 router.post("/money-transfer/bank/enquiry", enquireName);
+router.post("/money-transfer/bank", sendMoneyToBank);
 
 // Beneficiaries
 router.post("/beneficiary/retrieve", retrieveBeneficiaries);

@@ -143,3 +143,11 @@ export interface ISafeHavenNameEnquiry {
   kycLevel: string;
   bvn: string;
 }
+
+export interface ISafeHavenBankTransferPayload extends INameEnquiry {
+  sessionRef?: string;
+  amount: number;
+  narration: string;
+  reference: string;
+  debitAccountNumber?: string;
+}
