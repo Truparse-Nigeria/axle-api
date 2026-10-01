@@ -1,5 +1,10 @@
 import { logger, redis, type JOB_TYPE, type TJobData } from "@/common";
-import { generateMultiCurrency, processStaticAccount, uploadImageToDigitalOcean } from "@/job";
+import {
+  autosaveBeneficiary,
+  generateMultiCurrency,
+  processStaticAccount,
+  uploadImageToDigitalOcean,
+} from "@/job";
 import { sendEmail } from "@/provider";
 import {
   Worker,
@@ -32,6 +37,8 @@ export const mainWorker = new Worker<TJobData>(
         return await uploadImageToDigitalOcean(job.data);
       case "GENERATE_MULTICURRENCY_ACCOUNT":
         return await generateMultiCurrency();
+      case "SAVE_BENEFICIARY":
+        return await autosaveBeneficiary(job.data);
       default:
         //TODO:  Add monitor in the future
         logger.error(`Unknown job type: ${type}`);

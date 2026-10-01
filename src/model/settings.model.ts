@@ -698,6 +698,17 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             },
           },
         },
+        walletToBank: {
+          name: { type: String, default: "walletToBank" },
+          enabled: { type: Boolean, default: true },
+          providers: {
+            safehaven: {
+              enabled: { type: Boolean, default: true },
+              rate: { type: Number, default: 0 },
+              slug: { type: String, default: "walletToBank" },
+            },
+          },
+        },
       },
     },
     general: {

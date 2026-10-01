@@ -3,7 +3,7 @@ import type {
   IProcessStaticAccount,
   IVitalSwapIdentifer,
 } from "@/job";
-import type { ISendMail } from "../interface";
+import type { ISaveBeneficiaryJob, ISendMail } from "../interface";
 import type { IUploadImageToDigitalOceanJob } from "../interface";
 import { FiatCurrencyEnum } from "../enum";
 
@@ -12,14 +12,16 @@ export type JOB_TYPE =
   | "PROCESS_STATIC_ACCOUNT"
   | "UPLOAD_IMAGE_TO_DIGITAL_OCEAN"
   | "GENERATE_MULTICURRENCY_ACCOUNT"
-  | "VITALSWAP_WALLET";
+  | "VITALSWAP_WALLET"
+  | "SAVE_BENEFICIARY";
 
 export type TJobData =
   | ISendMail
   | IProcessStaticAccount
   | IUploadImageToDigitalOceanJob
   | IGenerateMultiCurrency
-  | IVitalSwapIdentifer;
+  | IVitalSwapIdentifer
+  | ISaveBeneficiaryJob;
 
 export const cacheKey = {
   SETTINGS: "settings",
@@ -49,6 +51,7 @@ export const TxnDesc = {
 // Option keys under `settings.moneyTransfer.options`
 export const ServiceCheck = {
   WALLET_TO_WALLET: "walletToWallet",
+  WALLET_TO_BANK: "walletToBank",
 };
 
 // Default billing/ID details used when provisioning an Eversend card user and
@@ -69,6 +72,8 @@ export const validationConstants = {
 // Fields hidden from non-privileged reads (mirrors the model's `select: false`)
 export const SENSITIVE_TRANSACTION_FIELDS =
   "+responsePayload +requestPayload +settlement +meta +provider +initialBalance +finalBalance";
+
+export const SENSITIVE_BENEFICIARY_FIELDS = "+createdBy +isDeleted";
 
 // Single source of truth for user fields that must never reach an API response.
 export const SENSITIVE_USER_FIELDS =

@@ -36,3 +36,17 @@ export const sendMoneyToWalletSchema = z
 export const checkRecipientSchema = z.object({
   recipientTag: recipientTagSchema,
 });
+
+export const enquiryNameSchema = z.object({
+  accountNumber: z
+    .string()
+    .trim()
+    .length(10, "Account number must be exactly 10 digits")
+    .regex(/^\d{10}$/, "Account number must contain only numbers"),
+  bankCode: z.string().trim().min(1, "Bank code is required"),
+  save: z.boolean().default(true),
+});
+
+export const beneficiaryIdSchema = z.object({
+  id: z.string().regex(/^[a-f\d]{24}$/i, "Invalid beneficiary id"),
+});

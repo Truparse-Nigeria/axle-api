@@ -38,6 +38,10 @@ import {
   sendMoneyToWallet,
   recipientValidator,
   changePasscode,
+  retrieveBanks,
+  enquireName,
+  retrieveBeneficiaries,
+  removeBeneficiary,
 } from "@/controller";
 import {
   changePin,
@@ -121,5 +125,11 @@ router.get("/wallet/currency/account/:currency", createFiatAccount);
 // Money transfer
 router.post("/transfer/wallet", sendMoneyToWallet);
 router.post("/money-transfer/wallet/enquiry", recipientValidator);
+router.get("/money-transfer/banks", retrieveBanks);
+router.post("/money-transfer/bank/enquiry", enquireName);
+
+// Beneficiaries
+router.post("/beneficiary/retrieve", retrieveBeneficiaries);
+router.delete("/beneficiary/:id", removeBeneficiary);
 
 export { router as userRouter };

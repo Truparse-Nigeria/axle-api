@@ -149,3 +149,9 @@ export enum SelfieStatusEnum {
   APPROVED = "APPROVED",
   REJECTED = "REJECTED",
 }
+
+export enum BeneficiaryEnum {
+  BANK = "BANK",
+  CABLE = "CABLE",
+  ELECTRICITY = "ELECTRICITY",
+}

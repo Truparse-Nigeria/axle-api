@@ -128,3 +128,18 @@ export interface IProcessTransactionParams {
   session: ClientSession;
   fullPayload?: ISafeHavenHook;
 }
+
+export interface INameEnquiry {
+  accountNumber: string;
+  bankCode: string;
+}
+
+export interface ISafeHavenNameEnquiry {
+  responseMessage: string;
+  sessionId: string;
+  bankCode: string;
+  accountNumber: string;
+  accountName: string;
+  kycLevel: string;
+  bvn: string;
+}

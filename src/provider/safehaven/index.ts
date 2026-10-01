@@ -6,7 +6,9 @@ import {
   setCache,
   type IBank,
   type ICreateSafeHavenAccountV2,
+  type INameEnquiry,
   type ISafeHavenBank,
+  type ISafeHavenNameEnquiry,
   type ISafeHavenResponse,
   type ISafeHavenSubAccount,
   type ISafehavenTransferResponse,
@@ -34,6 +36,29 @@ export const safehavenBanks = async () => {
   await setCache<IBank[]>(key, banks);
 
   return { data: banks as IBank[], error: null };
+};
+
+// Resolve the account name for a bank account
+export const safehavenNameEnquiry = async (payload: INameEnquiry) => {
+  const { data, error } = await callSafehaven<
+    ISafeHavenResponse<ISafeHavenNameEnquiry>
+  >(`/transfers/name-enquiry`, HttpMethod.POST, { data: payload });
+
+  if (error || !data?.data) return { error };
+
+  // Bank list is cached, used to attach the bank name to the beneficiary
+  const { data: banks } = await safehavenBanks();
+  const bank = banks.find((bank) => bank.bankCode === data.data.bankCode);
+
+  return {
+    data: {
+      accountNumber: data.data.accountNumber,
+      accountName: data.data.accountName,
+      session: data.data.sessionId,
+      bankCode: data.data.bankCode,
+      bankName: bank?.bankName ?? "",
+    },
+  };
 };
 
 // Query inbound transfer status

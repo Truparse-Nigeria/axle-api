@@ -11,3 +11,4 @@ export * from "./hook";
 export * from "./upload";
 export * from "./multicurrency";
 export * from "./money-transfer";
+export * from "./beneficiary";
