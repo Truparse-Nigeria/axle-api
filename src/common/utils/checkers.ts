@@ -243,6 +243,23 @@ export const billServiceCheck = async (
     : null;
 };
 
+// Cheap data has no providers in settings — the provider lives on each plan
+export const cheapDataService = async (network: string) => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  if (!settings.cheapData?.enabled) return null;
+
+  const checkNetwork = settings.cheapData.networks[network];
+
+  if (!checkNetwork?.enabled) return null;
+
+  return checkNetwork;
+};
+
 // Resolves the currently enabled giftcard provider, folding the top-level
 // service charge into the returned provider object.
 export const giftcardServiceCheck = async () => {

@@ -307,11 +307,6 @@ const SettingsSchema = new Schema<ISettingsDocument>(
               rate: { type: Number, default: 1.5 },
               slug: { type: String, default: "mtn-data" },
             },
-            ringo: {
-              enabled: { type: Boolean, default: false },
-              rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "mtn" },
-            },
           },
         },
         airtel: {
@@ -319,14 +314,9 @@ const SettingsSchema = new Schema<ISettingsDocument>(
           enabled: { type: Boolean, default: true },
           providers: {
             vtpass: {
-              enabled: { type: Boolean, default: false },
-              rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "airtel-data" },
-            },
-            ringo: {
               enabled: { type: Boolean, default: true },
               rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "airtel" },
+              slug: { type: String, default: "airtel-data" },
             },
           },
         },
@@ -335,14 +325,9 @@ const SettingsSchema = new Schema<ISettingsDocument>(
           enabled: { type: Boolean, default: true },
           providers: {
             vtpass: {
-              enabled: { type: Boolean, default: false },
-              rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "glo-data" },
-            },
-            ringo: {
               enabled: { type: Boolean, default: true },
               rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "glo" },
+              slug: { type: String, default: "glo-data" },
             },
           },
         },
@@ -351,14 +336,9 @@ const SettingsSchema = new Schema<ISettingsDocument>(
           enabled: { type: Boolean, default: true },
           providers: {
             vtpass: {
-              enabled: { type: Boolean, default: false },
-              rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "etisalat-data" },
-            },
-            ringo: {
               enabled: { type: Boolean, default: true },
               rate: { type: Number, default: 1.5 },
-              slug: { type: String, default: "9mobile" },
+              slug: { type: String, default: "etisalat-data" },
             },
           },
         },

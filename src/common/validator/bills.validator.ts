@@ -73,3 +73,25 @@ export const payElectricitySchema = z
     pin: pinField,
   })
   .strip();
+
+const networkField = z.enum(["mtn", "glo", "airtel", "9mobile"]);
+
+export const validateDataPlatformSchema = z.object({
+  network: networkField,
+});
+
+export const buyDataSchema = z
+  .object({
+    network: networkField,
+    dataId: z.string().trim(),
+    isPromo: z.boolean(),
+    phone: z
+      .string()
+      .trim()
+      .refine((phone) => /^(070|080|081|090|091)\d{8}$/.test(phone), {
+        message:
+          "Phone number should start with 070, 080, 081, 090, or 091 and be followed by 8 digits.",
+      }),
+    pin: pinField,
+  })
+  .strip();

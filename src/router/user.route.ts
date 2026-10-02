@@ -43,6 +43,9 @@ import {
   sendMoneyToBank,
   retrieveBeneficiaries,
   removeBeneficiary,
+  getCheapData,
+  purchaseData,
+  getRegularData,
 } from "@/controller";
 import {
   changePin,
@@ -77,6 +80,11 @@ router.patch("/change-passcode", changePasscode(access));
 
 // Bill payments
 router.post("/bill/airtime", purchaseAirtime);
+
+// Data
+router.get("/bill/data", getCheapData(access));
+router.post("/bill/data/purchase", purchaseData);
+router.get("/bill/data/regular/:network", getRegularData);
 
 // Cable (TV)
 router.get("/bill/cable/plans/:entity", retrievePlans);

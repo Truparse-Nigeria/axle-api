@@ -30,6 +30,7 @@ export const cacheKey = {
   EVERSEND_TOKEN_KEY: "eversend-token",
   GLOESIM_TOKEN_KEY: "gloesim-token",
   GLOESIM_COUNTRY_KEY: "gloesim-country",
+  BLAAC_TOKEN_KEY: "blaac-token",
 };
 
 export const TxnDesc = {

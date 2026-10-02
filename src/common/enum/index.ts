@@ -100,6 +100,7 @@ export enum VendorEnum {
   GLOESIM = "gloesim",
   AXLE = "axle",
   VITALSWAP = "vitalswap",
+  BLAAC = "blaac",
 }
 
 export enum CardVariantEnum {

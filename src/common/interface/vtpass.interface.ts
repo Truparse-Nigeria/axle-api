@@ -16,6 +16,7 @@ export interface IVtpassDataPurchase {
   serviceID: string;
   amount?: number;
   billersCode: string;
+  phone: string;
   variation_code: string;
 }
 

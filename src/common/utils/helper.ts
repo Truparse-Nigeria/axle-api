@@ -3,6 +3,7 @@ import { differenceInSeconds, endOfDay, format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
+import { createHmac } from "node:crypto";
 import { ENVIRONMENT } from "../config";
 import {
   CardVariantEnum,
@@ -12,6 +13,7 @@ import {
 } from "../enum";
 import type {
   ICardServiceCheck,
+  IDataPlan,
   IFiatAccount,
   ISettings,
   IUser,
@@ -534,4 +536,22 @@ export const testIdentity = (number = 11) => {
   }
 
   return randomNumber;
+};
+
+export const blaacSignature = (baseString: string, clientSecret: string) =>
+  createHmac("sha256", clientSecret).update(baseString, "utf8").digest("base64");
+
+// Sorts plans by size (then price) and strips internal-only fields
+export const sortDataPlans = (data: IDataPlan[]) => {
+  const unitToMB = { MB: 1, GB: 1024, TB: 1024 * 1024 };
+
+  return [...data]
+    .sort((a, b) => {
+      const sizeA = parseFloat(a.size) * unitToMB[a.unit];
+      const sizeB = parseFloat(b.size) * unitToMB[b.unit];
+
+      if (sizeA !== sizeB) return sizeA - sizeB;
+      return a.price - b.price;
+    })
+    .map(({ provider, planId, unitPrice, active, ...rest }) => rest);
 };
