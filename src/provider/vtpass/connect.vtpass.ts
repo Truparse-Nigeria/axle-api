@@ -60,8 +60,10 @@ export const callVtpass = async <T>(
     };
 
     const response: AxiosResponse<T> = await vtpassApi.request(config);
+    console.log(response.data);
     return {data: response.data};
   } catch (error) {
+    console.log(error);
     return  {error: parseError(error)};
   }
 };
