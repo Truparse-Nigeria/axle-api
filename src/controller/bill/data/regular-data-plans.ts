@@ -26,6 +26,9 @@ export const getRegularData = catchAsync(async (req, res) => {
 
   let combo = await getCache<IRegularData[]>(key);
 
+  console.log(combo);
+  console.log(combo?.length);
+
   if (!combo?.length) {
     combo = await regularDataQuery(network);
     await setCache<IRegularData[]>(key, combo, 24 * 60 * 60);
