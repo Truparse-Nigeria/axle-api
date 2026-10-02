@@ -91,6 +91,8 @@ export const vtpassVariation = async (serviceID: string) => {
     { params: { serviceID } },
   );
 
+  console.log(data, error);
+
   if (error || !data || data?.response_description !== "000") {
     throw new AppError("Oops! could not get plans. Try again", 400);
   }
