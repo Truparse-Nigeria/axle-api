@@ -43,7 +43,7 @@ export interface IDojahCachedDetails {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   image?: string;
   idUrl?: string;
   middleName?: string;

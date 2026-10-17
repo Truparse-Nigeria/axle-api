@@ -2,6 +2,7 @@ import {
   AppError,
   checkForCurrencyBankAccount,
   MULTICURRENCY_FIATS,
+  sendResponse,
   toFiatAccount,
   WalletStatusEnum,
   type IFiatAccount,
@@ -58,9 +59,6 @@ export const vitalSwapHook = catchAsync(async (req, res) => {
       };
     }
 
-    console.log(set);
-    console.log(push);
-
     if (!Object.keys(set).length) {
       throw new AppError("New SET object is empty", 400);
     }
@@ -71,6 +69,8 @@ export const vitalSwapHook = catchAsync(async (req, res) => {
     });
 
     //TODO: Notify customer that account was created
+
+    return sendResponse(res, 200, "Virtual bank account created successfully");
   };
 
   switch (payload.event_name) {

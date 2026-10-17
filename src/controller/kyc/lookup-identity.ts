@@ -61,17 +61,14 @@ export const lookupIdentity = catchAsync(async (req, res) => {
       throw new AppError("Unable to retrieve identity", 404);
     }
     const data = response.data;
-    if (
-      !data.firstName ||
-      !data.lastName ||
-      !data.dateOfBirth ||
-      !data.phoneNumber
-    ) {
+    if (!data.firstName || !data.lastName || !data.dateOfBirth) {
       throw new AppError(
         "Incomplete identity data returned from provider",
         400,
       );
     }
+
+    const phoneNumber = data.phoneNumber?.trim().replace(/^\+?234/, "0");
 
     cached = {
       type,
@@ -79,7 +76,7 @@ export const lookupIdentity = catchAsync(async (req, res) => {
       firstName: data.firstName.toLowerCase().trim(),
       lastName: data.lastName.toLowerCase().trim(),
       dateOfBirth: normalizeKycDate(data.dateOfBirth),
-      phoneNumber: encryptData(data.phoneNumber.trim().replace(/^\+?234/, "0")),
+      ...(phoneNumber && { phoneNumber: encryptData(phoneNumber) }),
       middleName: data.middleName?.toLowerCase().trim(),
     };
 
@@ -107,6 +104,8 @@ export const lookupIdentity = catchAsync(async (req, res) => {
   );
   return sendResponse(res, 200, "Success", {
     finalizer,
-    phone: maskPhone(decryptData(cached.phoneNumber)),
+    phone: maskPhone(
+      cached.phoneNumber ? decryptData(cached.phoneNumber) : "",
+    ),
   });
 });

@@ -29,10 +29,14 @@ export const verifyIdentity = catchAsync(async (req, res) => {
   }
   await throwIfIdentifierHasBeenUsed(finalizerData.identifier, type, String(user._id));
 
+  const phoneNumberMatches =
+    !cached.phoneNumber ||
+    (!!phoneNumber && decryptData(cached.phoneNumber) === phoneNumber);
+
   if (
     cached.firstName !== firstName.toLowerCase().trim() ||
     cached.lastName !== lastName.toLowerCase().trim() ||
-    decryptData(cached.phoneNumber) !== phoneNumber ||
+    !phoneNumberMatches ||
     cached.dateOfBirth !== normalizeKycDate(dateOfBirth)
   ) {
     await incrCache(attemptKey, secondsUntilEndOfDay());
@@ -57,7 +61,7 @@ export const verifyIdentity = catchAsync(async (req, res) => {
         lastName: cached.lastName,
         middleName: cached.middleName,
         dateOfBirth: encryptData(cached.dateOfBirth),
-        phoneNumber: cached.phoneNumber,
+        ...(cached.phoneNumber && { phoneNumber: cached.phoneNumber }),
         image: cached.image,
         ...(cached.idUrl && { idUrl: cached.idUrl }),
       },
