@@ -3,6 +3,8 @@ import { User, type IUserDocument } from "@/model";
 
 export enum AccessTypeEnum {
   USER = "USER",
+  ADMIN = "ADMIN",
+  MERCHANT = "MERCHANT",
 }
 
 export type TUser = IUserDocument;
