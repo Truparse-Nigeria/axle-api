@@ -61,6 +61,9 @@ export const lookupIdentity = catchAsync(async (req, res) => {
       throw new AppError("Unable to retrieve identity", 404);
     }
     const data = response.data;
+
+    console.log(data);
+
     if (!data.firstName || !data.lastName || !data.dateOfBirth) {
       throw new AppError(
         "Incomplete identity data returned from provider",
