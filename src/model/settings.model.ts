@@ -358,7 +358,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
     },
     cards: {
       ascend: {
-        active: { type: Boolean, default: true },
+        active: { type: Boolean, default: false },
         instruction: {
           type: String,
           default:
@@ -432,9 +432,9 @@ const SettingsSchema = new Schema<ISettingsDocument>(
             brandConfig: {
               mastercard: {
                 name: { type: String, default: CardBrandEnum.MASTERCARD },
-                create: { type: Boolean, default: true },
-                fund: { type: Boolean, default: true },
-                withdraw: { type: Boolean, default: true },
+                create: { type: Boolean, default: false },
+                fund: { type: Boolean, default: false },
+                withdraw: { type: Boolean, default: false },
                 minCardBalance: { type: Number, default: 1 },
                 minFundingOnCreation: { type: Number, default: 1 },
                 providerCreationFee: { type: Number, default: 1 },

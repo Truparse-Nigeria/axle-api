@@ -372,7 +372,7 @@ export const prepareFilterForAggregation = (
 // issued by Eversend; everything else falls back to the in-house/default vendor.
 export const cardVendorByVariant = (variant: CardVariantEnum) => {
   switch (variant) {
-    case CardVariantEnum.ASCEND:
+    case CardVariantEnum.ORIGIN:
       return VendorEnum.EVERSEND;
 
     default:
