@@ -73,6 +73,22 @@ export interface ICustomRates {
   base: number;
 }
 
+export interface ICardBrandInfo {
+  description: {
+    support: string;
+    cardBillingAddress: string;
+    terminationPolicy: string;
+    cardControl: string;
+  };
+  fees: {
+    cardCreation: string;
+    declineFees: string;
+    monthlyMaintenance: string;
+    crossBorderFees: string;
+    Rewards: string;
+  };
+}
+
 export interface ICardBrandProperties {
   name: CardBrandEnum;
   create: boolean;
@@ -86,11 +102,18 @@ export interface ICardBrandProperties {
   minFund: number;
   currency: string;
   creationFee: number;
+  declineFee?: number;
+  monthMaintenance?: number;
+  crossBorder?: {
+    percentage: number;
+    flat: number;
+  };
   fundingCharge: {
     providerPercent: number;
     percent: number;
     fixed: number;
   };
+  info?: ICardBrandInfo;
 }
 
 export interface ICardServiceCheck extends ICardBrandProperties {
