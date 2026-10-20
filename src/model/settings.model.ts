@@ -391,7 +391,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
                   flat: { type: Number, default: 0.20 },
-                }
+                },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
                   percent: { type: Number, default: 2 },
@@ -403,7 +403,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                     cardBillingAddress: {type: String, default: "Default card message"},
                     terminationPolicy: {type: String, default: "Default card message"},
                     cardControl: {type: String, default: "Default card message"},
-                  }
+                  },
                   fees: {
                     cardCreation: {type: String, default: "Default card message"},
                     declineFees: {type: String, default: "Default card message"},
@@ -431,7 +431,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
                   flat: { type: Number, default: 0.20 },
-                }
+                },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
                   percent: { type: Number, default: 2 },
@@ -443,7 +443,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                     cardBillingAddress: {type: String, default: "Default card message"},
                     terminationPolicy: {type: String, default: "Default card message"},
                     cardControl: {type: String, default: "Default card message"},
-                  }
+                  },
                   fees: {
                     cardCreation: {type: String, default: "Default card message"},
                     declineFees: {type: String, default: "Default card message"},
@@ -490,7 +490,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
                   flat: { type: Number, default: 0.20 },
-                }
+                },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
                   percent: { type: Number, default: 2 },
@@ -502,7 +502,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                     cardBillingAddress: {type: String, default: "Default card message"},
                     terminationPolicy: {type: String, default: "Default card message"},
                     cardControl: {type: String, default: "Default card message"},
-                  }
+                  },
                   fees: {
                     cardCreation: {type: String, default: "Default card message"},
                     declineFees: {type: String, default: "Default card message"},
@@ -530,7 +530,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
                   flat: { type: Number, default: 0.20 },
-                }
+                },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
                   percent: { type: Number, default: 2 },
@@ -542,7 +542,7 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                     cardBillingAddress: {type: String, default: "Default card message"},
                     terminationPolicy: {type: String, default: "Default card message"},
                     cardControl: {type: String, default: "Default card message"},
-                  }
+                  },
                   fees: {
                     cardCreation: {type: String, default: "Default card message"},
                     declineFees: {type: String, default: "Default card message"},
