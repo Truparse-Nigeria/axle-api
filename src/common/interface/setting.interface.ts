@@ -102,9 +102,9 @@ export interface ICardBrandProperties {
   minFund: number;
   currency: string;
   creationFee: number;
-  declineFee?: number;
-  monthMaintenance?: number;
-  crossBorder?: {
+  declineFee: number;
+  monthMaintenance: number;
+  crossBorder: {
     percentage: number;
     flat: number;
   };
@@ -113,7 +113,7 @@ export interface ICardBrandProperties {
     percent: number;
     fixed: number;
   };
-  info?: ICardBrandInfo;
+  info: ICardBrandInfo;
 }
 
 export interface ICardServiceCheck extends ICardBrandProperties {
