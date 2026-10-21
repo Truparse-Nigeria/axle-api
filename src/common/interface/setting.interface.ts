@@ -83,7 +83,7 @@ export interface ICardBrandInfo {
   fees: {
     cardCreation: string;
     declineFees: string;
-    monthlyMaintenance: string;
+    maintenance: string;
     crossBorderFees: string;
     Rewards: string;
   };
@@ -103,7 +103,7 @@ export interface ICardBrandProperties {
   currency: string;
   creationFee: number;
   declineFee: number;
-  monthMaintenance: number;
+  maintenance: number;
   crossBorder: {
     percentage: number;
     flat: number;
@@ -114,6 +114,41 @@ export interface ICardBrandProperties {
     fixed: number;
   };
   info: ICardBrandInfo;
+}
+
+export interface INgnCardBrandInfo {
+  description: {
+    shopOnline: string;
+    payForSubscription: string;
+    tapToPay: string;
+    stayInControl: string;
+  };
+  fees: {
+    cardCreation: string;
+    authorization: string;
+    atmWithdrawal: string;
+    maintenance: string;
+    DisputeResolution: string;
+  };
+}
+
+export interface INgnCardBrandProperties {
+  name: CardBrandEnum;
+  create: boolean;
+  withdraw: boolean;
+  providerCreationFee: number;
+  currency: string;
+  creationFee: number;
+  authorizationFee: number;
+  atmWithdrawalFee: number;
+  disputeResolutionFee: number;
+  maintenance: number;
+  info: INgnCardBrandInfo;
+}
+
+export interface INgnCardSettings {
+  maxCardCreation: number;
+  brandConfig: Record<string, INgnCardBrandProperties>;
 }
 
 export interface ICardServiceCheck extends ICardBrandProperties {
@@ -204,7 +239,7 @@ export interface ISettings {
   cable: IBiller;
   regularData: IBiller;
   giftcard: IGiftcard;
-  cards: Record<string, ICardSettings>;
+  cards: { ngn: INgnCardSettings } & Record<string, ICardSettings | INgnCardSettings>;
   airtimeToCash: IAirtimeToCash;
   crypto: ICrypto;
   esim: IEsim;

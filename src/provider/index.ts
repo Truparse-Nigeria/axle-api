@@ -8,3 +8,4 @@ export * from "./safehaven";
 export * from "./vitalswap";
 export * from "./axle";
 export * from "./blaac";
+export * from "./sudo";

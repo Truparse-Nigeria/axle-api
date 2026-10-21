@@ -5,6 +5,7 @@ import { cacheKey } from "../constant";
 import type {
   IBiller,
   ICardServiceCheck,
+  ICardSettings,
   IDisco,
   ISettings,
   IUser,
@@ -375,7 +376,7 @@ export const cardServiceCheck = async (
   const currencyKey = currency.toLowerCase();
   const brandKey = cardBrand.toLowerCase();
 
-  const cardVariant = settings.cards[variant];
+  const cardVariant = settings.cards[variant] as ICardSettings | undefined;
   const brandSettings =
     cardVariant?.currency[currencyKey]?.brandConfig?.[brandKey];
 
@@ -420,7 +421,7 @@ export const cardRateService = async (variant: CardVariantEnum) => {
     throw new AppError("Service not available");
   }
 
-  return settings?.cards[variant]?.customRates;
+  return (settings?.cards[variant] as ICardSettings | undefined)?.customRates;
 };
 
 export const checkConsent = async (id: string) => {

@@ -65,6 +65,8 @@ export enum DiscosEnum {
 export enum CardBrandEnum {
   MASTERCARD = "MasterCard",
   VISA = "Visa",
+  AFRIGO = "AfriGo",
+  VERVE = "Verve",
 }
 
 export enum StatusEnum {

@@ -1,0 +1,172 @@
+export interface ISudoRes<T = null> {
+  statusCode: number;
+  message: string;
+  data: T;
+}
+
+export interface ISudoAddress {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface ISudoIndividual {
+  firstName: string;
+  lastName: string;
+  otherNames?: string;
+  dob: string;
+  identity?: {
+    type: string;
+    number: string;
+  };
+  documents?: {
+    idFrontUrl?: string;
+    idBackUrl?: string;
+    addressVerificationUrl?: string;
+  };
+}
+
+export interface ISudoCreateCustomerReq {
+  type: "individual" | "company";
+  name: string;
+  phoneNumber: string;
+  status: "active" | "inactive";
+  emailAddress: string;
+  billingAddress: ISudoAddress;
+  individual: ISudoIndividual;
+}
+
+export interface ISudoCustomer {
+  _id: string;
+  business: string;
+  type: "individual" | "company";
+  name: string;
+  status: string;
+  isApproved: boolean;
+  phoneNumber: string;
+  emailAddress: string;
+  individual: ISudoIndividual;
+  billingAddress: ISudoAddress;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface ISudoSpendingControls {
+  allowedCategories?: string[];
+  blockedCategories?: string[];
+  channels?: {
+    atm: boolean;
+    pos: boolean;
+    web: boolean;
+    mobile: boolean;
+  };
+  spendingLimits?: {
+    amount: number;
+    interval: "daily" | "weekly" | "monthly" | "yearly";
+  }[];
+}
+
+export interface ISudoCreateCardReq {
+  customerId: string;
+  type: "physical" | "virtual";
+  currency: "NGN" | "USD";
+  status: "active" | "inactive";
+  fundingSourceId?: string;
+  brand?: "Verve" | "AfriGo" | "MasterCard" | "Visa";
+  /** Card PAN (Verve/AfriGo) or Card ID (Visa). Required for physical cards. */
+  number?: string;
+  enable2FA?: boolean;
+  issuerCountry?: "NGA" | "USA";
+  metadata?: string;
+  spendingControls?: ISudoSpendingControls;
+  bankCode?: string;
+  accountNumber?: string;
+  /** Card _id being replaced; requires replacementReason. */
+  replacementFor?: string;
+  replacementReason?: "lost" | "stolen";
+  /** Required for all virtual cards and gift cards. */
+  debitAccountId?: string;
+  /** Funding amount. Required for MasterCard. */
+  amount?: number;
+  sendPINSMS?: boolean;
+  /** Visa only, format MMM-YYYY (e.g. AUG-2025); max validity 3 years. */
+  expirationDate?: string;
+}
+
+export interface ISudoCard {
+  _id: string;
+  business: string;
+  customer: string;
+  account: string;
+  fundingSource: string;
+  program?: string | null;
+  type: "physical" | "virtual";
+  brand: string;
+  currency: string;
+  maskedPan: string;
+  expiryMonth: string;
+  expiryYear: string;
+  metadata?: Record<string, any> | null;
+  status: string;
+  replacedFor?: string | null;
+  spendingControls: {
+    _id?: string;
+    channels: {
+      _id?: string;
+      atm: boolean;
+      pos: boolean;
+      web: boolean;
+      mobile: boolean;
+    };
+    allowedCategories: string[];
+    blockedCategories: string[];
+    spendingLimits: {
+      _id?: string;
+      amount: number;
+      interval: string;
+      categories: string[];
+    }[];
+  };
+  is2FAEnabled?: boolean;
+  is2FAEnrolled: boolean;
+  isDefaultPINChanged: boolean;
+  disposable: boolean;
+  refundAccount: string | null;
+  providerReference?: string;
+  isDigitalized?: boolean;
+  failedTransactionCount?: number;
+  minimumBalance?: number;
+  version?: string;
+  accumulatedFees?: number;
+  totalFeesCharged?: number;
+  feeChargeDay?: number;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface ISudoDigitizeCardRes {
+  status: string;
+  card: string;
+}
+
+export interface ISudoUpdateCardReq {
+  status: "active" | "inactive" | "canceled";
+  fundingSourceId?: string;
+  metadata?: string;
+  /** Required when status is "canceled". */
+  cancellationReason?: "lost" | "stolen";
+  /** Required only when status is "canceled". */
+  creditAccountId?: string;
+  spendingControls?: ISudoSpendingControls;
+}
+
+export interface ISudoUpdateCardPinReq {
+  oldPin: string;
+  newPin: string;
+}

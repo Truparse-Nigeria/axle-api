@@ -357,6 +357,95 @@ const SettingsSchema = new Schema<ISettingsDocument>(
       },
     },
     cards: {
+      ngn: {
+        maxCardCreation: { type: Number, default: 3 },
+        brandConfig: {
+          verve: {
+            name: { type: String, default: CardBrandEnum.VERVE },
+            create: { type: Boolean, default: true },
+            withdraw: { type: Boolean, default: true },
+            providerCreationFee: { type: Number, default: 200 },
+            currency: { type: String, default: "NGN" },
+            creationFee: { type: Number, default: 500 },
+            authorizationFee: { type: Number, default: 20 },
+            atmWithdrawalFee: { type: Number, default: 100 },
+            disputeResolutionFee: { type: Number, default: 500 },
+            maintenance: { type: Number, default: 200 },
+            info: {
+              description: {
+                shopOnline: { type: String, default: "Default card message" },
+                payForSubscription: {
+                  type: String,
+                  default: "Default card message",
+                },
+                tapToPay: {
+                  type: String,
+                  default: "Default card message",
+                },
+                stayInControl: { type: String, default: "Default card message" },
+              },
+              fees: {
+                cardCreation: { type: String, default: "Default card message" },
+                authorization: {
+                  type: String,
+                  default: "Default card message",
+                },
+                atmWithdrawal: {
+                  type: String,
+                  default: "Default card message",
+                },
+                maintenance: {
+                  type: String,
+                  default: "Default card message",
+                },
+                DisputeResolution: { type: String, default: "Default card message" },
+              },
+            },
+          },
+          afriGo: {
+            name: { type: String, default: CardBrandEnum.AFRIGO },
+            create: { type: Boolean, default: true },
+            withdraw: { type: Boolean, default: true },
+            providerCreationFee: { type: Number, default: 200 },
+            currency: { type: String, default: "NGN" },
+            creationFee: { type: Number, default: 500 },
+            authorizationFee: { type: Number, default: 20 },
+            atmWithdrawalFee: { type: Number, default: 100 },
+            disputeResolutionFee: { type: Number, default: 500 },
+            maintenance: { type: Number, default: 200 },
+            info: {
+              description: {
+                shopOnline: { type: String, default: "Default card message" },
+                payForSubscription: {
+                  type: String,
+                  default: "Default card message",
+                },
+                tapToPay: {
+                  type: String,
+                  default: "Default card message",
+                },
+                stayInControl: { type: String, default: "Default card message" },
+              },
+              fees: {
+                cardCreation: { type: String, default: "Default card message" },
+                authorization: {
+                  type: String,
+                  default: "Default card message",
+                },
+                atmWithdrawal: {
+                  type: String,
+                  default: "Default card message",
+                },
+                maintenance: {
+                  type: String,
+                  default: "Default card message",
+                },
+                DisputeResolution: { type: String, default: "Default card message" },
+              },
+            },
+          },
+        },
+      },
       ascend: {
         active: { type: Boolean, default: false },
         instruction: {
@@ -386,11 +475,11 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 minFund: { type: Number, default: 2 },
                 currency: { type: String, default: "USD" },
                 creationFee: { type: Number, default: 2 },
-                declineFee: { type: Number, default: 0.20 },
-                monthMaintenance: { type: Number, default: 0 },
+                declineFee: { type: Number, default: 0.2 },
+                maintenance: { type: Number, default: 0 },
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
-                  flat: { type: Number, default: 0.20 },
+                  flat: { type: Number, default: 0.2 },
                 },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
@@ -399,19 +488,40 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 },
                 info: {
                   description: {
-                    support: {type: String, default: "Default card message"},
-                    cardBillingAddress: {type: String, default: "Default card message"},
-                    terminationPolicy: {type: String, default: "Default card message"},
-                    cardControl: {type: String, default: "Default card message"},
+                    support: { type: String, default: "Default card message" },
+                    cardBillingAddress: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    terminationPolicy: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    cardControl: {
+                      type: String,
+                      default: "Default card message",
+                    },
                   },
                   fees: {
-                    cardCreation: {type: String, default: "Default card message"},
-                    declineFees: {type: String, default: "Default card message"},
-                    monthlyMaintenance: {type: String, default: "Default card message"},
-                    crossBorderFees: {type: String, default: "Default card message"},
-                    Rewards: {type: String, default: "Default card message"},
-                  }
-                }
+                    cardCreation: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    declineFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    maintenance: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    crossBorderFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    Rewards: { type: String, default: "Default card message" },
+                  },
+                },
               },
               visa: {
                 name: { type: String, default: CardBrandEnum.VISA },
@@ -426,11 +536,11 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 minFund: { type: Number, default: 2 },
                 currency: { type: String, default: "USD" },
                 creationFee: { type: Number, default: 2 },
-                declineFee: { type: Number, default: 0.20 },
-                monthMaintenance: { type: Number, default: 0 },
+                declineFee: { type: Number, default: 0.2 },
+                maintenance: { type: Number, default: 0 },
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
-                  flat: { type: Number, default: 0.20 },
+                  flat: { type: Number, default: 0.2 },
                 },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
@@ -439,19 +549,40 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 },
                 info: {
                   description: {
-                    support: {type: String, default: "Default card message"},
-                    cardBillingAddress: {type: String, default: "Default card message"},
-                    terminationPolicy: {type: String, default: "Default card message"},
-                    cardControl: {type: String, default: "Default card message"},
+                    support: { type: String, default: "Default card message" },
+                    cardBillingAddress: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    terminationPolicy: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    cardControl: {
+                      type: String,
+                      default: "Default card message",
+                    },
                   },
                   fees: {
-                    cardCreation: {type: String, default: "Default card message"},
-                    declineFees: {type: String, default: "Default card message"},
-                    monthlyMaintenance: {type: String, default: "Default card message"},
-                    crossBorderFees: {type: String, default: "Default card message"},
-                    Rewards: {type: String, default: "Default card message"},
-                  }
-                }
+                    cardCreation: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    declineFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    maintenance: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    crossBorderFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    Rewards: { type: String, default: "Default card message" },
+                  },
+                },
               },
             },
           },
@@ -485,11 +616,11 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 minFund: { type: Number, default: 2 },
                 currency: { type: String, default: "USD" },
                 creationFee: { type: Number, default: 2 },
-                declineFee: { type: Number, default: 0.20 },
-                monthMaintenance: { type: Number, default: 0 },
+                declineFee: { type: Number, default: 0.2 },
+                maintenance: { type: Number, default: 0 },
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
-                  flat: { type: Number, default: 0.20 },
+                  flat: { type: Number, default: 0.2 },
                 },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
@@ -498,19 +629,40 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 },
                 info: {
                   description: {
-                    support: {type: String, default: "Default card message"},
-                    cardBillingAddress: {type: String, default: "Default card message"},
-                    terminationPolicy: {type: String, default: "Default card message"},
-                    cardControl: {type: String, default: "Default card message"},
+                    support: { type: String, default: "Default card message" },
+                    cardBillingAddress: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    terminationPolicy: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    cardControl: {
+                      type: String,
+                      default: "Default card message",
+                    },
                   },
                   fees: {
-                    cardCreation: {type: String, default: "Default card message"},
-                    declineFees: {type: String, default: "Default card message"},
-                    monthlyMaintenance: {type: String, default: "Default card message"},
-                    crossBorderFees: {type: String, default: "Default card message"},
-                    Rewards: {type: String, default: "Default card message"},
-                  }
-                }
+                    cardCreation: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    declineFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    maintenance: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    crossBorderFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    Rewards: { type: String, default: "Default card message" },
+                  },
+                },
               },
               visa: {
                 name: { type: String, default: CardBrandEnum.VISA },
@@ -525,11 +677,11 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 minFund: { type: Number, default: 2 },
                 currency: { type: String, default: "USD" },
                 creationFee: { type: Number, default: 2 },
-                declineFee: { type: Number, default: 0.20 },
-                monthMaintenance: { type: Number, default: 0 },
+                declineFee: { type: Number, default: 0.2 },
+                maintenance: { type: Number, default: 0 },
                 crossBorder: {
                   percentage: { type: Number, default: 2.2 },
-                  flat: { type: Number, default: 0.20 },
+                  flat: { type: Number, default: 0.2 },
                 },
                 fundingCharge: {
                   providerPercent: { type: Number, default: 1.5 },
@@ -538,19 +690,40 @@ const SettingsSchema = new Schema<ISettingsDocument>(
                 },
                 info: {
                   description: {
-                    support: {type: String, default: "Default card message"},
-                    cardBillingAddress: {type: String, default: "Default card message"},
-                    terminationPolicy: {type: String, default: "Default card message"},
-                    cardControl: {type: String, default: "Default card message"},
+                    support: { type: String, default: "Default card message" },
+                    cardBillingAddress: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    terminationPolicy: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    cardControl: {
+                      type: String,
+                      default: "Default card message",
+                    },
                   },
                   fees: {
-                    cardCreation: {type: String, default: "Default card message"},
-                    declineFees: {type: String, default: "Default card message"},
-                    monthlyMaintenance: {type: String, default: "Default card message"},
-                    crossBorderFees: {type: String, default: "Default card message"},
-                    Rewards: {type: String, default: "Default card message"},
-                  }
-                }
+                    cardCreation: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    declineFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    maintenance: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    crossBorderFees: {
+                      type: String,
+                      default: "Default card message",
+                    },
+                    Rewards: { type: String, default: "Default card message" },
+                  },
+                },
               },
             },
           },

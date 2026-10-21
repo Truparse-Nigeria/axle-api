@@ -105,6 +105,11 @@ export const ENVIRONMENT = {
     BUSINESS_USER_ID: Bun.env.VITALSWAP_BUSINESS_USER_ID,
     API_KEY: Bun.env.VITALSWAP_API_KEY,
   },
+  SUDO: {
+    BASE_URL: Bun.env.SUDO_BASE_URL,
+    VAULT_URL: Bun.env.SUDO_VAULT_URL,
+    API_KEY: Bun.env.SUDO_API_KEY,
+  },
 };
 
 (() => {
