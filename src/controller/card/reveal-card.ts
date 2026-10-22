@@ -43,7 +43,12 @@ export const revealCard = catchAsync(async (req, res) => {
 
   // Decrypt the secured PAN/CVV blob. It was stored as
   // `encryptData(JSON.stringify({ cardNumber, expiryDate, cvv }))`.
-  let reveal: { cardNumber: string; expiryDate: string; cvv: string };
+  let reveal: {
+    cardNumber: string;
+    expiryDate: string;
+    cvv: string;
+    pin?: string;
+  };
   try {
     reveal = JSON.parse(decryptData(card.cardDetails));
   } catch {
@@ -54,5 +59,6 @@ export const revealCard = catchAsync(async (req, res) => {
     cardNumber: reveal.cardNumber,
     expiryDate: reveal.expiryDate,
     cvv: reveal.cvv,
+    pin: reveal.pin,
   });
 });
