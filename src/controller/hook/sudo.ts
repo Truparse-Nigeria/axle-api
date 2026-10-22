@@ -14,6 +14,7 @@ import {
   type ISudoAuthorizationCodeHook,
   type ISudoAuthorizationRequestHook,
   type ISudoAuthorizationRes,
+  type ISudoTransactionCreatedHook,
   type ISudoHook,
 } from "@/common";
 import { catchAsync } from "@/middleware";
@@ -37,12 +38,12 @@ export const sudoHook = catchAsync(async (req, res) => {
   // (amount + fee + vat) and the txn stays PROCESSING until the settlement
   // events confirm or reverse it.
   const authorizationRequest = async (payload: ISudoAuthorizationRequestHook) => {
-    const { card, customer, pendingRequest, merchant, transactionMetadata } =
-      payload.data.object;
     const object = payload.data.object;
+    const { card, customer, pendingRequest, merchant, transactionMetadata } =
+      object;
     const currency = FiatCurrencyEnum.NGN;
 
-    if (!customer?._id || !card?._id || !pendingRequest?._id) {
+    if (!customer?._id || !card?._id || !object._id) {
       return respond(res, SudoAuthCode.INVALID_CARD);
     }
 
@@ -62,12 +63,12 @@ export const sudoHook = catchAsync(async (req, res) => {
       return respond(res, SudoAuthCode.INVALID_AMOUNT);
     }
 
-    // One pending request must never charge twice, even if Sudo redelivers it
-    const lockCount = await lockSession(`sudo_${pendingRequest._id}`);
+    // One authorization must never charge twice, even if Sudo redelivers it
+    const lockCount = await lockSession(`sudo_${object._id}`);
 
     // Already charged (lock may have expired): replay the approval, don't recharge
     if (await Transaction.exists({
-        "meta.pendingRequestId": pendingRequest._id,
+        "meta.authorizationId": object._id,
       })) {
       return respond(res, SudoAuthCode.APPROVED);
     }
@@ -120,14 +121,7 @@ export const sudoHook = catchAsync(async (req, res) => {
               purpose: PurposeEnum.CARDS,
               status: StatusEnum.PROCESSING,
               settlement: 0,
-              // Only what we need to reconcile; the full payload carries
-              // customer PII and identity numbers.
-              requestPayload: {
-                authorizationId: object._id,
-                pendingRequestId: pendingRequest._id,
-                cardId: card._id,
-                customerId: customer._id,
-              },
+              requestPayload: payload,
               initialBalance: finalBalance + total,
               finalBalance,
               view: {
@@ -147,7 +141,7 @@ export const sudoHook = catchAsync(async (req, res) => {
               meta: {
                 cardId: card._id,
                 authorizationId: object._id,
-                pendingRequestId: pendingRequest._id,
+                pendingRequestId: pendingRequest?._id,
               },
             },
           ],
@@ -201,11 +195,51 @@ export const sudoHook = catchAsync(async (req, res) => {
     return sendResponse(res, 200, "Authorization code sent");
   };
 
+  // The charge is already taken at authorization time, so once Sudo creates the
+  // matching transaction we only settle the PROCESSING txn to SUCCESS. Sudo links
+  // it back through `authorization`, the _id of the authorization.request.
+  const transactionCreated = async (payload: ISudoTransactionCreatedHook) => {
+    const { authorization, currency, type } = payload.data.object;
+
+    // Only NGN captures that came from one of our authorizations
+    if (
+      currency !== FiatCurrencyEnum.NGN ||
+      type !== "capture" ||
+      !authorization
+    ) {
+      return sendResponse(res, 200, "Transaction ignored");
+    }
+
+    const filter = {
+      provider: VendorEnum.SUDO,
+      "meta.authorizationId": authorization,
+    };
+
+    const transaction = await Transaction.findOneAndUpdate(
+      { ...filter, status: StatusEnum.PROCESSING },
+      { $set: { status: StatusEnum.SUCCESS } },
+      { new: true, projection: { _id: 1 } },
+    );
+
+    if (!transaction) {
+      // Redelivery of an already settled txn is fine; anything else is not
+      if (await Transaction.exists(filter)) {
+        return sendResponse(res, 200, "Transaction already processed");
+      }
+
+      throw new AppError("Transaction not found", 400);
+    }
+
+    return sendResponse(res, 200, "Transaction processed");
+  };
+
   switch (payload.type) {
     case "authorization.request":
       return await authorizationRequest(
         payload as ISudoAuthorizationRequestHook,
       );
+    case "transaction.created":
+      return await transactionCreated(payload as ISudoTransactionCreatedHook);
     case "authorization.code":
       return await authorizationCode(payload as ISudoAuthorizationCodeHook);
     default:

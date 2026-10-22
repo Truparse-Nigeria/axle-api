@@ -227,9 +227,27 @@ export interface ISudoAuthorizationCodeHook {
   };
 }
 
+// Settlement event. `authorization` is the _id of the authorization.request it
+// settles, or null when the transaction has no authorization behind it.
+export interface ISudoTransactionCreatedHook {
+  _id: string;
+  type: "transaction.created";
+  environment?: string;
+  data: {
+    object: {
+      _id: string;
+      authorization: string | null;
+      currency: string;
+      type: string;
+      amount: number;
+    };
+  };
+}
+
 export type ISudoHook =
   | ISudoAuthorizationRequestHook
   | ISudoAuthorizationCodeHook
+  | ISudoTransactionCreatedHook
   | { _id: string; type: string; data?: Record<string, any> };
 
 // Sudo reads the card network response code from the body: "00" approves,
