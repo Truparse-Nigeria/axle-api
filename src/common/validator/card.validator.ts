@@ -59,6 +59,13 @@ export const withdrawCardSchema = z.object({
   pin: pinField,
 });
 
+export const createCardPinSchema = z.object({
+  cardId: z.string(),
+  // Only omitted/null while the card still has its default PIN
+  oldPin: pinField.nullish(),
+  newPin: pinField,
+});
+
 export const revealCardSchema = z.object({
   cardId: z.string(),
   pin: pinField,

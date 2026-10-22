@@ -28,6 +28,7 @@ import {
   retrieveGiftcardProducts,
   retrievePlans,
   revealCard,
+  createCardPin,
   signup,
   terminateCard,
   validateMeterNumber,
@@ -108,6 +109,7 @@ router.get("/card", getUserCard);
 router.post("/card/fund", fundCard);
 router.post("/card/withdraw", withdrawCard);
 router.post("/card/reveal", revealCard);
+router.post("/card/pin", createCardPin);
 router.patch("/card/freeze", freezeCard);
 router.post("/card/terminate", terminateCard);
 router.get("/card/rate/:variant", cardRate);

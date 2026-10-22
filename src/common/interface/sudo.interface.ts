@@ -166,6 +166,21 @@ export interface ISudoUpdateCardReq {
   spendingControls?: ISudoSpendingControls;
 }
 
+// Vault reveal (GET /cards/:id?reveal=true) — card secrets alongside the card
+export interface ISudoRevealCardRes {
+  _id: string;
+  type: "physical" | "virtual";
+  brand: string;
+  number: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+  /** CVV used for online (card-not-present) transactions. */
+  cvv2: string;
+  defaultPin: string;
+  status: string;
+}
+
 export interface ISudoUpdateCardPinReq {
   oldPin: string;
   newPin: string;

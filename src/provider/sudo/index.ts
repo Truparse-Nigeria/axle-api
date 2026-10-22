@@ -2,6 +2,7 @@ import {
   ENVIRONMENT,
   HttpMethod,
   type ISudoCard,
+  type ISudoRevealCardRes,
   type ISudoCreateCardReq,
   type ISudoCreateCustomerReq,
   type ISudoDigitizeCardRes,
@@ -78,7 +79,7 @@ export const sudoUpdateCard = async (
 
 // Served by the Sudo vault (separate host), so it overrides the base URL.
 export const sudoRevealCard = async (cardId: string) => {
-  const { data, error } = await callSudoApi<Record<string, any>>(
+  const { data, error } = await callSudoApi<ISudoRevealCardRes>(
     `/cards/${cardId}`,
     HttpMethod.GET,
     { params: { reveal: true }, baseURL: ENVIRONMENT.SUDO.VAULT_URL },
