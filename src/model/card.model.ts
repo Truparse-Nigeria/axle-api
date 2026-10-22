@@ -68,6 +68,8 @@ const CardSchema = new Schema<ICard>(
       type: Schema.Types.Mixed,
     },
     reason: String,
+    // NGN (Sudo) cards only: whether the default PIN has been changed.
+    defaultPinChange: { type: Boolean, default: false },
     declineCount: { type: Number, default: 0, select: false },
   },
   { timestamps: true },

@@ -35,5 +35,6 @@ export interface ICard extends Document {
   status: CardStatusEnum;
   address?: ICardAddress;
   reason?: string;
+  defaultPinChange?: boolean;
   declineCount?: number;
 }

@@ -195,8 +195,26 @@ export interface ISudoAuthorizationRequestHook {
   data: { object: ISudoAuthorizationObject };
 }
 
+// One-time code Sudo issues when a card transaction needs 2FA. Here `card`
+// arrives with its `customer` expanded, unlike on authorization.request.
+export interface ISudoAuthorizationCodeHook {
+  _id: string;
+  type: "authorization.code";
+  environment?: string;
+  data: {
+    object: {
+      code: string;
+      card?: Pick<
+        ISudoCard,
+        "_id" | "status" | "maskedPan" | "currency" | "brand"
+      > & { customer?: { _id: string } };
+    };
+  };
+}
+
 export type ISudoHook =
   | ISudoAuthorizationRequestHook
+  | ISudoAuthorizationCodeHook
   | { _id: string; type: string; data?: Record<string, any> };
 
 // Sudo reads the card network response code from the body: "00" approves,

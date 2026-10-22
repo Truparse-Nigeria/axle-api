@@ -1,20 +1,24 @@
 import {
   ActivityEnum,
+  AppError,
   FiatCurrencyEnum,
   generateRequestID,
   lockSession,
   logger,
   PurposeEnum,
+  sendResponse,
   StatusEnum,
   SudoAuthCode,
   TxnDesc,
   VendorEnum,
+  type ISudoAuthorizationCodeHook,
   type ISudoAuthorizationRequestHook,
   type ISudoAuthorizationRes,
   type ISudoHook,
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { Transaction, User } from "@/model";
+import { createJob } from "@/queue";
 import type { Response } from "express";
 import mongoose, { sanitizeFilter } from "mongoose";
 
@@ -162,11 +166,48 @@ export const sudoHook = catchAsync(async (req, res) => {
     return respond(res, outcome);
   };
 
+  // Email the card's 2FA code to its owner. The code is never logged or stored.
+  const authorizationCode = async (payload: ISudoAuthorizationCodeHook) => {
+    const { code, card } = payload.data.object;
+    const customerId = card?.customer?._id;
+
+    if (!code || !card?._id || !customerId) {
+      throw new AppError("Invalid authorization code payload", 400);
+    }
+
+    if (card.status !== "active") {
+      throw new AppError("Card is not active", 400);
+    }
+
+    // Sudo may redeliver the event; only email the code once
+    if ((await lockSession(`sudo_code_${payload._id}`)) > 1) {
+      return sendResponse(res, 200, "Authorization code already sent");
+    }
+
+    const user = await User.findOne({ "identifier.sudo": customerId })
+      .select("email firstName")
+      .lean();
+
+    if (!user?.email) throw new AppError("User not found", 400);
+
+    createJob({
+      type: "SEND_EMAIL",
+      priority: 1,
+      to: user.email,
+      subject: "Card authorization code",
+      template: `Hello ${user.firstName}, your authorization code is ${code} for your ${card.brand} card ending ${card.maskedPan.slice(-4)}. Do not share this code with anyone.`,
+    });
+
+    return sendResponse(res, 200, "Authorization code sent");
+  };
+
   switch (payload.type) {
     case "authorization.request":
       return await authorizationRequest(
         payload as ISudoAuthorizationRequestHook,
       );
+    case "authorization.code":
+      return await authorizationCode(payload as ISudoAuthorizationCodeHook);
     default:
       // Acknowledge events we don't act on so Sudo doesn't keep retrying them
       return res.status(200).json({ success: true });
