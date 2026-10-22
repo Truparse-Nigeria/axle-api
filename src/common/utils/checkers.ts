@@ -6,6 +6,7 @@ import type {
   IBiller,
   ICardServiceCheck,
   ICardSettings,
+  INgnCardBrandProperties,
   IDisco,
   ISettings,
   IUser,
@@ -387,6 +388,34 @@ export const cardServiceCheck = async (
     ...brandSettings,
     rate: cardVariant.customRates,
   };
+};
+
+// Settings brand keys for Naira cards (note afriGo is camelCase in the schema).
+const NGN_BRAND_KEY: Partial<Record<CardBrandEnum, string>> = {
+  [CardBrandEnum.VERVE]: "verve",
+  [CardBrandEnum.AFRIGO]: "afriGo",
+};
+
+// Resolve the Naira card settings for a brand and confirm the requested
+// purpose (create/withdraw) is enabled. Returns null when unavailable.
+export const ngnCardServiceCheck = async (
+  cardBrand: CardBrandEnum,
+  purpose: "create" | "withdraw",
+): Promise<INgnCardBrandProperties | null> => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+
+  if (!settings) {
+    throw new AppError("Service not available");
+  }
+
+  const brandKey = NGN_BRAND_KEY[cardBrand];
+  const brandSettings = brandKey
+    ? settings.cards.ngn?.brandConfig?.[brandKey]
+    : undefined;
+
+  if (!brandSettings?.[purpose]) return null;
+
+  return brandSettings;
 };
 
 // Set a card's balance to the provider-reported value (absolute, not an

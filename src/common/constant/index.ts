@@ -44,6 +44,7 @@ export const TxnDesc = {
   wallet2Bank: "Outbound transfer",
   topUp: "Inbound Transfer",
   dollarCardCreation: "Dollar card creation",
+  nairaCardCreation: "Naira card creation",
   dollarCardFunding: "Dollar card funding",
   dollarCardWithdrawal: "Dollar card withdrawal",
   dollarCardTermination: "Dollar card termination",

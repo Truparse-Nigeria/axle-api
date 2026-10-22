@@ -3,21 +3,43 @@ import {
   CardBrandEnum,
   CardVariantEnum,
   FiatCurrencyEnum,
+  NgnCardVariantEnum,
 } from "../enum";
 import { validationConstants } from "../constant";
 
-export const createCardSchema = z.object({
-  pin: z
-    .string()
-    .trim()
-    .length(4, "PIN must be exactly 4 digits")
-    .regex(/^\d{4}$/, "PIN must contain only numbers"),
+const createCardPin = z
+  .string()
+  .trim()
+  .length(4, "PIN must be exactly 4 digits")
+  .regex(/^\d{4}$/, "PIN must contain only numbers");
+
+const createCardName = z
+  .string()
+  .max(12, "Name must not be more than 12 characters");
+
+// Naira cards: Verve/AfriGo, physical or virtual, no funding amount
+const createNgnCardSchema = z.object({
+  pin: createCardPin,
+  currency: z.literal(FiatCurrencyEnum.NGN),
+  cardBrand: z.enum([CardBrandEnum.VERVE, CardBrandEnum.AFRIGO]),
+  name: createCardName,
+  variant: z.enum(NgnCardVariantEnum).default(NgnCardVariantEnum.VIRTUAL),
+});
+
+// Foreign-currency cards: MasterCard/Visa, funded with `amount`
+const createForeignCardSchema = z.object({
+  pin: createCardPin,
   amount: z.number().positive(validationConstants.NUMBER_GREATER_THAN_ZERO),
-  currency: z.enum(FiatCurrencyEnum),
-  cardBrand: z.enum(CardBrandEnum),
-  name: z.string().max(12, "Name must not be more than 12 characters"),
+  currency: z.enum([FiatCurrencyEnum.USD]),
+  cardBrand: z.enum([CardBrandEnum.MASTERCARD, CardBrandEnum.VISA]),
+  name: createCardName,
   variant: z.enum(CardVariantEnum).default(CardVariantEnum.ORIGIN),
 });
+
+export const createCardSchema = z.discriminatedUnion("currency", [
+  createNgnCardSchema,
+  createForeignCardSchema,
+]);
 
 const pinField = z
   .string()

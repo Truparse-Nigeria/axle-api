@@ -21,14 +21,37 @@ export const sudoCreateCustomer = async (payload: ISudoCreateCustomerReq) => {
   return { data: data.data };
 };
 
-export const sudoCreateCard = async (payload: ISudoCreateCardReq) => {
+// Returns the same shape as eversendCreateCard so the controller can persist
+// the card the same way. Sudo's create response has no cardholder name and no
+// PAN/CVV (those come from the vault via sudoRevealCard), so `cardName` is
+// passed in and `cardDetails` is left out.
+export const sudoCreateCard = async (
+  payload: ISudoCreateCardReq,
+  cardName: string,
+) => {
   const { data, error } = await callSudoApi<ISudoCard>(
     "/cards",
     HttpMethod.POST,
     { data: payload },
   );
   if (error || !data?.data) return { error };
-  return { data: data.data };
+
+  const card = data.data;
+
+  return {
+    data: {
+      cardName,
+      externalCustomerId: card.customer,
+      externalCardId: card._id,
+      cardBrand: card.brand,
+      balance: 0,
+      expirationDate: `${card.expiryMonth}/${card.expiryYear}`,
+      currency: card.currency,
+      firstSix: card.maskedPan.slice(0, 6),
+      lastFour: card.maskedPan.slice(-4),
+    },
+    meta: card,
+  };
 };
 
 export const sudoDigitizeCard = async (cardId: string) => {

@@ -79,6 +79,7 @@ const WalletSchema = new Schema(
 const IdentifierSchema = new Schema(
   {
     eversend: { type: String, trim: true },
+    sudo: { type: String, trim: true },
     vitalswap: {
       user: { type: String, trim: true },
       wallets: {

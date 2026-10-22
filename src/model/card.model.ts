@@ -49,7 +49,7 @@ const CardSchema = new Schema<ICard>(
     },
     provider: {
       type: String,
-      enum: [VendorEnum.EVERSEND],
+      enum: [VendorEnum.EVERSEND, VendorEnum.SUDO],
       default: VendorEnum.EVERSEND,
       select: false,
     },

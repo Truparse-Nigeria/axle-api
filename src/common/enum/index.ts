@@ -103,11 +103,17 @@ export enum VendorEnum {
   AXLE = "axle",
   VITALSWAP = "vitalswap",
   BLAAC = "blaac",
+  SUDO = "sudo",
 }
 
 export enum CardVariantEnum {
   ASCEND = "ascend",
   ORIGIN = "origin",
+}
+
+export enum NgnCardVariantEnum {
+  PHYSICAL = "physical",
+  VIRTUAL = "virtual",
 }
 
 export enum CardStatusEnum {

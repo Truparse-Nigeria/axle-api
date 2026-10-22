@@ -110,6 +110,7 @@ export interface IUser {
 
 export interface IUserIdentifier {
   eversend?: string;
+  sudo?: string;
   vitalswap?: {
     user: string;
     wallets: Record<FiatCurrencyEnum, string>
