@@ -460,5 +460,5 @@ export const createNgnCard = async (
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
   }
 
-  return sendResponse(res, 200, "Card creation successful", txnPayload.view);
+  return sendResponse(res, 200, "Card creation successful", {...txnPayload.view, cardId: card._id});
 };
