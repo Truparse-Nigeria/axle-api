@@ -45,10 +45,22 @@ export const TxnDesc = {
   topUp: "Inbound Transfer",
   dollarCardCreation: "Dollar card creation",
   nairaCardCreation: "Naira card creation",
+  nairaCardSpend: "Naira card spend",
   dollarCardFunding: "Dollar card funding",
   dollarCardWithdrawal: "Dollar card withdrawal",
   dollarCardTermination: "Dollar card termination",
 };
+
+// ISO 8583 response codes Sudo expects back from an authorization.request
+export const SudoAuthCode = {
+  APPROVED: "00",
+  INVALID_CARD: "14",
+  INVALID_AMOUNT: "13",
+  INSUFFICIENT_FUNDS: "51",
+  NOT_PERMITTED: "57",
+  RESTRICTED_CARD: "62",
+  SYSTEM_ERROR: "96",
+} as const;
 
 // Option keys under `settings.moneyTransfer.options`
 export const ServiceCheck = {

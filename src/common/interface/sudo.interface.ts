@@ -170,3 +170,38 @@ export interface ISudoUpdateCardPinReq {
   oldPin: string;
   newPin: string;
 }
+
+// Webhooks — Sudo posts every event as { _id, type, environment, data: { object } }.
+// Only the fields we read are typed; `card` and `customer` arrive expanded.
+export interface ISudoAuthorizationObject {
+  _id: string;
+  customer?: { _id: string };
+  card?: Pick<ISudoCard, "_id" | "status" | "maskedPan" | "currency">;
+  amount: number;
+  fee?: number;
+  vat?: number;
+  currency: string;
+  merchantAmount?: number;
+  merchant?: { name?: string; category?: string; city?: string; country?: string };
+  transactionMetadata?: { channel?: string; type?: string; reference?: string };
+  // Identifies the authorization attempt; Sudo may redeliver it on timeout.
+  pendingRequest?: { _id: string; amount?: number; currency?: string };
+}
+
+export interface ISudoAuthorizationRequestHook {
+  _id: string;
+  type: "authorization.request";
+  environment?: string;
+  data: { object: ISudoAuthorizationObject };
+}
+
+export type ISudoHook =
+  | ISudoAuthorizationRequestHook
+  | { _id: string; type: string; data?: Record<string, any> };
+
+// Sudo reads the card network response code from the body: "00" approves,
+// anything else declines (e.g. "51" insufficient funds, "62" restricted card).
+export interface ISudoAuthorizationRes {
+  statusCode: number;
+  data: { responseCode: string };
+}
