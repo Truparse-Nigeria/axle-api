@@ -285,6 +285,15 @@ export const createNgnCard = async (
     throw new AppError("Physical card creation is not available yet");
   }
 
+  // A BVN is required: the card is issued under the BVN holder's name
+  const bvn = user.kyc?.bvn?.details;
+
+  if (!bvn?.firstName || !bvn?.lastName) {
+    throw new AppError("BVN is required to create a Naira card");
+  }
+
+  const bvnName = `${bvn.firstName} ${bvn.lastName}`;
+
   const currency = FiatCurrencyEnum.NGN;
 
   const checkService = await ngnCardServiceCheck(cardBrand, "create");
@@ -306,7 +315,6 @@ export const createNgnCard = async (
 
   // Sudo cards belong to a Sudo customer, provisioned once per user from KYC
   if (!user.identifier?.sudo) {
-    const bvn = user.kyc?.bvn?.details;
     const address = user.kyc?.address?.details;
 
     if (!bvn?.dateOfBirth) {
@@ -319,7 +327,7 @@ export const createNgnCard = async (
 
     const customerPayload: ISudoCreateCustomerReq = {
       type: "individual",
-      name: `${bvn.firstName} ${bvn.lastName}`,
+      name: bvnName,
       phoneNumber: `${user.dialCode}${user.phone}`,
       status: "active",
       emailAddress: user.email,
@@ -406,7 +414,7 @@ export const createNgnCard = async (
       debitAccountId: ENVIRONMENT.SUDO.DEBIT_ACCOUNT_ID,
       fundingSourceId: ENVIRONMENT.SUDO.FUNDING_SOURCE_ID,
     },
-    name,
+    bvnName,
   );
 
   // If card creation failed, record a failed txn, refund the charge, and bail
