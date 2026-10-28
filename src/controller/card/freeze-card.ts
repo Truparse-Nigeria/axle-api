@@ -9,7 +9,11 @@ import {
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { Card } from "@/model";
-import { eversendFreezeCard, eversendUnfreezeCard } from "@/provider";
+import {
+  eversendFreezeCard,
+  eversendUnfreezeCard,
+  sudoUpdateCard,
+} from "@/provider";
 
 export const freezeCard = catchAsync(async (req, res) => {
   const { cardId, pin } = await validateRequestPayload(
@@ -51,6 +55,13 @@ export const freezeCard = catchAsync(async (req, res) => {
     response = isActive
       ? await eversendFreezeCard({ cardId: card.externalCardId })
       : await eversendUnfreezeCard({ cardId: card.externalCardId });
+  } 
+  
+  if (card.provider === VendorEnum.SUDO) {
+    // Sudo has no freeze endpoint: inactive === frozen, active === unfrozen
+    response = await sudoUpdateCard(card.externalCardId, {
+      status: isActive ? "inactive" : "active",
+    });
   }
 
   if (response?.error || !response?.data) {

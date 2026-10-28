@@ -4,6 +4,7 @@ import {
   cardServiceCheck,
   CardStatusEnum,
   cardWithdrawalProperties,
+  ENVIRONMENT,
   FiatCurrencyEnum,
   generateRequestID,
   pinCheck,
@@ -18,7 +19,11 @@ import {
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { Card, Transaction } from "@/model";
-import { eversendGetCard, eversendTerminateCard } from "@/provider";
+import {
+  eversendGetCard,
+  eversendTerminateCard,
+  sudoUpdateCard,
+} from "@/provider";
 
 export const terminateCard = catchAsync(async (req, res) => {
   const { cardId, pin } = await validateRequestPayload(
@@ -51,6 +56,70 @@ export const terminateCard = catchAsync(async (req, res) => {
   }
 
   const { currency, cardBrand, variant, provider, cardName, lastFour } = card;
+
+  // Sudo (NGN) cards hold no balance of their own, so there is nothing to
+  // settle: cancel on Sudo and mark the card terminated.
+  if (provider === VendorEnum.SUDO) {
+    const reference = generateRequestID();
+    const balance = user.wallet.fiat[FiatCurrencyEnum.NGN]?.balance || 0;
+
+    const sudoTxnPayload: ITransactionPayload = {
+      user: user._id as unknown as string,
+      reference,
+      amount: 0,
+      activity: ActivityEnum.CREDIT,
+      sourceCurrency: currency,
+      destinationCurrency: currency,
+      exchangeRate: 1,
+      description: TxnDesc.nairaCardTermination,
+      provider,
+      purpose: PurposeEnum.CARDS,
+      status: StatusEnum.PROCESSING,
+      settlement: 0,
+      requestPayload: req.body,
+      initialBalance: balance,
+      finalBalance: balance,
+      view: { reference, cardName, lastFourDigit: lastFour },
+      meta: { ...req.meta, cardId: card._id },
+    };
+
+    const sudoResponse = await sudoUpdateCard(card.externalCardId, {
+      status: "canceled",
+      cancellationReason: "lost",
+      creditAccountId: ENVIRONMENT.SUDO.DEBIT_ACCOUNT_ID,
+    });
+
+    if (sudoResponse.error || !sudoResponse.data) {
+      await Transaction.create({
+        ...sudoTxnPayload,
+        status: StatusEnum.FAILED,
+        responsePayload: sudoResponse,
+      });
+
+      throw new AppError("Oh Snap! Card termination failed. Try again!");
+    }
+
+    const terminated = await Card.findByIdAndUpdate(
+      card._id,
+      { $set: { status: CardStatusEnum.TERMINATED, balance: 0 } },
+      { new: true },
+    );
+
+    if (!terminated) {
+      throw new AppError("Card termination failed. Try again!");
+    }
+
+    await Transaction.create({
+      ...sudoTxnPayload,
+      status: StatusEnum.SUCCESS,
+      responsePayload: sudoResponse.data,
+    });
+
+    return sendResponse(res, 200, "Card terminated successfully", {
+      ...sudoTxnPayload.view,
+      status: StatusEnum.SUCCESS,
+    });
+  }
 
   // Terminating settles the card's remaining balance back to the user, so the
   // withdrawal service/rate config governs the payout.

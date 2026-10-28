@@ -49,6 +49,7 @@ export const TxnDesc = {
   dollarCardFunding: "Dollar card funding",
   dollarCardWithdrawal: "Dollar card withdrawal",
   dollarCardTermination: "Dollar card termination",
+  nairaCardTermination: "Naira card termination",
 };
 
 // ISO 8583 response codes Sudo expects back from an authorization.request
