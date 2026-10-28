@@ -47,6 +47,14 @@ const pinField = z
   .length(4, "PIN must be exactly 4 digits")
   .regex(/^\d{4}$/, "PIN must contain only numbers");
 
+export const updateCardNameSchema = z.object({
+  customName: createCardName.trim().min(1, "Name is required"),
+});
+
+export const updateCardNameIdSchema = z.object({
+  cardId: z.string(),
+});
+
 export const fundCardSchema = z.object({
   cardId: z.string(),
   amount: z.number().positive(validationConstants.NUMBER_GREATER_THAN_ZERO),

@@ -1,7 +1,6 @@
 import type {
   IGenerateMultiCurrency,
   IProcessStaticAccount,
-  IVitalSwapIdentifer,
 } from "@/job";
 import type { ISaveBeneficiaryJob, ISendMail } from "../interface";
 import type { IUploadImageToDigitalOceanJob } from "../interface";
@@ -20,7 +19,6 @@ export type TJobData =
   | IProcessStaticAccount
   | IUploadImageToDigitalOceanJob
   | IGenerateMultiCurrency
-  | IVitalSwapIdentifer
   | ISaveBeneficiaryJob;
 
 export const cacheKey = {

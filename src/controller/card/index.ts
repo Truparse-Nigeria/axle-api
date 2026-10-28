@@ -7,3 +7,4 @@ export * from "./get-user-card";
 export * from "./freeze-card";
 export * from "./terminate-card";
 export * from "./card-rate";
+export * from "./update-card-name";

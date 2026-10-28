@@ -13,6 +13,7 @@ import {
   getSettings,
   getTransactions,
   getUserCard,
+  updateCardName,
   login,
   orderGiftcard,
   purchaseAirtime,
@@ -111,6 +112,7 @@ router.post("/card/withdraw", withdrawCard);
 router.post("/card/reveal", revealCard);
 router.post("/card/pin", createCardPin);
 router.patch("/card/freeze", freezeCard);
+router.patch("/card/:cardId", updateCardName);
 router.post("/card/terminate", terminateCard);
 router.get("/card/rate/:variant", cardRate);
 
