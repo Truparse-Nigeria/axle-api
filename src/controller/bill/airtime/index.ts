@@ -9,6 +9,7 @@ import {
   payAirtimeSchema,
   PurposeEnum,
   refundUser,
+  bvnCheck,
   runCheck,
   sendResponse,
   StatusEnum,
@@ -36,6 +37,8 @@ export const purchaseAirtime = catchAsync(async (req, res) => {
   if (!user) {
     throw new AppError("User not found");
   }
+
+  bvnCheck(user);
 
   await runCheck({ user, amount, currency, pin });
   delete req.body.pin;

@@ -11,6 +11,7 @@ import {
   getCache,
   PurposeEnum,
   refundUser,
+  bvnCheck,
   runCheck,
   sendResponse,
   StatusEnum,
@@ -40,6 +41,8 @@ export const purchaseData = catchAsync(async (req, res) => {
   if (!user) {
     throw new AppError("User not found");
   }
+
+  bvnCheck(user);
 
   // Regular (VTpass) plan ids are prefixed with REG_, cheap plans are DataPlan ids
   const isRegularData = dataId.startsWith("REG_");

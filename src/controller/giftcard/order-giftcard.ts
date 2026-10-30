@@ -8,6 +8,7 @@ import {
   giftcardServiceCheck,
   PurposeEnum,
   refundUser,
+  bvnCheck,
   runCheck,
   sendResponse,
   StatusEnum,
@@ -35,6 +36,8 @@ export const orderGiftcard = catchAsync(async (req, res) => {
   if (!user) {
     throw new AppError("User not found");
   }
+
+  bvnCheck(user);
 
   // Source and destination currency are both NGN — the user pays for the
   // giftcard from their NGN wallet, so the exchange rate is always 1.

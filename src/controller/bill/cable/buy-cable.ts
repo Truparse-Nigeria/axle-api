@@ -9,6 +9,7 @@ import {
   getCache,
   PurposeEnum,
   refundUser,
+  bvnCheck,
   runCheck,
   sendResponse,
   StatusEnum,
@@ -55,6 +56,8 @@ export const buyCable = catchAsync(async (req, res) => {
   if (!user) {
     throw new AppError("User not found");
   }
+
+  bvnCheck(user);
 
   // Check if service is available
   const checkService = await billServiceCheck("cable", entity);

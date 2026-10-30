@@ -23,6 +23,14 @@ export const walletCheck = (balance: number, amount: number) => {
   }
 };
 
+// Bill payments (airtime, data, gift cards, electricity, cable) are only
+// available to users with a verified BVN.
+export const bvnCheck = (user: IUserDocument) => {
+  if (!user.kyc?.bvn?.completed) {
+    throw new AppError("Verify your BVN to use this service", 403);
+  }
+};
+
 export const passcodeCheck = async (
   passcode: string,
   userPasscode?: string,

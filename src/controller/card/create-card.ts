@@ -1,6 +1,7 @@
 import {
   ActivityEnum,
   AppError,
+  bvnCheck,
   CardBrandEnum,
   cardCreationProperties,
   cardServiceCheck,
@@ -285,7 +286,9 @@ export const createNgnCard = async (
     throw new AppError("Physical card creation is not available yet");
   }
 
-  // A BVN is required: the card is issued under the BVN holder's name
+  // A verified BVN is required: the card is issued under the BVN holder's name
+  bvnCheck(user);
+
   const bvn = user.kyc?.bvn?.details;
 
   if (!bvn?.firstName || !bvn?.lastName) {
