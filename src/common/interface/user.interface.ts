@@ -94,6 +94,7 @@ export interface IUser {
   passcode: string;
   pin?: string;
   tag?: string;
+  avatar?: string;
   jti?: string;
   messageToken?: string;
   wallet: IWallet;

@@ -20,3 +20,9 @@ export const createTagSchema = z
       .refine((value) => !/\s/.test(value), "Tag cannot contain spaces"),
   })
   .strip();
+
+export const updateUserSchema = z
+  .object({
+    avatar: z.url("Avatar must be a valid URL").trim().optional(),
+  })
+  .strip();
