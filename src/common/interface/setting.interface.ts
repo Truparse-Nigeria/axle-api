@@ -232,6 +232,23 @@ export interface IGeneral {
   socials: ISocials;
 }
 
+export interface IBadgeTier {
+  referral: number;
+  points: number;
+  service: number;
+}
+
+export interface IReferAndEarn {
+  badge: {
+    explorer: IBadgeTier;
+    connector: IBadgeTier;
+    navigator: IBadgeTier;
+    pathFinder: IBadgeTier;
+    architect: IBadgeTier;
+    ambassador: IBadgeTier;
+  };
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -246,4 +263,5 @@ export interface ISettings {
   multiCurrency: IMultiCurrency;
   moneyTransfer: IMoneyTransfer;
   general: IGeneral;
+  referAndEarn: IReferAndEarn;
 }

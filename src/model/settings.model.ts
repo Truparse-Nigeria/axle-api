@@ -973,6 +973,40 @@ const SettingsSchema = new Schema<ISettingsDocument>(
         whatsapp: { type: String, default: "" },
       },
     },
+    referAndEarn: {
+      badge: {
+        explorer: {
+          referral: { type: Number, default: 0 },
+          points: { type: Number, default: 100 },
+          service: { type: Number, default: 3 },
+        },
+        connector: {
+          referral: { type: Number, default: 5 },
+          points: { type: Number, default: 500 },
+          service: { type: Number, default: 4 },
+        },
+        navigator: {
+          referral: { type: Number, default: 15 },
+          points: { type: Number, default: 1500 },
+          service: { type: Number, default: 5 },
+        },
+        pathFinder: {
+          referral: { type: Number, default: 35 },
+          points: { type: Number, default: 4000 },
+          service: { type: Number, default: 6 },
+        },
+        architect: {
+          referral: { type: Number, default: 75 },
+          points: { type: Number, default: 8000 },
+          service: { type: Number, default: 7 },
+        },
+        ambassador: {
+          referral: { type: Number, default: 150 },
+          points: { type: Number, default: 15000 },
+          service: { type: Number, default: 8 },
+        },
+      },
+    },
   },
   {
     timestamps: true,
