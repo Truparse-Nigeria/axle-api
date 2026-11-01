@@ -1,5 +1,6 @@
 import type {
   IGenerateMultiCurrency,
+  IReferralBonusJob,
   IProcessStaticAccount,
 } from "@/job";
 import type { ISaveBeneficiaryJob, ISendMail } from "../interface";
@@ -12,14 +13,16 @@ export type JOB_TYPE =
   | "UPLOAD_IMAGE_TO_DIGITAL_OCEAN"
   | "GENERATE_MULTICURRENCY_ACCOUNT"
   | "VITALSWAP_WALLET"
-  | "SAVE_BENEFICIARY";
+  | "SAVE_BENEFICIARY"
+  | "PROCESS_REFERRAL_BONUS";
 
 export type TJobData =
   | ISendMail
   | IProcessStaticAccount
   | IUploadImageToDigitalOceanJob
   | IGenerateMultiCurrency
-  | ISaveBeneficiaryJob;
+  | ISaveBeneficiaryJob
+  | IReferralBonusJob;
 
 export const cacheKey = {
   SETTINGS: "settings",

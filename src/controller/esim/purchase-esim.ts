@@ -22,6 +22,7 @@ import {
   type TAllowance,
   type TEsimPurchaseInput,
 } from "@/common";
+import { createJob } from "@/queue";
 import { catchAsync } from "@/middleware";
 import { Transaction } from "@/model";
 import {
@@ -202,6 +203,15 @@ export const purchaseEsim = catchAsync(async (req, res) => {
     responsePayload: response.meta,
     finalBalance: balance,
   });
+
+  // Count this spend towards the referrer's reward
+  if (user.referredBy && !user.referredBy.completed) {
+    createJob({
+      type: "PROCESS_REFERRAL_BONUS",
+      userId: String(user._id),
+      transactionAmount: amount,
+    });
+  }
 
   return sendResponse(
     res,

@@ -23,6 +23,7 @@ import {
   type IRegularData,
   type ITransactionPayload,
 } from "@/common";
+import { createJob } from "@/queue";
 import { catchAsync } from "@/middleware";
 import { Transaction } from "@/model";
 import { blaacDataPurchase, vtpassPay } from "@/provider";
@@ -174,6 +175,15 @@ export const purchaseData = catchAsync(async (req, res) => {
     responsePayload: response,
     finalBalance: balance,
   });
+
+  // Count this spend towards the referrer's reward
+  if (user.referredBy && !user.referredBy.completed) {
+    createJob({
+      type: "PROCESS_REFERRAL_BONUS",
+      userId: String(user._id),
+      transactionAmount: amount,
+    });
+  }
 
   sendResponse(
     res,

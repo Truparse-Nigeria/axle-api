@@ -31,6 +31,7 @@ import {
   type ISudoCreateCustomerReq,
   type ITransactionPayload,
 } from "@/common";
+import { createJob } from "@/queue";
 import { catchAsync } from "@/middleware";
 import { Card, Transaction, User } from "@/model";
 import {
@@ -261,6 +262,15 @@ export const createCard = catchAsync(async (req, res) => {
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
   }
 
+  // Count this spend towards the referrer's reward
+  if (user.referredBy && !user.referredBy.completed) {
+    createJob({
+      type: "PROCESS_REFERRAL_BONUS",
+      userId: String(user._id),
+      transactionAmount: convertedAmount,
+    });
+  }
+
   return sendResponse(res, 200, "Card creation successful", txnPayload.view);
 });
 
@@ -477,6 +487,15 @@ export const createNgnCard = async (
 
   if (!user?.hasCard) {
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
+  }
+
+  // Count this spend towards the referrer's reward
+  if (user.referredBy && !user.referredBy.completed) {
+    createJob({
+      type: "PROCESS_REFERRAL_BONUS",
+      userId: String(user._id),
+      transactionAmount: creationFee,
+    });
   }
 
   return sendResponse(res, 200, "Card creation successful", {...txnPayload.view, cardId: card._id});

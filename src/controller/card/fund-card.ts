@@ -20,6 +20,7 @@ import {
   VendorEnum,
   type ITransactionPayload,
 } from "@/common";
+import { createJob } from "@/queue";
 import { catchAsync } from "@/middleware";
 import { Card, Transaction, User } from "@/model";
 import { eversendFundCard } from "@/provider";
@@ -197,6 +198,15 @@ export const fundCard = catchAsync(async (req, res) => {
 
   if (!user?.hasCard) {
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
+  }
+
+  // Count this spend towards the referrer's reward
+  if (user.referredBy && !user.referredBy.completed) {
+    createJob({
+      type: "PROCESS_REFERRAL_BONUS",
+      userId: String(user._id),
+      transactionAmount: convertedAmount,
+    });
   }
 
   return sendResponse(res, 200, "Card funding successful", {

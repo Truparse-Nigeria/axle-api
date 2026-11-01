@@ -33,6 +33,7 @@ export interface ICurrencyWallet<TAccount> {
 
 export interface IWallet {
   axleCoins: number;
+  reward: number;
   fiat: Record<FiatCurrencyEnum, ICurrencyWallet<IFiatAccount>>;
   crypto: Record<CryptoCurrencyEnum, ICurrencyWallet<ICryptoAccount>>;
 }
