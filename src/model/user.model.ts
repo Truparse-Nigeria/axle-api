@@ -107,6 +107,10 @@ const ReferredBySchema = new Schema(
       type: Boolean,
       default: false,
     },
+    blockedReason: {
+      type: String,
+      default: null,
+    },
   },
   { _id: false },
 );

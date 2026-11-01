@@ -90,6 +90,7 @@ export const fundCard = catchAsync(async (req, res) => {
     user,
     amount: convertedAmount,
     currency: chargeCurrency,
+    service: "cards",
   });
 
   const balance = updatedUser.wallet.fiat[chargeCurrency]?.balance || 0;
@@ -157,6 +158,7 @@ export const fundCard = catchAsync(async (req, res) => {
       user,
       amount: convertedAmount,
       currency: chargeCurrency,
+      service: "cards",
     });
 
     throw new AppError("Oh Snap! Card funding failed. Try again!");

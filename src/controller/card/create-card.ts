@@ -132,6 +132,7 @@ export const createCard = catchAsync(async (req, res) => {
     user,
     amount: convertedAmount,
     currency: chargeCurrency,
+    service: "cards",
   });
 
   const balance = updatedUser.wallet.fiat[chargeCurrency]?.balance || 0;
@@ -197,6 +198,7 @@ export const createCard = catchAsync(async (req, res) => {
       user,
       amount: convertedAmount,
       currency: chargeCurrency,
+      service: "cards",
     });
 
     throw new AppError("Oh Snap! Card creation failed. Try again!");
@@ -372,6 +374,7 @@ export const createNgnCard = async (
     user,
     amount: creationFee,
     currency,
+    service: "cards",
   });
 
   const balance = updatedUser.wallet.fiat[currency]?.balance || 0;
@@ -429,7 +432,12 @@ export const createNgnCard = async (
       finalBalance: balance,
     });
 
-    await refundUser({ user, amount: creationFee, currency });
+    await refundUser({
+      user,
+      amount: creationFee,
+      currency,
+      service: "cards",
+    });
 
     throw new AppError("Oh Snap! Card creation failed. Try again!");
   }

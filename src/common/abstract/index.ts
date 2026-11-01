@@ -92,6 +92,7 @@ export const SafehavenHookAbstract = async (
         user,
         amount: findTxn.amount,
         currency: FiatCurrencyEnum.NGN,
+        service: "localTransfer",
         session,
       });
 

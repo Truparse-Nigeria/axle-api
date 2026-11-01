@@ -79,7 +79,12 @@ export const sendMoneyToBank = catchAsync(async (req, res) => {
   await lockUser(String(user._id));
 
   // Charge user
-  const updatedUser = await chargeUser({ user, amount: totalAmount, currency });
+  const updatedUser = await chargeUser({
+    user,
+    amount: totalAmount,
+    currency,
+    service: "localTransfer",
+  });
 
   const balance = updatedUser.wallet.fiat[currency]?.balance || 0;
 
@@ -147,7 +152,12 @@ export const sendMoneyToBank = catchAsync(async (req, res) => {
 
     if (shouldRefund) {
       // Return the money we already debited before bailing out
-      await refundUser({ user, amount: totalAmount, currency });
+      await refundUser({
+        user,
+        amount: totalAmount,
+        currency,
+        service: "localTransfer",
+      });
 
       throw new AppError(
         "Oops! Transfer didn't go through. Let's give it another shot",

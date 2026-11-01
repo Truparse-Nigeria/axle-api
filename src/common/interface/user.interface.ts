@@ -105,6 +105,7 @@ export interface IUser {
     user?: string;
     amount?: number;
     completed?: boolean;
+    blockedReason?: string | null;
   };
   kyc: IKycSchema;
   isDeleted?: boolean;
