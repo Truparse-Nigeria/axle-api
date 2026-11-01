@@ -249,6 +249,26 @@ export interface IReferAndEarn {
   };
 }
 
+export interface IAxleCoins {
+  nairaPerCoin: number;
+  services: {
+    giftcardPurchase: number;
+    giftcardSale: number;
+    stablecoinConversion: number;
+    fxConversion: number;
+    flight: number;
+    cards: number;
+    esim: number;
+    airtimeToCash: number;
+    internationalTransfer: number;
+    airtime: number;
+    data: number;
+    cable: number;
+    electricity: number;
+    localTransfer: number;
+  };
+}
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;
@@ -264,4 +284,5 @@ export interface ISettings {
   moneyTransfer: IMoneyTransfer;
   general: IGeneral;
   referAndEarn: IReferAndEarn;
+  axleCoins: IAxleCoins;
 }
