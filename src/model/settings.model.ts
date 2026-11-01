@@ -974,6 +974,9 @@ const SettingsSchema = new Schema<ISettingsDocument>(
       },
     },
     referAndEarn: {
+      enabled: { type: Boolean, default: true },
+      commission: { type: Number, default: 500 },
+      minSpend: { type: Number, default: 5000 },
       badge: {
         explorer: {
           referral: { type: Number, default: 0 },

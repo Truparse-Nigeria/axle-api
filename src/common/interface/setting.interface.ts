@@ -239,6 +239,9 @@ export interface IBadgeTier {
 }
 
 export interface IReferAndEarn {
+  enabled: boolean;
+  commission: number;
+  minSpend: number;
   badge: {
     explorer: IBadgeTier;
     connector: IBadgeTier;
