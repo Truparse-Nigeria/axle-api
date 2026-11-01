@@ -102,6 +102,7 @@ export interface IUser {
   wallet: IWallet;
   hasCard?: boolean;
   identifier?: IUserIdentifier;
+  opportunityScore: number;
   referredBy?: {
     user?: string;
     amount?: number;

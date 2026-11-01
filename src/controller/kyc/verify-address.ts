@@ -7,6 +7,7 @@ import {
 } from "@/common";
 import { catchAsync } from "@/middleware";
 import { User } from "@/model";
+import { createJob } from "@/queue";
 
 export const verifyAddress = catchAsync(async (req, res) => {
   const user = req.user;
@@ -31,5 +32,12 @@ export const verifyAddress = catchAsync(async (req, res) => {
     { new: true },
   );
   if (!updated) throw new AppError("Address already verified", 400);
+
+  // Reward the referrer for this completed KYC step
+  createJob({
+    type: "PROCESS_KYC_COMPLETE",
+    userId: String(user._id),
+  });
+
   return sendResponse(res, 200, "Address verification successful");
 });

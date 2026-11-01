@@ -242,6 +242,12 @@ export interface IReferAndEarn {
   enabled: boolean;
   commission: number;
   minSpend: number;
+  opportunityScore: {
+    referralJoin: number;
+    kycComplete: number;
+    transaction: number;
+    referralTransaction: number;
+  };
   badge: {
     explorer: IBadgeTier;
     connector: IBadgeTier;

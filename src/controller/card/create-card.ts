@@ -262,6 +262,12 @@ export const createCard = catchAsync(async (req, res) => {
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
   }
 
+  // Reward the user (and their referrer) with opportunity score
+  createJob({
+    type: "PROCESS_TRANSACTION_SCORE",
+    userId: String(user._id),
+  });
+
   // Count this spend towards the referrer's reward
   if (user.referredBy && !user.referredBy.completed) {
     createJob({
@@ -488,6 +494,12 @@ export const createNgnCard = async (
   if (!user?.hasCard) {
     await User.findByIdAndUpdate(user._id, { $set: { hasCard: true } });
   }
+
+  // Reward the user (and their referrer) with opportunity score
+  createJob({
+    type: "PROCESS_TRANSACTION_SCORE",
+    userId: String(user._id),
+  });
 
   // Count this spend towards the referrer's reward
   if (user.referredBy && !user.referredBy.completed) {

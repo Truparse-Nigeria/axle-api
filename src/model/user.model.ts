@@ -236,6 +236,7 @@ const userSchema = new Schema<IUserDocument>(
     phone: { type: String, required: true, trim: true },
     dialCode: { type: String, required: true, trim: true },
     referralCode: { type: String, trim: true, unique: true, sparse: true },
+    opportunityScore: { type: Number, default: 0 },
     referredBy: {
       type: ReferredBySchema,
       select: false,

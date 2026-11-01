@@ -3,6 +3,9 @@ import {
   autosaveBeneficiary,
   generateMultiCurrency,
   processReferralBonus,
+  processReferralJoin,
+  processTransactionScore,
+  processKycComplete,
   processStaticAccount,
   uploadImageToDigitalOcean,
 } from "@/job";
@@ -42,6 +45,12 @@ export const mainWorker = new Worker<TJobData>(
         return await autosaveBeneficiary(job.data);
       case "PROCESS_REFERRAL_BONUS":
         return await processReferralBonus(job.data);
+      case "PROCESS_REFERRAL_JOIN":
+        return await processReferralJoin(job.data);
+      case "PROCESS_TRANSACTION_SCORE":
+        return await processTransactionScore(job.data);
+      case "PROCESS_KYC_COMPLETE":
+        return await processKycComplete(job.data);
       default:
         //TODO:  Add monitor in the future
         logger.error(`Unknown job type: ${type}`);

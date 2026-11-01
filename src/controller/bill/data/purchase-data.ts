@@ -176,6 +176,12 @@ export const purchaseData = catchAsync(async (req, res) => {
     finalBalance: balance,
   });
 
+  // Reward the user (and their referrer) with opportunity score
+  createJob({
+    type: "PROCESS_TRANSACTION_SCORE",
+    userId: String(user._id),
+  });
+
   // Count this spend towards the referrer's reward
   if (user.referredBy && !user.referredBy.completed) {
     createJob({

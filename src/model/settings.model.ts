@@ -977,6 +977,12 @@ const SettingsSchema = new Schema<ISettingsDocument>(
       enabled: { type: Boolean, default: true },
       commission: { type: Number, default: 500 },
       minSpend: { type: Number, default: 5000 },
+      opportunityScore: {
+        referralJoin: { type: Number, default: 100 },
+        kycComplete: { type: Number, default: 200 },
+        transaction: { type: Number, default: 100 },
+        referralTransaction: { type: Number, default: 100 },
+      },
       badge: {
         explorer: {
           referral: { type: Number, default: 0 },

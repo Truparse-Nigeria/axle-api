@@ -101,5 +101,12 @@ export const verifyIdentity = catchAsync(async (req, res) => {
       dob: cached.dateOfBirth,
     });
   }
+
+  // Reward the referrer for this completed KYC step
+  createJob({
+    type: "PROCESS_KYC_COMPLETE",
+    userId: String(user._id),
+  });
+
   return sendResponse(res, 200, `${type.toUpperCase()} KYC completed`);
 });

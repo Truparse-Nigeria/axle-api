@@ -1,6 +1,9 @@
 import type {
   IGenerateMultiCurrency,
   IReferralBonusJob,
+  IReferralJoinJob,
+  ITransactionScoreJob,
+  IKycCompleteJob,
   IProcessStaticAccount,
 } from "@/job";
 import type { ISaveBeneficiaryJob, ISendMail } from "../interface";
@@ -14,7 +17,10 @@ export type JOB_TYPE =
   | "GENERATE_MULTICURRENCY_ACCOUNT"
   | "VITALSWAP_WALLET"
   | "SAVE_BENEFICIARY"
-  | "PROCESS_REFERRAL_BONUS";
+  | "PROCESS_REFERRAL_BONUS"
+  | "PROCESS_REFERRAL_JOIN"
+  | "PROCESS_TRANSACTION_SCORE"
+  | "PROCESS_KYC_COMPLETE";
 
 export type TJobData =
   | ISendMail
@@ -22,7 +28,10 @@ export type TJobData =
   | IUploadImageToDigitalOceanJob
   | IGenerateMultiCurrency
   | ISaveBeneficiaryJob
-  | IReferralBonusJob;
+  | IReferralBonusJob
+  | IReferralJoinJob
+  | ITransactionScoreJob
+  | IKycCompleteJob;
 
 export const cacheKey = {
   SETTINGS: "settings",

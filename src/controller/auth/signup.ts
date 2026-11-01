@@ -10,6 +10,7 @@ import {
   validateRequestPayload,
 } from "@/common";
 import { catchAsync } from "@/middleware";
+import { createJob } from "@/queue";
 import { User } from "@/model";
 
 // Referral codes are checked against the db and backed by a unique
@@ -74,6 +75,15 @@ export const signup = catchAsync(async (req, res) => {
     messageToken,
     ...(referrer && { referredBy: { user: referrer._id } }),
   });
+
+  // Reward the referrer's opportunity score for the new signup
+  if (referrer) {
+    createJob({
+      type: "PROCESS_REFERRAL_JOIN",
+      referrerId: String(referrer._id),
+      jobId: `referral-join-${user._id}`,
+    });
+  }
 
   // Log the new account in right away
   const jti = await tokenPair(req, res, { id: String(user._id) }, AccessTypeEnum.USER);
