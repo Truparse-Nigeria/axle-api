@@ -72,7 +72,7 @@ export const buyCable = catchAsync(async (req, res) => {
   delete req.body.pin;
 
   // Charge user
-  const updatedUser = await chargeUser({ user, amount: totalAmount, currency });
+  const updatedUser = await chargeUser({ user, amount: totalAmount, currency, service: "cable" });
 
   const balance = updatedUser.wallet.fiat[currency]?.balance || 0;
 
@@ -126,7 +126,7 @@ export const buyCable = catchAsync(async (req, res) => {
     });
 
     // Return the money we already debited before bailing out
-    await refundUser({ user, amount: totalAmount, currency });
+    await refundUser({ user, amount: totalAmount, currency, service: "cable" });
 
     throw new AppError(
       response?.error?.message ||

@@ -269,6 +269,8 @@ export interface IAxleCoins {
   };
 }
 
+export type AxleCoinService = keyof IAxleCoins["services"];
+
 export interface ISettings {
   airtime: IBiller;
   cheapData: IBiller;

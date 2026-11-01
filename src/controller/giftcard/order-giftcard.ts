@@ -81,7 +81,7 @@ export const orderGiftcard = catchAsync(async (req, res) => {
   delete req.body.pin;
 
   // Charge user
-  const updatedUser = await chargeUser({ user, amount, currency });
+  const updatedUser = await chargeUser({ user, amount, currency, service: "giftcardPurchase" });
 
   const balance = updatedUser.wallet.fiat[currency]?.balance || 0;
 
@@ -136,7 +136,7 @@ export const orderGiftcard = catchAsync(async (req, res) => {
     });
 
     // Return the money we already debited before bailing out
-    await refundUser({ user, amount, currency });
+    await refundUser({ user, amount, currency, service: "giftcardPurchase" });
 
     throw new AppError("Oh Snap! Giftcard transaction failed");
   }

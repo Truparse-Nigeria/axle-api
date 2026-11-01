@@ -9,6 +9,7 @@ import type {
   INgnCardBrandProperties,
   IDisco,
   ISettings,
+  AxleCoinService,
   IUser,
 } from "../interface";
 import AppError from "./app-error";
@@ -113,6 +114,19 @@ export const runCheck = async (options: {
   walletCheck(wallet.balance, amount);
 };
 
+// Axle coins earned per purchase of a service: the flat `services[service]`
+// value from settings. Returns 0 when the config isn't in settings yet.
+const axleCoinsFor = async (service: AxleCoinService) => {
+  const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
+  const config = settings?.axleCoins;
+
+  if (!config?.nairaPerCoin) {
+    return 0;
+  }
+
+  return config.services[service] ?? 0;
+};
+
 // Atomically debit the user's fiat wallet for the given currency. The
 // `balance >= amount` condition is the source of truth — a null return means
 // insufficient funds.
@@ -120,12 +134,15 @@ export const chargeUser = async (option: {
   user: IUserDocument;
   amount: number;
   currency: FiatCurrencyEnum;
+  // When set, the purchase also earns axle coins for this service
+  service?: AxleCoinService;
   session?: ClientSession;
 }) => {
-  const { user, amount, currency, session } = option;
+  const { user, amount, currency, service, session } = option;
 
   const absAmount = Math.abs(amount);
   const balanceField = `wallet.fiat.${currency}.balance`;
+  const coins = service ? await axleCoinsFor(service) : 0;
 
   const updatedUser = await User.findOneAndUpdate(
     {
@@ -133,7 +150,10 @@ export const chargeUser = async (option: {
       [balanceField]: { $gte: absAmount },
     },
     {
-      $inc: { [balanceField]: -absAmount },
+      $inc: {
+        [balanceField]: -absAmount,
+        ...(coins && { "wallet.axleCoins": coins }),
+      },
     },
     { new: true, session },
   );
@@ -150,17 +170,23 @@ export const refundUser = async (option: {
   user: IUserDocument;
   amount: number;
   currency: FiatCurrencyEnum;
+  // When set, the axle coins earned by the original charge are taken back
+  service?: AxleCoinService;
   session?: ClientSession;
 }) => {
-  const { user, amount, currency, session } = option;
+  const { user, amount, currency, service, session } = option;
 
   const absAmount = Math.abs(amount);
   const balanceField = `wallet.fiat.${currency}.balance`;
+  const coins = service ? await axleCoinsFor(service) : 0;
 
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id },
     {
-      $inc: { [balanceField]: absAmount },
+      $inc: {
+        [balanceField]: absAmount,
+        ...(coins && { "wallet.axleCoins": -coins }),
+      },
     },
     { new: true, session },
   );
@@ -337,9 +363,7 @@ export const esimServiceCheck = async () => {
 
 // Resolves the currently enabled multi-currency provider for the requested
 // currency. Returns null when the service, currency, or provider is disabled.
-export const checkMultiCurrencyService = async (
-  currency: FiatCurrencyEnum,
-) => {
+export const checkMultiCurrencyService = async (currency: FiatCurrencyEnum) => {
   const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
 
   if (!settings) {

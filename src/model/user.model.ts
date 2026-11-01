@@ -57,6 +57,7 @@ const CryptoCurrencyWalletSchema = currencyWallet(CryptoAccountSchema);
 
 const WalletSchema = new Schema(
   {
+    axleCoins: { type: Number, default: 0 },
     fiat: Object.fromEntries(
       Object.values(FiatCurrencyEnum).map((currency) => [
         currency,

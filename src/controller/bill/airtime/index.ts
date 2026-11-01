@@ -50,7 +50,7 @@ export const purchaseAirtime = catchAsync(async (req, res) => {
   }
 
   // Charge user
-  const updatedUser = await chargeUser({ user, amount, currency });
+  const updatedUser = await chargeUser({ user, amount, currency, service: "airtime" });
 
   const balance = updatedUser.wallet.fiat[currency]?.balance || 0;
 
@@ -100,7 +100,7 @@ export const purchaseAirtime = catchAsync(async (req, res) => {
     });
 
     // Return the money we already debited before bailing out
-    await refundUser({ user, amount, currency });
+    await refundUser({ user, amount, currency, service: "airtime" });
 
     logger.info(response?.error);
 
