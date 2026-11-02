@@ -55,6 +55,7 @@ import {
   createTag,
   updateUser,
   currentUser,
+  getReferrals,
   resetPin,
 } from "@/controller/user";
 import { authGuard } from "@/middleware";
@@ -75,6 +76,7 @@ router.get("/settings/refresh", refreshSettings);
 router.use(authGuard(access));
 
 router.get("/me", currentUser(access));
+router.post("/me/referral", getReferrals);
 router.patch("/create-pin", createPin);
 router.patch("/create-tag", createTag);
 router.patch("/update", updateUser);

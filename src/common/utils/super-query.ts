@@ -52,6 +52,7 @@ export const superQuery = async <T>(
     sumField,
     rangeSumField,
     hiddenFields,
+    includeFields,
     skipObjectIdConversion,
   } = payload;
 
@@ -78,6 +79,13 @@ export const superQuery = async <T>(
     }
     return { $sum: 1 };
   };
+
+  // Final projection: an include-list wins over a hide-list (they can't be mixed)
+  const projectStages: any[] = includeFields?.length
+    ? [{ $project: Object.fromEntries(includeFields.map((f) => [f, 1])) }]
+    : hiddenFields?.length
+      ? [{ $project: Object.fromEntries(hiddenFields.map((f) => [f, 0])) }]
+      : [];
 
   const pipeline: any[] = [];
 
@@ -247,19 +255,7 @@ export const superQuery = async <T>(
         { $skip: skip },
         { $limit: limit },
         ...buildJoinStages(),
-        ...(hiddenFields?.length
-          ? [
-              {
-                $project: hiddenFields.reduce(
-                  (acc, f) => {
-                    acc[f as string] = 0;
-                    return acc;
-                  },
-                  {} as any,
-                ),
-              },
-            ]
-          : []),
+        ...projectStages,
       ];
 
       // Fire both concurrently — wall-clock time ≈ max(count, data), not sum
@@ -279,17 +275,7 @@ export const superQuery = async <T>(
       pipeline.push({ $sort: sort });
       pipeline.push(...buildJoinStages());
 
-      if (hiddenFields?.length) {
-        pipeline.push({
-          $project: hiddenFields.reduce(
-            (acc, f) => {
-              acc[f as string] = 0;
-              return acc;
-            },
-            {} as any,
-          ),
-        });
-      }
+      pipeline.push(...projectStages);
     }
   }
 

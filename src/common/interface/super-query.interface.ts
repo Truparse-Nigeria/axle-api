@@ -39,6 +39,7 @@ export interface ISuperQuery<T> {
   sumField?: ISum;
   rangeSumField?: IRangeSum;
   hiddenFields?: string[];
+  includeFields?: string[]; // when set, only these fields are returned (takes precedence over hiddenFields)
   fillMissing?: boolean;
   skipObjectIdConversion?: string[];
 }
