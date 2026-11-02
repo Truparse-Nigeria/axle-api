@@ -85,6 +85,7 @@ export interface IKycSchema {
 }
 
 export interface IUser {
+  rowNumber?: number;
   email: string;
   phone: string;
   dialCode: string;

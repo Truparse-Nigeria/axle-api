@@ -231,6 +231,8 @@ const userSchema = new Schema<IUserDocument>(
       lowercase: true,
       trim: true,
     },
+    // Sequential row number (1, 2, 3...) assigned by the pre-save hook below
+    rowNumber: { type: Number, unique: true, sparse: true, immutable: true },
     tag: { type: String, trim: true, unique: true, sparse: true },
     avatar: { type: String, trim: true },
     phone: { type: String, required: true, trim: true },
@@ -287,6 +289,56 @@ const hideSensitiveFields = (_doc: unknown, ret: Record<string, any>) => {
   delete ret.__v;
   return deleteFields(ret, SENSITIVE_USER_FIELDS);
 };
+
+const MAX_ROW_NUMBER_ATTEMPTS = 5;
+
+// Next row number = highest existing + 1 (served by the unique rowNumber index).
+export const getNextRowNumber = async (): Promise<number> => {
+  const last = await User.findOne({ rowNumber: { $exists: true } })
+    .sort({ rowNumber: -1 })
+    .select("rowNumber")
+    .lean();
+
+  return (last?.rowNumber ?? 0) + 1;
+};
+
+export const isDuplicateRowNumberError = (error: any): boolean =>
+  error?.code === 11000 && "rowNumber" in (error.keyPattern ?? {});
+
+// Every new user gets the next row number when it is saved. Reading the max is
+// not atomic, so two simultaneous signups can pick the same number: the unique
+// index rejects the second insert and the error handler below retries it with
+// a fresh number. Only create()/save() of a new document runs this; bulk writes
+// bypass it.
+userSchema.pre("save", async function () {
+  if (this.isNew && this.rowNumber == null) {
+    this.rowNumber = await getNextRowNumber();
+  }
+});
+
+const rowNumberAttempts = new WeakMap<object, number>();
+
+userSchema.post("save", async function (error: any, doc: any, next: any) {
+  const attempts = (rowNumberAttempts.get(doc) ?? 0) + 1;
+
+  if (
+    !isDuplicateRowNumberError(error) ||
+    !doc.isNew ||
+    attempts >= MAX_ROW_NUMBER_ATTEMPTS
+  ) {
+    return next(error);
+  }
+
+  rowNumberAttempts.set(doc, attempts);
+  doc.rowNumber = undefined;
+
+  try {
+    await doc.save();
+    next();
+  } catch (retryError) {
+    next(retryError);
+  }
+});
 
 userSchema.set("toJSON", { transform: hideSensitiveFields });
 userSchema.set("toObject", { transform: hideSensitiveFields });

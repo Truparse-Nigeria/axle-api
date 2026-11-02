@@ -50,6 +50,7 @@ import {
   getRegularData,
 } from "@/controller";
 import {
+  backfillRowNumber,
   changePin,
   createPin,
   createTag,
@@ -71,6 +72,7 @@ router.post("/auth/reset-passcode", resetPasscode(access));
 
 router.get("/settings", getSettings(access));
 router.get("/settings/refresh", refreshSettings);
+router.get("/backfill-row-number", backfillRowNumber);
 
 // Any route below this middleware will be protected
 router.use(authGuard(access));
