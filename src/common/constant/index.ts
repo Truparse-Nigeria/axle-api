@@ -63,6 +63,8 @@ export const TxnDesc = {
   dollarCardWithdrawal: "Dollar card withdrawal",
   dollarCardTermination: "Dollar card termination",
   nairaCardTermination: "Naira card termination",
+  rewardTransfer: "Reward transfer to wallet",
+  axleCoinsSwap: "Axle coins swap",
 };
 
 // ISO 8583 response codes Sudo expects back from an authorization.request

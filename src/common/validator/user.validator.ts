@@ -26,3 +26,14 @@ export const updateUserSchema = z
     avatar: z.url("Avatar must be a valid URL").trim().optional(),
   })
   .strip();
+
+export const pinSchema = z.object({
+  pin: z
+    .string()
+    .trim()
+    .length(4, "PIN must be exactly 4 digits")
+    .regex(/^\d{4}$/, "PIN must contain only numbers"),
+});
+
+export const rewardTransferSchema = pinSchema;
+export const swapCoinsSchema = pinSchema;
