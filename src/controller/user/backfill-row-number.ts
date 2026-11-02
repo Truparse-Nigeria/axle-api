@@ -5,19 +5,22 @@ import { getNextRowNumber, isDuplicateRowNumberError, User } from "@/model";
 const MAX_ATTEMPTS = 10;
 
 let running = false;
+const progress = { total: 0, updated: 0 };
 
 // Takes the next free number for one user. If a concurrent signup grabbed the
 // same number, the unique index rejects the write and we pick a fresh one.
 const assignRowNumber = async (id: unknown): Promise<boolean> => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
-      const updated = await User.findOneAndUpdate(
+      // rowNumber is immutable on the schema, and Mongoose silently drops
+      // updates to immutable paths unless overwriteImmutable is set.
+      const { modifiedCount } = await User.updateOne(
         { _id: id, rowNumber: { $exists: false } },
         { $set: { rowNumber: await getNextRowNumber() } },
-        { new: true },
-      ).select("_id");
+        { overwriteImmutable: true },
+      );
 
-      return !!updated;
+      return modifiedCount === 1;
     } catch (error) {
       if (!isDuplicateRowNumberError(error)) throw error;
     }
@@ -35,6 +38,8 @@ export const backfillUserRowNumbers = async (): Promise<{
   const filter = { rowNumber: { $exists: false } };
   const total = await User.countDocuments(filter);
   let updated = 0;
+  progress.total = total;
+  progress.updated = 0;
 
   const cursor = User.find(filter)
     .sort({ createdAt: 1, _id: 1 })
@@ -43,7 +48,7 @@ export const backfillUserRowNumbers = async (): Promise<{
     .cursor();
 
   for await (const { _id } of cursor) {
-    if (await assignRowNumber(_id)) updated++;
+    if (await assignRowNumber(_id)) progress.updated = ++updated;
     if (updated > 0 && updated % 500 === 0) {
       logger.info(`Row number backfill: ${updated}/${total} users`);
     }
@@ -56,7 +61,12 @@ export const backfillUserRowNumbers = async (): Promise<{
 // timeout on a big collection) and progress is written to the logs.
 export const backfillRowNumber = catchAsync(async (req, res) => {
   if (running) {
-    return sendResponse(res, 202, "Row number backfill is already running");
+    return sendResponse(
+      res,
+      202,
+      "Row number backfill is already running",
+      { ...progress },
+    );
   }
 
   const pending = await User.countDocuments({ rowNumber: { $exists: false } });
