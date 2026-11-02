@@ -61,6 +61,7 @@ import {
   rewardTransfer,
   swapCoins,
   getReferralEarnings,
+  getLeaderboard,
 } from "@/controller/user";
 import { authGuard } from "@/middleware";
 import { Router } from "express";
@@ -83,6 +84,7 @@ router.use(authGuard(access));
 router.get("/me", currentUser(access));
 router.post("/me/referral", getReferrals);
 router.get("/me/referral/earnings", getReferralEarnings);
+router.get("/leaderboard", getLeaderboard);
 router.post("/me/reward/transfer", rewardTransfer);
 router.post("/me/coins/swap", swapCoins);
 router.patch("/create-pin", createPin);

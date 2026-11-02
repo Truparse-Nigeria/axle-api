@@ -38,6 +38,7 @@ export type TJobData =
 
 export const cacheKey = {
   SETTINGS: "settings",
+  LEADERBOARD: "leaderboard",
   CHEAP_DATA_KEY: "cheap-data",
   REGULAR_DATA_KEY: "regular-data",
   EVERSEND_TOKEN_KEY: "eversend-token",
