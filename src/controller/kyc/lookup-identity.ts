@@ -33,9 +33,9 @@ export const lookupIdentity = catchAsync(async (req, res) => {
     throw new AppError("KYC already completed", 400);
 
   const attemptKey = `KYC_ATTEMPT_${type}:${user._id}`;
-  if (Number(await getCache<number>(attemptKey)) >= 10) {
+  if (Number(await getCache<number>(attemptKey)) >= 5) {
     throw new AppError(
-      "You've exhausted your 10 tries per day. Please try again tomorrow",
+      "You've exhausted your 5 tries per day. Please try again tomorrow",
       429,
     );
   }

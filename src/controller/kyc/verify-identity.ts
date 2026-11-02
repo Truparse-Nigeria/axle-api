@@ -24,8 +24,8 @@ export const verifyIdentity = catchAsync(async (req, res) => {
   if (type !== finalizerData.type) throw new AppError("Invalid KYC reference", 400);
   if (user.kyc?.[type]?.completed === true) throw new AppError("KYC already completed", 400);
   const attemptKey = `KYC_ATTEMPT_${type}:${user._id}`;
-  if (Number(await getCache<number>(attemptKey)) >= 10) {
-    throw new AppError("You've exhausted your 10 tries per day. Please try again tomorrow", 429);
+  if (Number(await getCache<number>(attemptKey)) >= 5) {
+    throw new AppError("You've exhausted your 5 tries per day. Please try again tomorrow", 429);
   }
   await throwIfIdentifierHasBeenUsed(finalizerData.identifier, type, String(user._id));
 
