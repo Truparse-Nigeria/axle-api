@@ -204,6 +204,7 @@ export const fundCard = catchAsync(async (req, res) => {
   createJob({
     type: "PROCESS_TRANSACTION_SCORE",
     userId: String(user._id),
+    service: PurposeEnum.CARDS,
   });
 
   // Count this spend towards the referrer's reward

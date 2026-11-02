@@ -1,13 +1,21 @@
-import { cacheKey, retrieveSettings, type IBaseJobType } from "@/common";
+import {
+  cacheKey,
+  retrieveSettings,
+  type PurposeEnum,
+  type IBaseJobType,
+} from "@/common";
 import { User } from "@/model";
+import { evaluateBadge } from "./process-badge";
 
 export interface ITransactionScoreJob extends IBaseJobType {
   userId: string;
+  // Service the transaction belongs to, used for badge progress
+  service?: `${PurposeEnum}`;
 }
 
 // Awards opportunity score for a completed transaction: `transaction` to the
 // user, and `referralTransaction` to whoever referred them (if anyone).
-export const processTransactionScore = async (data: ITransactionScoreJob) => {
+const awardScore = async (userId: string) => {
   const settings = await retrieveSettings(`${cacheKey.SETTINGS}:FULL`);
   const referAndEarn = settings?.referAndEarn;
   if (!referAndEarn?.enabled) return;
@@ -18,7 +26,7 @@ export const processTransactionScore = async (data: ITransactionScoreJob) => {
   );
 
   const user = await User.findByIdAndUpdate(
-    data.userId,
+    userId,
     score ? { $inc: { opportunityScore: score } } : {},
   ).select("+referredBy");
 
@@ -28,4 +36,13 @@ export const processTransactionScore = async (data: ITransactionScoreJob) => {
   await User.findByIdAndUpdate(referrerId, {
     $inc: { opportunityScore: referralScore },
   });
+};
+
+// Score first, then the badge check, so the badge sees the updated score.
+export const processTransactionScore = async (data: ITransactionScoreJob) => {
+  try {
+    await awardScore(data.userId);
+  } finally {
+    if (data.service) await evaluateBadge(data.userId, data.service);
+  }
 };

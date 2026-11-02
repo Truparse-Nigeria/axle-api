@@ -1,4 +1,6 @@
 import type {
+  BadgeEnum,
+  PurposeEnum,
   CryptoCurrencyEnum,
   FiatCurrencyEnum,
   GenderEnum,
@@ -84,8 +86,16 @@ export interface IKycSchema {
   selfie?: ISelfieSchema;
 }
 
+export interface IUserBadge {
+  // Unset until the user earns their first badge
+  name?: BadgeEnum;
+  // select: false on the schema; load it with "+badge.services"
+  services?: PurposeEnum[];
+}
+
 export interface IUser {
   rowNumber?: number;
+  badge?: IUserBadge;
   email: string;
   phone: string;
   dialCode: string;

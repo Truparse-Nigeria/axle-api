@@ -157,6 +157,7 @@ export const purchaseElectricity = catchAsync(async (req, res) => {
   createJob({
     type: "PROCESS_TRANSACTION_SCORE",
     userId: String(user._id),
+    service: PurposeEnum.POWER,
   });
 
   // Count this spend towards the referrer's reward

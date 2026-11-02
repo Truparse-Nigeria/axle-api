@@ -164,3 +164,14 @@ export enum BeneficiaryEnum {
   CABLE = "CABLE",
   ELECTRICITY = "ELECTRICITY",
 }
+
+// Badge tiers, lowest to highest. Values match the keys of
+// settings.referAndEarn.badge, and the order is the progression order.
+export enum BadgeEnum {
+  EXPLORER = "explorer",
+  CONNECTOR = "connector",
+  NAVIGATOR = "navigator",
+  PATH_FINDER = "pathFinder",
+  ARCHITECT = "architect",
+  AMBASSADOR = "ambassador",
+}

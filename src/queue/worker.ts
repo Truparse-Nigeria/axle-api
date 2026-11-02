@@ -2,6 +2,7 @@ import { logger, redis, type JOB_TYPE, type TJobData } from "@/common";
 import {
   autosaveBeneficiary,
   generateMultiCurrency,
+  processBadge,
   processReferralBonus,
   processReferralJoin,
   processTransactionScore,
@@ -49,6 +50,8 @@ export const mainWorker = new Worker<TJobData>(
         return await processReferralJoin(job.data);
       case "PROCESS_TRANSACTION_SCORE":
         return await processTransactionScore(job.data);
+      case "PROCESS_BADGE":
+        return await processBadge(job.data);
       case "PROCESS_KYC_COMPLETE":
         return await processKycComplete(job.data);
       default:

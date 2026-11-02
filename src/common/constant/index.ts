@@ -1,4 +1,5 @@
 import type {
+  IBadgeJob,
   IGenerateMultiCurrency,
   IReferralBonusJob,
   IReferralJoinJob,
@@ -20,6 +21,7 @@ export type JOB_TYPE =
   | "PROCESS_REFERRAL_BONUS"
   | "PROCESS_REFERRAL_JOIN"
   | "PROCESS_TRANSACTION_SCORE"
+  | "PROCESS_BADGE"
   | "PROCESS_KYC_COMPLETE";
 
 export type TJobData =
@@ -31,6 +33,7 @@ export type TJobData =
   | IReferralBonusJob
   | IReferralJoinJob
   | ITransactionScoreJob
+  | IBadgeJob
   | IKycCompleteJob;
 
 export const cacheKey = {
@@ -102,7 +105,7 @@ export const SENSITIVE_BENEFICIARY_FIELDS = "+createdBy +isDeleted";
 
 // Single source of truth for user fields that must never reach an API response.
 export const SENSITIVE_USER_FIELDS =
-  "+passcode +pin +jti +referredBy +messageToken +isDeleted +__v +kyc.bvn.details +kyc.bvn.identifier +kyc.nin.details +kyc.nin.identifier +kyc.passport.details +kyc.passport.identifier";
+  "+passcode +pin +jti +referredBy +messageToken +isDeleted +__v +kyc.bvn.details +kyc.bvn.identifier +kyc.nin.details +kyc.nin.identifier +kyc.passport.details +kyc.passport.identifier +badge.services";
 
 export interface IApiResponse<T = null> {
   data?: T;

@@ -181,6 +181,13 @@ export const sendMoneyToWallet = catchAsync(async (req, res) => {
   const senderName = `${user.firstName} ${user.lastName}`;
   const formattedAmount = formatAmount(amount);
 
+  // Count local transfers towards the sender's badge
+  createJob({
+    type: "PROCESS_BADGE",
+    userId: String(user._id),
+    service: PurposeEnum.TRANSFER,
+  });
+
   // Fire emails in parallel
   await Promise.all([
     createJob({

@@ -177,6 +177,13 @@ export const sendMoneyToBank = catchAsync(async (req, res) => {
     responsePayload: response,
   });
 
+  // Count local transfers towards the user's badge
+  createJob({
+    type: "PROCESS_BADGE",
+    userId: String(user._id),
+    service: PurposeEnum.TRANSFER,
+  });
+
   createJob({
     type: "SEND_EMAIL",
     priority: 1,

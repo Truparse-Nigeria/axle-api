@@ -1,5 +1,7 @@
 import { Schema, model, type Document, type Model } from "mongoose";
 import {
+  BadgeEnum,
+  PurposeEnum,
   CryptoCurrencyEnum,
   deleteFields,
   FiatCurrencyEnum,
@@ -111,6 +113,24 @@ const ReferredBySchema = new Schema(
     blockedReason: {
       type: String,
       default: null,
+    },
+  },
+  { _id: false },
+);
+
+// `name` is the current tier and stays unset until the user meets a tier's
+// targets. `services` is the set of distinct services the user has used, which
+// is what the tier's `service` requirement counts.
+const BadgeSchema = new Schema(
+  {
+    name: {
+      type: String,
+      enum: Object.values(BadgeEnum),
+    },
+    services: {
+      type: [{ type: String, enum: Object.values(PurposeEnum) }],
+      default: [],
+      select: false,
     },
   },
   { _id: false },
@@ -239,6 +259,7 @@ const userSchema = new Schema<IUserDocument>(
     dialCode: { type: String, required: true, trim: true },
     referralCode: { type: String, trim: true, unique: true, sparse: true },
     opportunityScore: { type: Number, default: 0 },
+    badge: { type: BadgeSchema, default: () => ({}) },
     referredBy: {
       type: ReferredBySchema,
       select: false,
@@ -289,6 +310,9 @@ const hideSensitiveFields = (_doc: unknown, ret: Record<string, any>) => {
   delete ret.__v;
   return deleteFields(ret, SENSITIVE_USER_FIELDS);
 };
+
+// Badge checks count how many users a given user has referred
+userSchema.index({ "referredBy.user": 1 });
 
 const MAX_ROW_NUMBER_ATTEMPTS = 5;
 
