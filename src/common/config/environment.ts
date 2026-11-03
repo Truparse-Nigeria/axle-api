@@ -18,6 +18,9 @@ export const ENVIRONMENT = {
   DB: {
     URL: Bun.env.DB_URL,
   },
+  CHATWOOT: {
+    TOKEN: Bun.env.CHATWOOT_IDENTIFIER_TOKEN,
+  },
   JWT: {
     USER: {
       ACCESS_TOKEN_SECRET: Bun.env.JWT_USER_ACCESS_TOKEN_SECRET,

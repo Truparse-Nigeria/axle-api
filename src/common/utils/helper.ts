@@ -555,3 +555,12 @@ export const sortDataPlans = (data: IDataPlan[]) => {
     })
     .map(({ provider, planId, unitPrice, active, ...rest }) => rest);
 };
+
+// Chatwoot identity-validation hash for a user. Undefined while the token isn't
+// configured, so reads never fail over a missing env var.
+export const computeChatIdentity = (userId: unknown) => {
+  const token = ENVIRONMENT.CHATWOOT.TOKEN;
+  if (!token) return undefined;
+
+  return createHmac("sha256", token).update(String(userId)).digest("hex");
+};

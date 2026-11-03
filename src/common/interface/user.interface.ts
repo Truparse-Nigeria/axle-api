@@ -122,6 +122,7 @@ export interface IUser {
   };
   kyc: IKycSchema;
   isDeleted?: boolean;
+  chatIdentity?: string;
 }
 
 export interface IUserIdentifier {

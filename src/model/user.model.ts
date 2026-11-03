@@ -1,6 +1,7 @@
 import { Schema, model, type Document, type Model } from "mongoose";
 import {
   BadgeEnum,
+  computeChatIdentity,
   PurposeEnum,
   CryptoCurrencyEnum,
   deleteFields,
@@ -306,8 +307,10 @@ const userSchema = new Schema<IUserDocument>(
 // deleteFields() and superQuery `hiddenFields` use. This covers document/
 // toObject responses; lean() results and aggregation (superQuery) are plain
 // objects that bypass this — those paths strip explicitly instead.
-const hideSensitiveFields = (_doc: unknown, ret: Record<string, any>) => {
+const hideSensitiveFields = (doc: any, ret: Record<string, any>) => {
   delete ret.__v;
+  // chatIdentity isn't a schema path, so carry it over from the document
+  if (doc?.chatIdentity !== undefined) ret.chatIdentity = doc.chatIdentity;
   return deleteFields(ret, SENSITIVE_USER_FIELDS);
 };
 
@@ -363,6 +366,19 @@ userSchema.post("save", async function (error: any, doc: any, next: any) {
     next(retryError);
   }
 });
+
+// chatIdentity is derived from the id, never stored: attach it to every user
+// that is saved or read so it shows up in responses.
+const attachChatIdentity = (docs: any) => {
+  if (!docs) return;
+
+  for (const doc of Array.isArray(docs) ? docs : [docs]) {
+    if (doc?._id) doc.chatIdentity = computeChatIdentity(doc._id);
+  }
+};
+
+userSchema.post("save", (doc) => attachChatIdentity(doc));
+userSchema.post(/^find/, (docs) => attachChatIdentity(docs));
 
 userSchema.set("toJSON", { transform: hideSensitiveFields });
 userSchema.set("toObject", { transform: hideSensitiveFields });
